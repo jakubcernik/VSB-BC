@@ -2,9 +2,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Bakalářský projekt</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulace dynamického pole</title>
+    <link rel="stylesheet" href="style.css">
+    https://chatgpt.com/c/672a6d87-6870-800e-a189-5105ff7914e7
 </head>
 <body>
-<h1>Hello world!</h1>
+<div id="container">
+    <h1>Simulace dynamického pole</h1>
+    <button onclick="generateRandomArray()">Generovat náhodný vstup</button>
+    <button onclick="runBestCase()">Nejlepší případ</button>
+    <button onclick="runWorstCase()">Nejhorší případ</button>
+    <input type="number" id="manualInput" placeholder="Přidat prvek">
+    <button onclick="addElement()">Přidat</button>
+
+    <div id="arrayVisualization"></div>
+    <div id="creditCounter">Naspořené mince: 0</div>
+    <div id="stepCounter">Počet kroků: 0</div>
+    <div id="infoPanel">Zde budou vysvětleny jednotlivé kroky simulace.</div>
+
+    <!-- Přidáváme kontejner pro log -->
+    <div id="log"></div>
+</div>
+<script src="script.js"></script>
 </body>
 </html>

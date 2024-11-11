@@ -1,0 +1,107 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f4f4f9;
+    margin: 0;
+}
+#container {
+    text-align: center;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    width: 90%;
+}
+h1 {
+    color: #333;
+}
+button, input[type="number"] {
+    padding: 10px;
+    margin: 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+button {
+    background-color: #4CAF50;
+    color: white;
+}
+input[type="number"] {
+    width: 100px;
+}
+#infoPanel, #arrayVisualization, #creditCounter, #stepCounter {
+    margin-top: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #f9f9f9;
+}
+
+#arrayVisualization {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.frame {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    background-image: url('frame.png');
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #333;
+}
+
+.coins {
+    position: absolute;
+    top: -20px;
+    display: flex;
+    flex-direction: column; /* Mince se kupí nad sebe */
+    gap: 2px;
+}
+
+.coin {
+    width: 20px;
+    height: 20px;
+    background-image: url('golden-coin.webp');
+    background-size: cover;
+}
+
+#infoPanel {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #f9f9f9;
+}
+
+#log {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #f1f1f1;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.log-entry {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.log-entry.newest {
+    color: #333;
+    font-weight: bold;
+}
+
