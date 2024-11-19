@@ -1,5 +1,6 @@
 let array = [];
 let capacity = 1; // počáteční velikost pole
+let creditsPerSlot = []; // Počet mincí nad každým políčkem
 let credit = 0;
 let steps = 0;
 
@@ -7,115 +8,129 @@ function visualizeArray() {
     const arrayContainer = document.getElementById("arrayVisualization");
     arrayContainer.innerHTML = ''; // Vymazání starého obsahu
 
-    // Vytvoření vizualizace každého prvku v poli
-    array.forEach((value, index) => {
+    for (let i = 0; i < capacity; i++) {
         const frame = document.createElement("div");
         frame.classList.add("frame");
 
-        // Zobrazíme mince jako kredit nad každým políčkem
+        // Zobrazíme hodnotu, pokud políčko obsahuje prvek
+        if (i < array.length) {
+            frame.innerText = array[i];
+        } else {
+            frame.innerText = ""; // Prázdné políčko
+        }
+
+        // Zobrazíme mince podle kreditu políčka
         const coinsContainer = document.createElement("div");
         coinsContainer.classList.add("coins");
 
-        const coinsNeeded = Math.min(credit, index + 1); // Počet mincí pro každé políčko
-        for (let i = 0; i < coinsNeeded; i++) {
+        const coinsNeeded = i < creditsPerSlot.length ? creditsPerSlot[i] : 0;
+        for (let j = 0; j < coinsNeeded; j++) {
             const coin = document.createElement("div");
             coin.classList.add("coin");
             coinsContainer.appendChild(coin);
         }
 
-        // Přidáme hodnotu prvku
-        frame.innerText = value;
         frame.appendChild(coinsContainer);
-        arrayContainer.appendChild(frame);
-    });
-
-    // Zobrazení prázdných políček po zvětšení kapacity
-    const emptySlots = capacity - array.length;
-    for (let i = 0; i < emptySlots; i++) {
-        const frame = document.createElement("div");
-        frame.classList.add("frame");
-        frame.innerText = ""; // Prázdné pole
         arrayContainer.appendChild(frame);
     }
 
-    document.getElementById("creditCounter").innerHTML = `Naspořené mince: ${credit}`;
     document.getElementById("stepCounter").innerHTML = `Počet kroků: ${steps}`;
 }
 
-function updateInfoPanel(message) {
-    document.getElementById("infoPanel").innerHTML = message;
-    appendLog(message); // Přidáme zprávu do logu
-}
 
-function appendLog(message) {
-    const logContainer = document.getElementById("log");
-    const entry = document.createElement("div");
-    entry.classList.add("log-entry", "newest");
-    entry.innerHTML = `<strong>${steps}. krok:</strong> ${message}`;
+async function addElement() {
+    const input = document.getElementById("manualInput");
+    const value = parseInt(input.value);
 
-    // Novou zprávu přidáme na začátek
-    logContainer.prepend(entry);
-
-    // Aktualizace starších zpráv (zašednutí)
-    const entries = logContainer.querySelectorAll(".log-entry");
-    entries.forEach((entry, index) => {
-        entry.classList.remove("newest");
-        if (index > 0) entry.style.color = `rgba(102, 102, 102, ${1 - index * 0.1})`;
-    });
-}
-
-function addElement() {
-    let value = parseInt(document.getElementById("manualInput").value);
     if (isNaN(value)) {
-        updateInfoPanel("Prosím, zadejte číslo, které chcete přidat.");
+        updateInfoPanel("Prosím, zadejte platné číslo.");
         return;
     }
 
     steps++;
-    credit += 3; // přidáme "3 mince" za každou operaci
-
-    updateInfoPanel(`Přidáváme prvek ${value}. Naspoříme 3 mince. Aktuální kredit: ${credit}.`);
 
     if (array.length === capacity) {
-        // Potřebujeme zvětšit kapacitu
+        // Pokud je pole plné, zvětšíme kapacitu
         let oldCapacity = capacity;
         capacity *= 2;
-        credit -= array.length; // odečteme mince potřebné na zvětšení pole
-        updateInfoPanel(
-            `Pole bylo plné. Zvětšujeme kapacitu z ${oldCapacity} na ${capacity}. ` +
-            `Odebíráme ${array.length} mincí za přesun všech prvků. Zbývající kredit: ${credit}.`
-        );
+
+        let totalCreditsNeeded = array.length; // Mince potřebné na kopírování
+        for (let i = 0; i < creditsPerSlot.length && totalCreditsNeeded > 0; i++) {
+            const creditsToUse = Math.min(creditsPerSlot[i], totalCreditsNeeded);
+            creditsPerSlot[i] -= creditsToUse;
+            totalCreditsNeeded -= creditsToUse;
+
+            if (creditsPerSlot[i] === 0) {
+                updateInfoPanel(`Pole ${i} spotřebovalo všechny své mince.`);
+            }
+        }
+
+        if (array.length === capacity) {
+            let oldCapacity = capacity;
+            capacity *= 2;
+
+            updateInfoPanel(`Pole bylo plné. Zvětšujeme kapacitu z ${oldCapacity} na ${capacity}.`);
+            await consumeCreditsForExpansion(); // Spotřebujeme mince pro zvětšení pole
+        }
+
     }
 
+    // Přidáme nový prvek a jeho mince
     array.push(value);
-    visualizeArray();
+    creditsPerSlot.push(3); // Každé políčko začíná se 3 mincemi
+
+    updateInfoPanel(`Přidali jsme prvek ${value}. Nad políčkem jsou nyní 3 mince.`);
+    visualizeArray(); // Aktualizujeme vizualizaci
+    input.value = ""; // Vyčistíme vstup
 }
 
-function generateRandomArray() {
-    array = [];
-    capacity = 2;
-    credit = 0;
-    steps = 0;
-    updateInfoPanel("Generujeme náhodný vstup...");
+async function consumeCreditsForExpansion() {
+    let totalCreditsNeeded = array.length; // Mince potřebné na kopírování
+    for (let i = 0; i < creditsPerSlot.length && totalCreditsNeeded > 0; i++) {
+        while (creditsPerSlot[i] > 0 && totalCreditsNeeded > 0) {
+            creditsPerSlot[i]--;
+            totalCreditsNeeded--;
 
-    for (let i = 0; i < 10; i++) {
-        document.getElementById("manualInput").value = Math.floor(Math.random() * 100);
-        addElement();
+            visualizeArray(); // Aktualizujeme vizualizaci po každém odebrání mince
+
+            // Simulujeme krátkou prodlevu pro vizualizaci
+            await new Promise((resolve) => setTimeout(resolve, 300));
+        }
+
+        if (creditsPerSlot[i] === 0) {
+            const frame = document.querySelector(`.frame:nth-child(${i + 1})`);
+            frame.style.border = "2px solid red"; // Zvýraznění
+            await new Promise((resolve) => setTimeout(resolve, 500)); // Krátká prodleva
+            frame.style.border = ""; // Zrušíme zvýraznění
+            updateInfoPanel(`Pole ${i} spotřebovalo všechny své mince.`);
+        }
     }
 }
+
+function updateInfoPanel(message) {
+    const infoPanel = document.getElementById("infoPanel");
+    const logEntry = document.createElement("div");
+    logEntry.textContent = message;
+    logEntry.style.marginBottom = "5px";
+    logEntry.style.fontSize = "14px";
+
+    infoPanel.prepend(logEntry); // Přidáme novou zprávu na začátek
+}
+
 
 function runBestCase() {
     array = [];
-    capacity = 2;
-    credit = 0;
+    capacity = 1; // Opraveno
+    creditsPerSlot = [];
     steps = 0;
-    updateInfoPanel("Simulujeme nejlepší případ, kde se každé vložení vejde bez zvětšení kapacity.");
 
-    for (let i = 0; i < capacity; i++) {
+    updateInfoPanel("Simulujeme nejlepší případ, kde se každé vložení vejde bez zvětšení kapacity.");
+    for (let i = 0; i < 10; i++) {
         document.getElementById("manualInput").value = i;
         addElement();
     }
 }
+
 
 function runWorstCase() {
     array = [];
