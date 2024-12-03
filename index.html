@@ -11,10 +11,9 @@
 <div id="container">
     <header>
         <h1>Amortized complexity for vector<></h1>
-        <h3>Simulate the amortized complexity of a dynamic array</h3>
     </header>
 
-    <!-- Navigation -->
+    <!-- Input mode -->
     <nav id="navigation">
         <button onclick="setMode('manual')" id="manualTab" class="active">Manual</button>
         <button onclick="setMode('random')" id="randomTab">Random</button>
@@ -24,11 +23,10 @@
 
     <!-- Trackers -->
     <div id="trackers">
-        <div id="creditCounter">Credits: 0</div>
+        <div id="creditCounter">Coins: 0</div>
         <div id="stepCounter">Steps: 0</div>
     </div>
 
-    <!-- Modes -->
     <main id="mainContent">
         <!-- Manual Mode -->
         <section id="manualMode" class="mode active">
@@ -52,7 +50,6 @@
             <button onclick="generateRandomArray()">Generate Random Array</button>
         </section>
 
-
         <!-- Best Case Mode -->
         <section id="bestMode" class="mode">
             <h2>Best Case</h2>
@@ -66,10 +63,10 @@
         </section>
     </main>
 
-    <!-- Visualization -->
+    <!-- Visual elements -->
     <section id="arrayVisualization"></section>
 
-    <!-- Info Panel -->
+    <!-- log -->
     <div id="infoPanel">Steps will appear here</div>
     <footer>
         <p>&copy; 2024 by Jakub Cernik. Designed for educational purposes as a Bachelor Thesis.</p>

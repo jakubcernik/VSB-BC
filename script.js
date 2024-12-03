@@ -1,32 +1,36 @@
-let array = [];
-let capacity = 1; // Initial array size
-let creditsPerSlot = []; // Number of coins above each slot
+let array = [];                 // Added numbers
+let capacity = 1;             // Initial array size
+let creditsPerSlot = [];        // Coins above each slot
 let steps = 0;
 
-function toggleTheme() {
+function toggleTheme()
+{
     const body = document.body;
     const button = document.getElementById("themeToggle");
 
-    // Toggle dark mode class
+    // Toggle dark mode
     body.classList.toggle("dark-mode");
 
-    // Update button text based on the current mode
-    if (body.classList.contains("dark-mode")) {
+    if (body.classList.contains("dark-mode"))
+    {
         button.textContent = "Switch to Light Mode";
-    } else {
+    }
+    else
+    {
         button.textContent = "Switch to Dark Mode";
     }
 }
 
 
-function updateCredits() {
+function updateCredits()
+{
     const totalCredits = creditsPerSlot.reduce((sum, credits) => sum + credits, 0);
-    document.getElementById("creditCounter").textContent = `Credits: ${totalCredits}`;
+    document.getElementById("creditCounter").textContent = `Coins: ${totalCredits}`;
 }
 
 
-function resetSimulation() {
-    // Reset core data structures
+function resetValues()
+{
     array = [];
     creditsPerSlot = [];
     capacity = 1;
@@ -34,52 +38,53 @@ function resetSimulation() {
     updateCredits();
 
     // Reset trackers
-    document.getElementById("creditCounter").textContent = "Credits: 0";
+    document.getElementById("creditCounter").textContent = "Coins: 0";
     document.getElementById("stepCounter").textContent = "Steps: 0";
 
-    // Clear visualization
+    // Clear array visualization
     document.getElementById("arrayVisualization").innerHTML = "";
 
-    // Clear info panel
+    // Clear log
     document.getElementById("infoPanel").textContent = "Steps will appear here.";
 }
 
-function setMode(mode) {
-    // Reset the simulation
-    resetSimulation();
+function setMode(mode)
+{
+    resetValues();
 
-    // Remove 'active' class from all tabs and sections
     document.querySelectorAll('nav button').forEach(tab => tab.classList.remove('active'));
     document.querySelectorAll('.mode').forEach(section => section.classList.remove('active'));
 
-    // Add 'active' class to the selected tab and section
     document.getElementById(`${mode}Tab`).classList.add('active');
     document.getElementById(`${mode}Mode`).classList.add('active');
 }
 
-
-
-function visualizeArray() {
+function visualizeArray()
+{
     const arrayContainer = document.getElementById("arrayVisualization");
-    arrayContainer.innerHTML = ''; // Clear old content
+    arrayContainer.innerHTML = '';      // Clear old content
 
-    for (let i = 0; i < capacity; i++) {
+    for (let i = 0; i < capacity; i++)
+    {
         const frame = document.createElement("div");
         frame.classList.add("frame");
 
-        // Display value if the slot contains an element
-        if (i < array.length) {
+        if (i < array.length)
+        {
             frame.innerText = array[i];
-        } else {
-            frame.innerText = ""; // Empty slot
+        }
+        else
+        {
+            frame.innerText = "";       // Empty slot
         }
 
-        // Display coins based on credits
+        // Coins container
         const coinsContainer = document.createElement("div");
         coinsContainer.classList.add("coins");
 
         const coinsNeeded = i < creditsPerSlot.length ? creditsPerSlot[i] : 0;
-        for (let j = 0; j < coinsNeeded; j++) {
+        for (let j = 0; j < coinsNeeded; j++)
+        {
             const coin = document.createElement("div");
             coin.classList.add("coin");
             coinsContainer.appendChild(coin);
@@ -92,124 +97,161 @@ function visualizeArray() {
     document.getElementById("stepCounter").innerHTML = `Steps: ${steps}`;
 }
 
-async function animateCoinUpdate(frameIndex, coinsNeeded) {
+async function animateCoinUpdate(frameIndex, coinsNeeded)
+{
     const frame = document.querySelector(`.frame:nth-child(${frameIndex + 1}) .coins`);
     const currentCoins = frame.childElementCount;
 
-    if (coinsNeeded > currentCoins) {
+    if (coinsNeeded > currentCoins)
+    {
+
         // Gradually add coins
-        for (let i = currentCoins; i < coinsNeeded; i++) {
+        for (let i = currentCoins; i < coinsNeeded; i++)
+        {
             const coin = document.createElement("div");
             coin.classList.add("coin", "adding");
             frame.appendChild(coin);
-
-            // Wait for the animation to complete
             await new Promise(resolve => setTimeout(resolve, 300));
             coin.classList.remove("adding");
         }
-    } else if (coinsNeeded < currentCoins) {
+
+    }
+    else if (coinsNeeded < currentCoins)
+    {
         // Gradually remove coins
-        for (let i = currentCoins; i > coinsNeeded; i--) {
+        for (let i = currentCoins; i > coinsNeeded; i--)
+        {
             const coin = frame.lastChild;
             coin.classList.add("removing");
-            await new Promise(resolve => setTimeout(resolve, 300)); // Wait for the animation
+            await new Promise(resolve => setTimeout(resolve, 300));
             coin.remove();
         }
     }
 }
 
-async function resizeArray() {
+async function resizeArray()
+{
     let oldCapacity = capacity;
     capacity *= 2;
 
-    // Main message
     updateInfoPanelWithDetails(
         `Increasing capacity from ${oldCapacity} to ${capacity}.`,
         `Copied ${oldCapacity} elements. Each copy operation spent 1 coin.`
     );
 
-    // Deduct coins for copying elements
-    for (let i = 0; i < oldCapacity; i++) {
-        if (creditsPerSlot[i] > 0) {
-            creditsPerSlot[i]--; // Deduct 1 coin for the copy
+    // Copying
+    for (let i = 0; i < oldCapacity; i++)
+    {
+        if (creditsPerSlot[i] > 0)
+        {
+            creditsPerSlot[i]--; // Deduct 1 coin
             updateCredits();
             console.log(`Resizing: Spent 1 coin for copying value from slot ${i}.`);
-            await animateCoinUpdate(i, creditsPerSlot[i]); // Gradual removal
-        } else {
-            updateInfoPanel(`Field ${i} had no credits left during resizing.`);
+            await animateCoinUpdate(i, creditsPerSlot[i]);
+        }
+        else
+        {
+            // Borrow coin
+            let borrowed = false;
+            for (let j = i + 1; j < oldCapacity; j++)
+            {
+                if (creditsPerSlot[j] > 0)
+                {
+                    creditsPerSlot[j]--;
+                    updateCredits();
+                    console.log(`Resizing: Borrowed 1 coin from slot ${j} to copy value from slot ${i}.`);
+                    updateInfoPanel(`Field ${i} had no coins. Borrowed 1 coin from field ${j}.`);
+                    await animateCoinUpdate(j, creditsPerSlot[j]);
+                    borrowed = true;
+                    break;
+                }
+            }
+
+            if (!borrowed)
+            {
+                updateInfoPanel(`Field ${i} and subsequent fields had no coins left during resizing. ERROR`);
+                console.log(`ERROR when attempting to copy field ${i}.`);
+            }
         }
     }
 
-    // Add new empty slots with animations
-    for (let i = oldCapacity; i < capacity; i++) {
-        creditsPerSlot[i] = 0; // Temporarily set to 0 coins
+    // Add empty slots
+    for (let i = oldCapacity; i < capacity; i++)
+    {
+        creditsPerSlot[i] = 0;
         visualizeArray();
-        await new Promise(resolve => setTimeout(resolve, 500)); // Wait for empty field animation
+        await new Promise(resolve => setTimeout(resolve, 500));
 
         creditsPerSlot[i] = 3; // Initialize with 3 coins
         updateCredits();
-        await animateCoinUpdate(i, 3); // Animate adding coins
+        await animateCoinUpdate(i, 3);
     }
 
-    visualizeArray(); // Redraw array
+    visualizeArray();
 }
 
-
-
-async function addElement() {
+async function addElement()
+{
     const input = document.getElementById("manualInput");
     const value = parseInt(input.value);
 
-    if (isNaN(value)) {
+    if (isNaN(value))
+    {
         updateInfoPanel("Please enter a valid number.");
         return;
     }
 
     steps++;
 
-    if (array.length === capacity) {
+    if (array.length === capacity)
+    {
         updateInfoPanel(`Array full. Resizing needed.`);
         await resizeArray();
     }
 
-    // Check if this is the first element
-    if (array.length === 0) {
+    // First element
+    if (array.length === 0)
+    {
         // Step 1: Create the empty field
-        capacity = 1; // Initialize capacity
-        creditsPerSlot.push(0); // Temporarily set to 0 coins
+        capacity = 1;
+        creditsPerSlot.push(0);
         visualizeArray();
-        await new Promise(resolve => setTimeout(resolve, 500)); // Wait for field animation
+        await new Promise(resolve => setTimeout(resolve, 500));
 
         // Step 2: Add 3 coins above the empty field
         creditsPerSlot[0] = 3;
         updateCredits();
-        await animateCoinUpdate(0, 3); // Animate adding coins
+        await animateCoinUpdate(0, 3);
     }
 
     // Step 3: Add the value into the field
     array.push(value);
-    visualizeArray(); // Update visualization with the value
-    await new Promise(resolve => setTimeout(resolve, 500)); // Wait for value animation
+    visualizeArray();
+    await new Promise(resolve => setTimeout(resolve, 500));
 
     // Step 4: Deduct 1 coin for the insertion
-    if (array.length - 1 < creditsPerSlot.length && creditsPerSlot[array.length - 1] > 0) {
-        creditsPerSlot[array.length - 1]--; // Deduct 1 coin for the insertion
+    if (array.length - 1 < creditsPerSlot.length && creditsPerSlot[array.length - 1] > 0)
+    {
+        creditsPerSlot[array.length - 1]--;
         updateCredits();
         console.log(`Insertion: Spent 1 coin for inserting value ${value} into slot ${array.length - 1}.`);
-        await animateCoinUpdate(array.length - 1, creditsPerSlot[array.length - 1]); // Animate coin removal
-    } else {
+        await animateCoinUpdate(array.length - 1, creditsPerSlot[array.length - 1]);
+    }
+    else
+    {
         updateInfoPanel(`No coins left for insertion in slot ${array.length - 1}.`);
     }
 
     updateInfoPanel(`Added value ${value}. New slot has 3 coins. Spent 1 coin for insertion. `);
-    input.value = ""; // Clear the input
+    input.value = "";
 }
 
 
-function updateInfoPanel(message) {
+function updateInfoPanel(message)
+{
     const infoPanel = document.getElementById("infoPanel");
 
-    // Create a new log entry
+    // Create new log entry
     const logEntry = document.createElement("div");
     logEntry.innerHTML = `<strong>Step ${steps}:</strong> ${message}`;
     logEntry.style.margin = "10px 0";
@@ -217,22 +259,24 @@ function updateInfoPanel(message) {
     logEntry.style.padding = "10px";
     logEntry.style.borderBottom = "1px solid #ddd";
 
-    // Apply appropriate background based on theme
-    if (document.body.classList.contains("dark-mode")) {
+    if (document.body.classList.contains("dark-mode"))
+    {
         logEntry.style.background = "#333";
         logEntry.style.color = "#ccc";
         logEntry.style.borderBottom = "1px solid #444";
-    } else {
+    }
+    else
+    {
         logEntry.style.background = "#f9f9f9";
         logEntry.style.color = "#666";
     }
 
-    // Append the new log entry at the bottom
     infoPanel.appendChild(logEntry);
 }
 
 
-function updateInfoPanelWithDetails(mainMessage, details) {
+function updateInfoPanelWithDetails(mainMessage, details)
+{
     const infoPanel = document.getElementById("infoPanel");
 
     // Main message
@@ -254,34 +298,38 @@ function updateInfoPanelWithDetails(mainMessage, details) {
     infoPanel.appendChild(logEntry);
 }
 
-function toggleDetails(button) {
+function toggleDetails(button)
+{
     const details = button.nextElementSibling;
     details.style.display = details.style.display === "none" ? "block" : "none";
 }
 
-function getRandomNumber(min, max) {
+function getRandomNumber(min, max)
+{
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-async function generateRandomArray() {
-    // Get user inputs
+async function generateRandomArray()
+{
+    // Get inputs
     const count = parseInt(document.getElementById("randomCount").value);
     const min = parseInt(document.getElementById("randomMin").value);
     const max = parseInt(document.getElementById("randomMax").value);
 
-    // Validate inputs
-    if (isNaN(count) || isNaN(min) || isNaN(max) || count <= 0 || min > max) {
+    // Validate
+    if (isNaN(count) || isNaN(min) || isNaN(max) || count <= 0 || min > max)
+    {
         updateInfoPanel("Invalid input. Please check the values and try again.");
         return;
     }
 
     updateInfoPanel(`Generating ${count} random numbers between ${min} and ${max}.`);
 
-    // Generate and insert numbers one by one
-    for (let i = 0; i < count; i++) {
-        const randomValue = getRandomNumber(min, max);
-        document.getElementById("manualInput").value = randomValue; // Set the input value
-        await addElement(); // Add element using the existing logic
+    // Generate and insert numbers
+    for (let i = 0; i < count; i++)
+    {
+        document.getElementById("manualInput").value = getRandomNumber(min, max);
+        await addElement();
     }
 
     updateInfoPanel(`Completed generating ${count} random numbers.`);
@@ -289,17 +337,19 @@ async function generateRandomArray() {
 
 
 
-function runBestCase() {
+function runBestCase()
+{
     array = [];
-    capacity = 1; // Reset
+    capacity = 1;
     creditsPerSlot = [];
     steps = 0;
 }
 
 
-function runWorstCase() {
+function runWorstCase()
+{
     array = [];
-    capacity = 1; // Set initial capacity
+    capacity = 1;
     creditsPerSlot = [];
     steps = 0;
 }
