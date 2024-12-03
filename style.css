@@ -1,130 +1,243 @@
+/* Global Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', sans-serif;
+    background: #f3f8fa;
+    color: #333;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: #f4f4f9;
-    margin: 0;
-}
-#container {
-    text-align: center;
-    padding: 20px;
-    background: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    max-width: 500px;
-    width: 90%;
-}
-h1 {
-    color: #333;
-}
-button, input[type="number"] {
-    padding: 10px;
-    margin: 5px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-button {
-    background-color: #4CAF50;
-    color: white;
-}
-input[type="number"] {
-    width: 100px;
-}
-#arrayVisualization, #creditCounter, #stepCounter {
-    margin-top: 15px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background: #f9f9f9;
+    overflow: hidden;
 }
 
-#arrayVisualization {
+/* Container Styling */
+#container {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    width: 100%;
+    max-width: 900px;
+    height: 90%;
     display: flex;
-    justify-content: left;
-    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Header */
+header h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #2a7a9b;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Manual Input Section */
+#manualInputSection {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#manualInputSection h2 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.input-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     gap: 10px;
 }
 
+input[type="number"], button {
+    padding: 10px 15px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    transition: background 0.3s ease;
+}
+
+button {
+    background: #2a7a9b;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #238091;
+}
+
+input[type="number"] {
+    border: 1px solid #ddd;
+    width: 150px;
+    text-align: center;
+}
+
+#infoPanel {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: #666;
+    text-align: center;
+}
+
+/* Secondary Options */
+#secondaryOptions {
+    margin: 20px 0;
+    text-align: center;
+}
+
+#secondaryOptions h2 {
+    margin-bottom: 10px;
+    color: #333;
+    font-weight: 600;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+button {
+    font-size: 1rem;
+    background: #f0ad4e;
+}
+
+button:hover {
+    background: #e49d42;
+}
+
+/* Visualization */
+#arrayVisualization {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px auto;
+    max-width: 800px;
+}
+
 .frame {
-    position: relative;
     width: 60px;
     height: 60px;
-    background: #f0f0f0;
-    border: 1px solid #ccc;
+    border: 2px solid #ddd;
+    background: #fafafa;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    color: #333;
-    transition: all 0.5s ease-in-out;
+    color: #555;
+    border-radius: 8px;
+    position: relative;
+    transition: transform 0.3s ease, background 0.3s ease;
 }
 
-.frame.adding {
-    transform: scale(1.2);
-    opacity: 0.5;
-}
-
-.frame.removing {
-    transform: scale(0.8);
-    opacity: 0;
+.frame:hover {
+    background: #e6f7fa;
+    transform: scale(1.1);
 }
 
 .coins {
     position: absolute;
-    top: -20px;
+    top: -30px;
     display: flex;
-    flex-direction: row; /* Mince se kupí nad sebe */
-    gap: 2px;
+    gap: 5px;
 }
 
 .coin {
-    width: 20px;
-    height: 20px;
-    background-image: url('coin.png');
-    background-size: cover;
-    transition: transform 0.3s, opacity 0.3s;
+    width: 18px;
+    height: 18px;
+    background: linear-gradient(45deg, #ffcc00, #ffaa00);
+    border-radius: 50%;
+    border: 1px solid #e6b800;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.coin.adding {
-    transform: scale(1.2);
-    opacity: 0.5;
-}
-
-.coin.removing {
-    transform: scale(0.8);
-    opacity: 0;
-}
-
-#infoPanel {
+/* Step Info */
+#stepInfo {
+    display: flex;
+    justify-content: space-between;
     margin-top: 20px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background: #f9f9f9;
-    text-align: left;
-}
-
-#log {
-    margin-top: 20px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background: #f1f1f1;
-    max-height: 200px;
-    overflow-y: auto;
-}
-
-.log-entry {
-    font-size: 14px;
+    font-size: 0.9rem;
     color: #666;
-    margin-bottom: 5px;
 }
 
-.log-entry.newest {
+/* Navigation */
+#navigation {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+#navigation button {
+    padding: 10px 20px;
+    border: none;
+    background: #2a7a9b;
+    color: white;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+#navigation button:hover {
+    background: #238091;
+}
+
+#navigation button.active {
+    background: #f0ad4e;
     color: #333;
-    font-weight: bold;
 }
 
+/* Trackers Positioned Prominently */
+#trackers {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 10px 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+}
+
+#trackers div {
+    padding: 10px 20px;
+    background: #eef2f5;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Modes */
+.mode {
+    display: none;
+}
+
+.mode.active {
+    display: block;
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* Info Panel (Footer) */
+footer {
+    background: #eef2f5;
+    padding: 15px;
+    font-size: 0.9rem;
+    color: #555;
+    text-align: left;
+    border-top: 1px solid #ddd;
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
