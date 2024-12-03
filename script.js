@@ -98,7 +98,12 @@ async function animateCoinUpdate(frameIndex, coinsNeeded) {
 async function resizeArray() {
     let oldCapacity = capacity;
     capacity *= 2;
-    updateInfoPanel(`Increasing capacity from ${oldCapacity} to ${capacity}.`);
+
+    // Main message
+    updateInfoPanelWithDetails(
+        `Increasing capacity from ${oldCapacity} to ${capacity}.`,
+        `Copied ${oldCapacity} elements. Each copy operation spent 1 coin.`
+    );
 
     // Deduct coins for copying elements
     for (let i = 0; i < oldCapacity; i++) {
@@ -123,6 +128,7 @@ async function resizeArray() {
 
     visualizeArray(); // Redraw array
 }
+
 
 
 async function addElement() {
@@ -175,13 +181,47 @@ async function addElement() {
 
 function updateInfoPanel(message) {
     const infoPanel = document.getElementById("infoPanel");
-    const logEntry = document.createElement("div");
-    logEntry.textContent = message;
-    logEntry.style.marginBottom = "5px";
-    logEntry.style.fontSize = "14px";
 
-    infoPanel.prepend(logEntry); // Add new message to the top
+    // Ensure chronological order by appending at the bottom
+    const logEntry = document.createElement("div");
+    logEntry.innerHTML = `<strong>Step ${steps}:</strong> ${message}`;
+    logEntry.style.margin = "10px 0";
+    logEntry.style.fontSize = "14px";
+    logEntry.style.padding = "10px";
+    logEntry.style.borderBottom = "1px solid #ddd";
+    logEntry.style.background = "#f9f9f9";
+
+    // Append the new log entry at the bottom
+    infoPanel.appendChild(logEntry);
 }
+
+function updateInfoPanelWithDetails(mainMessage, details) {
+    const infoPanel = document.getElementById("infoPanel");
+
+    // Main message
+    const logEntry = document.createElement("div");
+    logEntry.style.margin = "10px 0";
+    logEntry.style.fontSize = "14px";
+    logEntry.style.padding = "10px";
+    logEntry.style.borderBottom = "1px solid #ddd";
+    logEntry.style.background = "#f9f9f9";
+
+    logEntry.innerHTML = `
+        <strong>Step ${steps}:</strong> ${mainMessage}
+        <button onclick="toggleDetails(this)" style="margin-left: 10px; font-size: 12px; padding: 2px 6px; border: none; background: #eee; cursor: pointer;">Details</button>
+        <div class="details" style="display: none; margin-top: 10px; font-size: 12px; color: #666;">
+            ${details}
+        </div>
+    `;
+
+    infoPanel.appendChild(logEntry);
+}
+
+function toggleDetails(button) {
+    const details = button.nextElementSibling;
+    details.style.display = details.style.display === "none" ? "block" : "none";
+}
+
 
 async function addElementManually(value) {
     const input = document.getElementById("manualInput");
