@@ -3,12 +3,19 @@ let capacity = 1; // Initial array size
 let creditsPerSlot = []; // Number of coins above each slot
 let steps = 0;
 
+function updateCredits() {
+    const totalCredits = creditsPerSlot.reduce((sum, credits) => sum + credits, 0);
+    document.getElementById("creditCounter").textContent = `Credits: ${totalCredits}`;
+}
+
+
 function resetSimulation() {
     // Reset core data structures
     array = [];
     creditsPerSlot = [];
     capacity = 1;
     steps = 0;
+    updateCredits();
 
     // Reset trackers
     document.getElementById("creditCounter").textContent = "Credits: 0";
@@ -109,6 +116,7 @@ async function resizeArray() {
     for (let i = 0; i < oldCapacity; i++) {
         if (creditsPerSlot[i] > 0) {
             creditsPerSlot[i]--; // Deduct 1 coin for the copy
+            updateCredits();
             console.log(`Resizing: Spent 1 coin for copying value from slot ${i}.`);
             await animateCoinUpdate(i, creditsPerSlot[i]); // Gradual removal
         } else {
@@ -123,6 +131,7 @@ async function resizeArray() {
         await new Promise(resolve => setTimeout(resolve, 500)); // Wait for empty field animation
 
         creditsPerSlot[i] = 3; // Initialize with 3 coins
+        updateCredits();
         await animateCoinUpdate(i, 3); // Animate adding coins
     }
 
@@ -157,6 +166,7 @@ async function addElement() {
 
         // Step 2: Add 3 coins above the empty field
         creditsPerSlot[0] = 3;
+        updateCredits();
         await animateCoinUpdate(0, 3); // Animate adding coins
     }
 
@@ -168,6 +178,7 @@ async function addElement() {
     // Step 4: Deduct 1 coin for the insertion
     if (array.length - 1 < creditsPerSlot.length && creditsPerSlot[array.length - 1] > 0) {
         creditsPerSlot[array.length - 1]--; // Deduct 1 coin for the insertion
+        updateCredits();
         console.log(`Insertion: Spent 1 coin for inserting value ${value} into slot ${array.length - 1}.`);
         await animateCoinUpdate(array.length - 1, creditsPerSlot[array.length - 1]); // Animate coin removal
     } else {
