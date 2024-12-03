@@ -3,23 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulace dynamického pole</title>
+    <title>Dynamic Array Simulation</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
 <div id="container">
-    <h1>Simulace dynamického pole</h1>
-    <button onclick="generateRandomArray()">Generovat náhodný vstup</button>
-    <button onclick="runBestCase()">Nejlepší případ</button>
-    <button onclick="runWorstCase()">Nejhorší případ</button>
-    <input type="number" id="manualInput" placeholder="Přidat prvek">
-    <button onclick="addElement()">Přidat</button>
+    <header>
+        <h1>Interactive Dynamic Array</h1>
+    </header>
 
-    <div id="arrayVisualization"></div>
-    <div id="creditCounter">Naspořené mince: 0</div>
-    <div id="stepCounter">Počet kroků: 0</div>
-    <div id="infoPanel">Zde budou vysvětleny jednotlivé kroky simulace.</div>
+    <!-- Navigation -->
+    <nav id="navigation">
+        <button onclick="setMode('manual')" id="manualTab" class="active">Manual</button>
+        <button onclick="setMode('random')" id="randomTab">Random</button>
+        <button onclick="setMode('best')" id="bestTab">Best Case</button>
+        <button onclick="setMode('worst')" id="worstTab">Worst Case</button>
+    </nav>
+
+    <!-- Trackers -->
+    <div id="trackers">
+        <div id="creditCounter">Credits: 0</div>
+        <div id="stepCounter">Steps: 0</div>
+    </div>
+
+    <!-- Modes -->
+    <main id="mainContent">
+        <!-- Manual Mode -->
+        <section id="manualMode" class="mode active">
+            <h2>Manual Mode</h2>
+            <div class="input-group">
+                <input type="number" id="manualInput" placeholder="Enter a number">
+                <button onclick="addElement()">Add Number</button>
+            </div>
+        </section>
+
+        <!-- Random Mode -->
+        <section id="randomMode" class="mode">
+            <h2>Random Mode</h2>
+            <button onclick="generateRandomArray()">Generate Random Array</button>
+        </section>
+
+        <!-- Best Case Mode -->
+        <section id="bestMode" class="mode">
+            <h2>Best Case</h2>
+            <button onclick="runBestCase()">Run Best Case</button>
+        </section>
+
+        <!-- Worst Case Mode -->
+        <section id="worstMode" class="mode">
+            <h2>Worst Case</h2>
+            <button onclick="runWorstCase()">Run Worst Case</button>
+        </section>
+    </main>
+
+    <!-- Visualization -->
+    <section id="arrayVisualization"></section>
+
+    <!-- Info Panel -->
+    <footer id="infoPanel">Steps will appear here</footer>
 </div>
+
 <script src="script.js"></script>
 </body>
 </html>

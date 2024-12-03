@@ -3,6 +3,39 @@ let capacity = 1; // Initial array size
 let creditsPerSlot = []; // Number of coins above each slot
 let steps = 0;
 
+function resetSimulation() {
+    // Reset core data structures
+    array = [];
+    creditsPerSlot = [];
+    capacity = 1;
+    steps = 0;
+
+    // Reset trackers
+    document.getElementById("creditCounter").textContent = "Credits: 0";
+    document.getElementById("stepCounter").textContent = "Steps: 0";
+
+    // Clear visualization
+    document.getElementById("arrayVisualization").innerHTML = "";
+
+    // Clear info panel
+    document.getElementById("infoPanel").textContent = "Steps will appear here.";
+}
+
+function setMode(mode) {
+    // Reset the simulation
+    resetSimulation();
+
+    // Remove 'active' class from all tabs and sections
+    document.querySelectorAll('nav button').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.mode').forEach(section => section.classList.remove('active'));
+
+    // Add 'active' class to the selected tab and section
+    document.getElementById(`${mode}Tab`).classList.add('active');
+    document.getElementById(`${mode}Mode`).classList.add('active');
+}
+
+
+
 function visualizeArray() {
     const arrayContainer = document.getElementById("arrayVisualization");
     arrayContainer.innerHTML = ''; // Clear old content
@@ -33,7 +66,7 @@ function visualizeArray() {
         arrayContainer.appendChild(frame);
     }
 
-    document.getElementById("stepCounter").innerHTML = `Počet kroků: ${steps}`;
+    document.getElementById("stepCounter").innerHTML = `Steps: ${steps}`;
 }
 
 async function animateCoinUpdate(frameIndex, coinsNeeded) {
