@@ -71,19 +71,26 @@ async function resizeArray() {
     for (let i = 0; i < oldCapacity; i++) {
         if (creditsPerSlot[i] > 0) {
             creditsPerSlot[i]--; // Deduct 1 coin for the copy
+            console.log(`Resizing: Spent 1 coin for copying value from slot ${i}.`);
             await animateCoinUpdate(i, creditsPerSlot[i]); // Gradual removal
         } else {
             updateInfoPanel(`Field ${i} had no credits left during resizing.`);
         }
     }
 
-    // Add new empty slots with initial credits
+    // Add new empty slots with animations
     for (let i = oldCapacity; i < capacity; i++) {
-        creditsPerSlot[i] = 3; // Each new slot starts with 3 coins
+        creditsPerSlot[i] = 0; // Temporarily set to 0 coins
+        visualizeArray();
+        await new Promise(resolve => setTimeout(resolve, 500)); // Wait for empty field animation
+
+        creditsPerSlot[i] = 3; // Initialize with 3 coins
+        await animateCoinUpdate(i, 3); // Animate adding coins
     }
 
     visualizeArray(); // Redraw array
 }
+
 
 async function addElement() {
     const input = document.getElementById("manualInput");
@@ -103,22 +110,23 @@ async function addElement() {
 
     // Check if this is the first element
     if (array.length === 0) {
-        // Initialize the first slot with 3 coins
-        creditsPerSlot.push(3);
+        // Step 1: Create the empty field
+        capacity = 1; // Initialize capacity
+        creditsPerSlot.push(0); // Temporarily set to 0 coins
+        visualizeArray();
+        await new Promise(resolve => setTimeout(resolve, 500)); // Wait for field animation
+
+        // Step 2: Add 3 coins above the empty field
+        creditsPerSlot[0] = 3;
+        await animateCoinUpdate(0, 3); // Animate adding coins
     }
 
-    // Add the new element
+    // Step 3: Add the value into the field
     array.push(value);
+    visualizeArray(); // Update visualization with the value
+    await new Promise(resolve => setTimeout(resolve, 500)); // Wait for value animation
 
-    // Assign 3 credits to the new slot if capacity allows
-    if (creditsPerSlot.length < capacity) {
-        creditsPerSlot.push(3);
-    }
-
-    // Update the DOM first to ensure elements exist
-    visualizeArray();
-
-    // Spend 1 coin for the insertion
+    // Step 4: Deduct 1 coin for the insertion
     if (array.length - 1 < creditsPerSlot.length && creditsPerSlot[array.length - 1] > 0) {
         creditsPerSlot[array.length - 1]--; // Deduct 1 coin for the insertion
         console.log(`Insertion: Spent 1 coin for inserting value ${value} into slot ${array.length - 1}.`);
@@ -130,6 +138,7 @@ async function addElement() {
     updateInfoPanel(`Added value ${value}. Spent 1 coin for insertion. New slot has 3 coins.`);
     input.value = ""; // Clear the input
 }
+
 
 function updateInfoPanel(message) {
     const infoPanel = document.getElementById("infoPanel");
