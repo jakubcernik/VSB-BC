@@ -56,6 +56,23 @@ header h1 {
     justify-content: center;
     align-items: center;
     gap: 10px;
+    margin-bottom: 20px;
+}
+
+.input-group input, .input-group label {
+    font-size: 1rem;
+}
+
+.input-group input {
+    width: 100px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.input-group label {
+    font-weight: 600;
 }
 
 input[type="number"], button {
@@ -121,7 +138,7 @@ button:hover {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 30px 15px;
     margin: 20px auto;
     max-width: 800px;
 }
@@ -141,11 +158,6 @@ button:hover {
     transition: transform 0.3s ease, background 0.3s ease;
 }
 
-.frame:hover {
-    background: #e6f7fa;
-    transform: scale(1.1);
-}
-
 .coins {
     position: absolute;
     top: -30px;
@@ -154,8 +166,8 @@ button:hover {
 }
 
 .coin {
-    width: 18px;
-    height: 18px;
+    width: 15px;
+    height: 15px;
     background: linear-gradient(45deg, #ffcc00, #ffaa00);
     border-radius: 50%;
     border: 1px solid #e6b800;
@@ -229,7 +241,7 @@ button:hover {
 }
 
 /* Info Panel (Footer) */
-footer {
+#infoPanel {
     background: #f8f9fa;
     padding: 15px;
     font-size: 0.9rem;
@@ -244,6 +256,155 @@ footer {
     box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
 }
 
-footer div {
+#infoPanel div {
     margin-bottom: 10px;
+}
+
+/* Footer Styling */
+footer {
+    background: #f8f9fa;
+    padding: 15px;
+    text-align: center;
+    font-size: 0.9rem;
+    border-top: 1px solid #ddd;
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+footer p {
+    margin: 0;
+    color: #555;
+}
+
+footer button {
+    margin-top: 10px;
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 5px;
+    background: #2a7a9b;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+footer button:hover {
+    background: #238091;
+}
+
+/* Dark Mode Styling */
+body.dark-mode {
+    background: #1e1e1e;
+    color: #f1f1f1;
+}
+
+body.dark-mode header {
+    color: #e0e0e0;
+}
+
+body.dark-mode footer {
+    background: #2a2a2a;
+    color: #e0e0e0;
+    border-color: #444;
+}
+
+body.dark-mode #trackers div {
+    background: #333;
+    color: #ccc;
+}
+
+body.dark-mode button {
+    background: #444;
+    color: #e0e0e0;
+}
+
+body.dark-mode button:hover {
+    background: #666;
+}
+
+body.dark-mode #infoPanel {
+    background: #333;
+    color: #ddd;
+    border-top: 1px solid #444;
+}
+
+body.dark-mode #container {
+    background: #2e2e2e;
+    color: #e0e0e0;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode input[type="number"], body.dark-mode button {
+    background: #444;
+    color: #f1f1f1;
+    border: 1px solid #666;
+}
+
+body.dark-mode input[type="number"]::placeholder {
+    color: #888;
+}
+
+body.dark-mode input[type="number"]:focus {
+    border-color: #888;
+    outline: none;
+}
+
+body.dark-mode .frame {
+    border: 2px solid #555;
+    background: #3a3a3a;
+    color: #ddd;
+}
+
+body.dark-mode .frame:hover {
+    background: #444;
+}
+
+body.dark-mode .coin {
+    background: linear-gradient(45deg, #ffaa00, #cc8a00);
+    border: 1px solid #aa7700;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode #navigation button {
+    background: #444;
+    color: #f1f1f1;
+    border: none;
+}
+
+body.dark-mode #navigation button.active {
+    background: #ffaa00;
+    color: #1e1e1e;
+}
+
+body.dark-mode #navigation button:hover {
+    background: #666;
+}
+
+body.dark-mode #infoPanel {
+    background: #2a2a2a;
+    color: #ddd;
+    border-top: 1px solid #555;
+}
+
+body.dark-mode #infoPanel div {
+    background: #333;
+    border-bottom: 1px solid #555;
+    color: #ccc;
+}
+
+body.dark-mode footer {
+    background: #2a2a2a;
+    color: #ccc;
+    border-top: 1px solid #444;
+}
+
+body.dark-mode footer button {
+    background: #555;
+    color: #e0e0e0;
+}
+
+body.dark-mode footer button:hover {
+    background: #666;
 }

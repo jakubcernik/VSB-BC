@@ -10,7 +10,8 @@
 <body>
 <div id="container">
     <header>
-        <h1>Interactive Dynamic Array</h1>
+        <h1>Amortized complexity for vector<></h1>
+        <h3>Simulate the amortized complexity of a dynamic array</h3>
     </header>
 
     <!-- Navigation -->
@@ -40,8 +41,17 @@
         <!-- Random Mode -->
         <section id="randomMode" class="mode">
             <h2>Random Mode</h2>
+            <div class="input-group">
+                <label for="randomCount">Count:</label>
+                <input type="number" id="randomCount" placeholder="Enter count" min="1">
+                <label for="randomMin">Min:</label>
+                <input type="number" id="randomMin" placeholder="Min value">
+                <label for="randomMax">Max:</label>
+                <input type="number" id="randomMax" placeholder="Max value">
+            </div>
             <button onclick="generateRandomArray()">Generate Random Array</button>
         </section>
+
 
         <!-- Best Case Mode -->
         <section id="bestMode" class="mode">
@@ -60,7 +70,11 @@
     <section id="arrayVisualization"></section>
 
     <!-- Info Panel -->
-    <footer id="infoPanel">Steps will appear here</footer>
+    <div id="infoPanel">Steps will appear here</div>
+    <footer>
+        <p>&copy; 2024 by Jakub Cernik. Designed for educational purposes as a Bachelor Thesis.</p>
+        <button id="themeToggle" onclick="toggleTheme()">Switch to Dark Mode</button>
+    </footer>
 </div>
 
 <script src="script.js"></script>

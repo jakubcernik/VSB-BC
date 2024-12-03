@@ -3,6 +3,22 @@ let capacity = 1; // Initial array size
 let creditsPerSlot = []; // Number of coins above each slot
 let steps = 0;
 
+function toggleTheme() {
+    const body = document.body;
+    const button = document.getElementById("themeToggle");
+
+    // Toggle dark mode class
+    body.classList.toggle("dark-mode");
+
+    // Update button text based on the current mode
+    if (body.classList.contains("dark-mode")) {
+        button.textContent = "Switch to Light Mode";
+    } else {
+        button.textContent = "Switch to Dark Mode";
+    }
+}
+
+
 function updateCredits() {
     const totalCredits = creditsPerSlot.reduce((sum, credits) => sum + credits, 0);
     document.getElementById("creditCounter").textContent = `Credits: ${totalCredits}`;
@@ -185,7 +201,7 @@ async function addElement() {
         updateInfoPanel(`No coins left for insertion in slot ${array.length - 1}.`);
     }
 
-    updateInfoPanel(`Added value ${value}. Spent 1 coin for insertion. New slot has 3 coins.`);
+    updateInfoPanel(`Added value ${value}. New slot has 3 coins. Spent 1 coin for insertion. `);
     input.value = ""; // Clear the input
 }
 
@@ -193,18 +209,28 @@ async function addElement() {
 function updateInfoPanel(message) {
     const infoPanel = document.getElementById("infoPanel");
 
-    // Ensure chronological order by appending at the bottom
+    // Create a new log entry
     const logEntry = document.createElement("div");
     logEntry.innerHTML = `<strong>Step ${steps}:</strong> ${message}`;
     logEntry.style.margin = "10px 0";
     logEntry.style.fontSize = "14px";
     logEntry.style.padding = "10px";
     logEntry.style.borderBottom = "1px solid #ddd";
-    logEntry.style.background = "#f9f9f9";
+
+    // Apply appropriate background based on theme
+    if (document.body.classList.contains("dark-mode")) {
+        logEntry.style.background = "#333";
+        logEntry.style.color = "#ccc";
+        logEntry.style.borderBottom = "1px solid #444";
+    } else {
+        logEntry.style.background = "#f9f9f9";
+        logEntry.style.color = "#666";
+    }
 
     // Append the new log entry at the bottom
     infoPanel.appendChild(logEntry);
 }
+
 
 function updateInfoPanelWithDetails(mainMessage, details) {
     const infoPanel = document.getElementById("infoPanel");
@@ -233,12 +259,34 @@ function toggleDetails(button) {
     details.style.display = details.style.display === "none" ? "block" : "none";
 }
 
-
-async function addElementManually(value) {
-    const input = document.getElementById("manualInput");
-    input.value = value;
-    await addElement();
+function getRandomNumber(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+async function generateRandomArray() {
+    // Get user inputs
+    const count = parseInt(document.getElementById("randomCount").value);
+    const min = parseInt(document.getElementById("randomMin").value);
+    const max = parseInt(document.getElementById("randomMax").value);
+
+    // Validate inputs
+    if (isNaN(count) || isNaN(min) || isNaN(max) || count <= 0 || min > max) {
+        updateInfoPanel("Invalid input. Please check the values and try again.");
+        return;
+    }
+
+    updateInfoPanel(`Generating ${count} random numbers between ${min} and ${max}.`);
+
+    // Generate and insert numbers one by one
+    for (let i = 0; i < count; i++) {
+        const randomValue = getRandomNumber(min, max);
+        document.getElementById("manualInput").value = randomValue; // Set the input value
+        await addElement(); // Add element using the existing logic
+    }
+
+    updateInfoPanel(`Completed generating ${count} random numbers.`);
+}
+
 
 
 function runBestCase() {
@@ -246,23 +294,12 @@ function runBestCase() {
     capacity = 1; // Reset
     creditsPerSlot = [];
     steps = 0;
-
-    updateInfoPanel("Simulating best case where each insertion fits without resizing.");
-    for (let i = 0; i < 10; i++) {
-        addElementManually(i);
-    }
 }
 
 
 function runWorstCase() {
     array = [];
-    capacity = 2; // Set initial capacity
+    capacity = 1; // Set initial capacity
     creditsPerSlot = [];
     steps = 0;
-    updateInfoPanel("Simulating worst case where resizing happens almost every insertion.");
-
-    for (let i = 0; i < 16; i++) { // Simulate a longer series
-        document.getElementById("manualInput").value = i;
-        addElement();
-    }
 }
