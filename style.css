@@ -43,7 +43,7 @@ input[type="number"] {
 
 #arrayVisualization {
     display: flex;
-    justify-content: center;
+    justify-content: left;
     flex-wrap: wrap;
     gap: 10px;
 }
@@ -52,7 +52,7 @@ input[type="number"] {
     position: relative;
     width: 60px;
     height: 60px;
-    background-image: url('frame.png');
+    background-image: url('frame1.png');
     background-size: cover;
     display: flex;
     align-items: center;
@@ -65,14 +65,14 @@ input[type="number"] {
     position: absolute;
     top: -20px;
     display: flex;
-    flex-direction: column; /* Mince se kupí nad sebe */
+    flex-direction: row; /* Mince se kupí nad sebe */
     gap: 2px;
 }
 
 .coin {
     width: 20px;
     height: 20px;
-    background-image: url('golden-coin.webp');
+    background-image: url('coin.png');
     background-size: cover;
 }
 
