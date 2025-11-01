@@ -8,11 +8,11 @@ body {
     font-family: 'Inter', sans-serif;
     background: #f3f8fa;
     color: #333;
+    min-height: 100vh;
+    margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    overflow: hidden;
 }
 
 #container {
@@ -22,10 +22,9 @@ body {
     padding: 30px;
     width: 100%;
     max-width: 900px;
-    height: 90%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
 }
 
 header h1 {
@@ -255,10 +254,13 @@ footer {
     text-align: center;
     font-size: 0.9rem;
     border-top: 1px solid #ddd;
-    position: sticky;
+    position: fixed;
+    left: 0;
     bottom: 0;
     width: 100%;
     box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 0;
+    z-index: 100;
 }
 
 footer p {
