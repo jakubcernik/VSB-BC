@@ -182,9 +182,9 @@ async function resizeArray()
         visualizeArray();
         await new Promise(resolve => setTimeout(resolve, 500));
 
-        creditsPerSlot[i] = 3; // Initialize with 3 coins
+        creditsPerSlot[i] = 2; // Initialize with 2 coins
         updateCredits();
-        await animateCoinUpdate(i, 3);
+        await animateCoinUpdate(i, 2);
     }
 
     visualizeArray();
@@ -218,10 +218,10 @@ async function addElement()
         visualizeArray();
         await new Promise(resolve => setTimeout(resolve, 500));
 
-        // Step 2: Add 3 coins above the empty field
-        creditsPerSlot[0] = 3;
+        // Step 2: Add 2 coins above the empty field
+        creditsPerSlot[0] = 2;
         updateCredits();
-        await animateCoinUpdate(0, 3);
+        await animateCoinUpdate(0, 2);
     }
 
     // Step 3: Add the value into the field
@@ -242,7 +242,7 @@ async function addElement()
         updateInfoPanel(`No coins left for insertion in slot ${array.length - 1}.`);
     }
 
-    updateInfoPanel(`Added value ${value}. New slot has 3 coins. Spent 1 coin for insertion. `);
+    updateInfoPanel(`Added value ${value}. New slot has 2 coins. Spent 1 coin for insertion. `);
     input.value = "";
 }
 
