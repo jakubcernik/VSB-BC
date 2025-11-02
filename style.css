@@ -320,7 +320,16 @@ body:not(.dark-mode) #infoPanel .log-entry button {
 
 body.dark-mode #infoPanel .log-entry button {
     background-color: #444;
-    color: #444;
+    color: #ddd;
+}
+
+/* Accessibility helper */
+.visually-hidden {
+  position: absolute !important;
+  height: 1px; width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
 }
 
 /* Dark Mode */

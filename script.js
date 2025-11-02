@@ -2,6 +2,52 @@ let array = [];                 // Added numbers
 let capacity = 1;             // Initial array size
 let creditsPerSlot = [];        // Coins above each slot
 let steps = 0;
+let currentLang = 'cz';
+
+const dict = {
+    en: {
+        manual: 'Manual',
+        random: 'Random',
+        best: 'Best Case',
+        worst: 'Worst Case',
+        addNumber: 'Add Number',
+        enterNumber: 'Enter a number',
+        generateRandom: 'Generate Random Array',
+        coins: 'Coins',
+        steps: 'Steps',
+        switchToDark: 'Switch to Dark Mode',
+        switchToLight: 'Switch to Light Mode',
+        footer: '2025 by Jakub Cernik. Developed for educational purposes as a Bachelor Thesis.',
+        pleaseEnterValidNumber: 'Please enter a valid number.',
+        invalidInput: 'Invalid input. Please check the values and try again.',
+        arrayFull: 'Array full. Resizing needed.',
+        noCoinsLeft: 'No coins left for insertion in slot',
+        addedValue: 'Added value',
+        newSlotHas: 'New slot has',
+        spentInsertion: 'Spent 1 coin for insertion.'
+    },
+    cz: {
+        manual: 'Manuálně',
+        random: 'Náhodně',
+        best: 'Nejlepší případ',
+        worst: 'Nejhorší případ',
+        addNumber: 'Přidat číslo',
+        enterNumber: 'Zadej číslo',
+        generateRandom: 'Vygenerovat pole',
+        coins: 'Mince',
+        steps: 'Kroky',
+        switchToDark: 'Přepnout do tmavého režimu',
+        switchToLight: 'Přepnout do světlého režimu',
+        footer: '2024 by Jakub Cernik. Vyvinuto pro vzdělávací účely jako bakalářská práce.',
+        pleaseEnterValidNumber: 'Zadejte platné číslo.',
+        invalidInput: 'Neplatný vstup. Zkontrolujte hodnoty a zkuste to znovu.',
+        arrayFull: 'Pole je plné. Potřeba zvětšení.',
+        noCoinsLeft: 'V poli není dost mincí pro vložení na pozici',
+        addedValue: 'Přidána hodnota',
+        newSlotHas: 'Nové políčko má',
+        spentInsertion: 'Utracena 1 mince za vložení.'
+    }
+};
 
 function toggleTheme()
 {
@@ -11,13 +57,14 @@ function toggleTheme()
     // Toggle dark mode
     body.classList.toggle("dark-mode");
 
+    const d = dict[currentLang];
     if (body.classList.contains("dark-mode"))
     {
-        button.textContent = "Switch to Light Mode";
+        button.textContent = d.switchToLight;
     }
     else
     {
-        button.textContent = "Switch to Dark Mode";
+        button.textContent = d.switchToDark;
     }
 }
 
@@ -25,7 +72,8 @@ function toggleTheme()
 function updateCredits()
 {
     const totalCredits = creditsPerSlot.reduce((sum, credits) => sum + credits, 0);
-    document.getElementById("creditCounter").textContent = `Coins: ${totalCredits}`;
+    const d = dict[currentLang];
+    document.getElementById("creditCounter").textContent = `${d.coins}: ${totalCredits}`;
 }
 
 
@@ -37,15 +85,16 @@ function resetValues()
     steps = 0;
     updateCredits();
 
+    const d = dict[currentLang];
     // Reset trackers
-    document.getElementById("creditCounter").textContent = "Coins: 0";
-    document.getElementById("stepCounter").textContent = "Steps: 0";
+    document.getElementById("creditCounter").textContent = `${d.coins}: 0`;
+    document.getElementById("stepCounter").textContent = `${d.steps}: 0`;
 
     // Clear array visualization
     document.getElementById("arrayVisualization").innerHTML = "";
 
     // Clear log
-    document.getElementById("infoPanel").textContent = "Steps will appear here.";
+    document.getElementById("infoPanel").textContent = d.steps + " will appear here.";
 }
 
 function setMode(mode)
@@ -217,7 +266,7 @@ async function addElement()
 
     if (isNaN(value))
     {
-        updateInfoPanel("Please enter a valid number.");
+        updateInfoPanel(dict[currentLang].pleaseEnterValidNumber);
         return;
     }
 
@@ -225,7 +274,7 @@ async function addElement()
 
     if (array.length === capacity)
     {
-        updateInfoPanel(`Array full. Resizing needed.`);
+        updateInfoPanel(dict[currentLang].arrayFull);
         await resizeArray();
     }
 
@@ -259,12 +308,13 @@ async function addElement()
     }
     else
     {
-        updateInfoPanel(`No coins left for insertion in slot ${array.length - 1}.`);
+        updateInfoPanel(`${dict[currentLang].noCoinsLeft} ${array.length - 1}.`);
     }
 
     // Use the actual remaining credits in the new slot for the message
     const remainingInNewSlot = (array.length - 1 < creditsPerSlot.length) ? creditsPerSlot[array.length - 1] : 0;
-    updateInfoPanel(`Added value ${value}. New slot has ${remainingInNewSlot} coins. Spent 1 coin for insertion.`);
+    const d = dict[currentLang];
+    updateInfoPanel(`${d.addedValue} ${value}. ${d.newSlotHas} ${remainingInNewSlot} ${d.coins.toLowerCase()}. ${d.spentInsertion}`);
     input.value = "";
 }
 
@@ -323,7 +373,7 @@ async function generateRandomArray()
     // Validate
     if (isNaN(count) || isNaN(min) || isNaN(max) || count <= 0 || min > max)
     {
-        updateInfoPanel("Invalid input. Please check the values and try again.");
+        updateInfoPanel(dict[currentLang].invalidInput);
         return;
     }
 
@@ -357,3 +407,45 @@ function runWorstCase()
     creditsPerSlot = [];
     steps = 0;
 }
+
+function toggleLanguage()
+{
+    currentLang = currentLang === 'cz' ? 'en' : 'cz';
+    document.getElementById('langToggle').textContent = currentLang === 'cz' ? 'CZ' : 'EN';
+    applyLanguage();
+}
+
+function applyLanguage()
+{
+    const d = dict[currentLang];
+
+    // Navigation buttons
+    document.getElementById('manualTab').textContent = d.manual;
+    document.getElementById('randomTab').textContent = d.random;
+    document.getElementById('bestTab').textContent = d.best;
+    document.getElementById('worstTab').textContent = d.worst;
+
+    // Inputs and buttons
+    document.querySelector('#manualMode .input-group button').textContent = d.addNumber;
+    document.getElementById('manualInput').placeholder = d.enterNumber;
+
+    document.querySelector('#randomMode button').textContent = d.generateRandom;
+
+    // Trackers
+    document.getElementById('creditCounter').textContent = `${d.coins}: ${creditsPerSlot.reduce((s, c) => s + c, 0)}`;
+    document.getElementById('stepCounter').textContent = `${d.steps}: ${steps}`;
+
+    // Footer
+    document.querySelector('footer p').textContent = d.footer;
+
+    // Theme button
+    const themeBtn = document.getElementById('themeToggle');
+    themeBtn.textContent = document.body.classList.contains('dark-mode') ? d.switchToLight : d.switchToDark;
+
+    // Language toggle button label
+    const langBtn = document.getElementById('langToggle');
+    if (langBtn) langBtn.textContent = currentLang === 'cz' ? 'CZ' : 'EN';
+}
+
+// Run initial language application
+applyLanguage();

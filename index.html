@@ -31,6 +31,7 @@
         <!-- Manual Mode -->
         <section id="manualMode" class="mode active">
             <div class="input-group">
+                <label id="manualInputLabel" for="manualInput" class="visually-hidden">Enter a number</label>
                 <input type="number" id="manualInput" placeholder="Enter a number">
                 <button onclick="addElement()">Add Number</button>
             </div>
@@ -74,7 +75,10 @@
 
 <footer>
     <p>2024 by Jakub Cernik. Designed for educational purposes as a Bachelor Thesis.</p>
-    <button id="themeToggle" onclick="toggleTheme()">Switch to Dark Mode</button>
+    <div style="display:flex; gap:10px; justify-content:center; align-items:center;">
+        <button id="langToggle" onclick="toggleLanguage()">CZ</button>
+        <button id="themeToggle" onclick="toggleTheme()">Switch to Dark Mode</button>
+    </div>
 </footer>
 </body>
 </html>
