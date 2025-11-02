@@ -139,6 +139,20 @@ async function resizeArray()
         `Copied ${oldCapacity} elements. Each copy operation spent 1 coin.`
     );
 
+    // Initialize newly created slots with 2 coins BEFORE copying
+    for (let i = oldCapacity; i < capacity; i++)
+    {
+        creditsPerSlot[i] = 2;
+    }
+    updateCredits();
+    // Update visualization to show new slots with coins
+    visualizeArray();
+    await new Promise(resolve => setTimeout(resolve, 500));
+    for (let i = oldCapacity; i < capacity; i++)
+    {
+        await animateCoinUpdate(i, 2);
+    }
+
     // Copying
     for (let i = 0; i < oldCapacity; i++)
     {
@@ -167,24 +181,30 @@ async function resizeArray()
                 }
             }
 
+            // If still not borrowed, try borrowing from the newly added slots as well
+            if (!borrowed)
+            {
+                for (let j = oldCapacity; j < capacity; j++)
+                {
+                    if (creditsPerSlot[j] > 0)
+                    {
+                        creditsPerSlot[j]--;
+                        updateCredits();
+                        console.log(`Resizing: Borrowed 1 coin from new slot ${j} to copy value from slot ${i}.`);
+                        updateInfoPanel(`Field ${i} had no coins. Borrowed 1 coin from new field ${j}.`);
+                        await animateCoinUpdate(j, creditsPerSlot[j]);
+                        borrowed = true;
+                        break;
+                    }
+                }
+            }
+
             if (!borrowed)
             {
                 updateInfoPanel(`Field ${i} and subsequent fields had no coins left during resizing. ERROR`);
                 console.log(`ERROR when attempting to copy field ${i}.`);
             }
         }
-    }
-
-    // Add empty slots
-    for (let i = oldCapacity; i < capacity; i++)
-    {
-        creditsPerSlot[i] = 0;
-        visualizeArray();
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        creditsPerSlot[i] = 2; // Initialize with 2 coins
-        updateCredits();
-        await animateCoinUpdate(i, 2);
     }
 
     visualizeArray();
@@ -242,7 +262,9 @@ async function addElement()
         updateInfoPanel(`No coins left for insertion in slot ${array.length - 1}.`);
     }
 
-    updateInfoPanel(`Added value ${value}. New slot has 2 coins. Spent 1 coin for insertion. `);
+    // Use the actual remaining credits in the new slot for the message
+    const remainingInNewSlot = (array.length - 1 < creditsPerSlot.length) ? creditsPerSlot[array.length - 1] : 0;
+    updateInfoPanel(`Added value ${value}. New slot has ${remainingInNewSlot} coins. Spent 1 coin for insertion.`);
     input.value = "";
 }
 
@@ -253,23 +275,9 @@ function updateInfoPanel(message)
 
     // Create new log entry
     const logEntry = document.createElement("div");
+    logEntry.classList.add('log-entry');
     logEntry.innerHTML = `<strong>Step ${steps}:</strong> ${message}`;
-    logEntry.style.margin = "10px 0";
-    logEntry.style.fontSize = "14px";
-    logEntry.style.padding = "10px";
-    logEntry.style.borderBottom = "1px solid #ddd";
-
-    if (document.body.classList.contains("dark-mode"))
-    {
-        logEntry.style.background = "#333";
-        logEntry.style.color = "#ccc";
-        logEntry.style.borderBottom = "1px solid #444";
-    }
-    else
-    {
-        logEntry.style.background = "#f9f9f9";
-        logEntry.style.color = "#666";
-    }
+    // Visual styles moved to CSS so theme switching affects existing entries
 
     infoPanel.appendChild(logEntry);
 }
@@ -281,11 +289,7 @@ function updateInfoPanelWithDetails(mainMessage, details)
 
     // Main message
     const logEntry = document.createElement("div");
-    logEntry.style.margin = "10px 0";
-    logEntry.style.fontSize = "14px";
-    logEntry.style.padding = "10px";
-    logEntry.style.borderBottom = "1px solid #ddd";
-    logEntry.style.background = "#f9f9f9";
+    logEntry.classList.add('log-entry');
 
     logEntry.innerHTML = `
         <strong>Step ${steps}:</strong> ${mainMessage}
