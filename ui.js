@@ -1,4 +1,5 @@
-let currentLang = 'cz';
+
+let currentLang = localStorage.getItem('lang') || 'cz';
 
 const dict = {
     en: {
@@ -12,8 +13,6 @@ const dict = {
         coins: 'Coins',
         steps: 'Steps',
         willAppear: 'will appear here.',
-        switchToDark: 'Switch to Dark Mode',
-        switchToLight: 'Switch to Light Mode',
         footer: '2025 by Jakub Cernik. Developed for educational purposes as a Bachelor Thesis.',
         pleaseEnterValidNumber: 'Please enter a valid number.',
         invalidInput: 'Invalid input. Please check the values and try again.',
@@ -34,8 +33,6 @@ const dict = {
         coins: 'Mince',
         steps: 'Kroky',
         willAppear: 'se budou zobrazovat zde.',
-        switchToDark: 'Přepnout do tmavého režimu',
-        switchToLight: 'Přepnout do světlého režimu',
         footer: '2024 by Jakub Cernik. Vyvinuto pro vzdělávací účely jako bakalářská práce.',
         pleaseEnterValidNumber: 'Zadejte platné číslo.',
         invalidInput: 'Neplatný vstup. Zkontrolujte hodnoty a zkuste to znovu.',
@@ -47,15 +44,52 @@ const dict = {
     }
 };
 
+function reloadWithTransition(beforeReload)
+{
+    const overlay = document.getElementById('pageTransitionOverlay');
+    overlay.classList.add('visible');
+
+    setTimeout(() => {
+        if (beforeReload) beforeReload();
+        window.location.reload();
+    }, 350);
+}
+
 function toggleTheme()
 {
-    const body = document.body;
-    const button = document.getElementById("themeToggle");
+    const isDark = document.body.classList.contains('dark-mode');
+    reloadWithTransition(() => {
+        localStorage.setItem('theme', isDark ? 'light' : 'dark');
+    });
+}
 
-    body.classList.toggle("dark-mode");
+function applyTheme()
+{
+    const saved = localStorage.getItem('theme') || 'light';
+    if (saved === 'dark') document.body.classList.add('dark-mode');
 
-    const d = dict[currentLang];
-    button.textContent = body.classList.contains("dark-mode") ? d.switchToLight : d.switchToDark;
+    updateThemeToggleUI();
+}
+
+function updateThemeToggleUI()
+{
+    const isDark = document.body.classList.contains('dark-mode');
+    document.getElementById('themeOptLight').classList.toggle('active', !isDark);
+    document.getElementById('themeOptDark').classList.toggle('active', isDark);
+}
+
+function toggleLanguage()
+{
+    const next = currentLang === 'cz' ? 'en' : 'cz';
+    reloadWithTransition(() => {
+        localStorage.setItem('lang', next);
+    });
+}
+
+function updateLangToggleUI()
+{
+    document.getElementById('langOptCZ').classList.toggle('active', currentLang === 'cz');
+    document.getElementById('langOptEN').classList.toggle('active', currentLang === 'en');
 }
 
 function setMode(mode)
@@ -89,7 +123,7 @@ function updateInfoPanelWithDetails(mainMessage, details)
 
     logEntry.innerHTML = `
         <strong>Step ${steps}:</strong> ${mainMessage}
-        <button onclick="toggleDetails(this)" style="margin-left: 10px; font-size: 12px; padding: 2px 6px; border: none; background: #eee; cursor: pointer;">Details</button>
+        <button onclick="toggleDetails(this)">Details</button>
         <div class="details" style="display: none; margin-top: 10px; font-size: 12px; color: #666;">
             ${details}
         </div>
@@ -104,37 +138,33 @@ function toggleDetails(button)
     details.style.display = details.style.display === "none" ? "block" : "none";
 }
 
-function toggleLanguage()
-{
-    currentLang = currentLang === 'cz' ? 'en' : 'cz';
-    applyLanguage();
-}
-
 function applyLanguage()
 {
     const d = dict[currentLang];
-    
+
     document.getElementById('manualTab').textContent = d.manual;
     document.getElementById('randomTab').textContent = d.random;
     document.getElementById('bestTab').textContent = d.best;
     document.getElementById('worstTab').textContent = d.worst;
-    
+
     document.querySelector('#manualMode .input-group button').textContent = d.addNumber;
     document.getElementById('manualInput').placeholder = d.enterNumber;
     document.querySelector('#randomMode button').textContent = d.generateRandom;
-    
-    document.getElementById('creditCounter').textContent =
-        `${d.coins}: ${typeof creditsPerSlot !== 'undefined' ? creditsPerSlot.reduce((s, c) => s + c, 0) : 0}`;
-    document.getElementById('stepCounter').textContent =
-        `${d.steps}: ${typeof steps !== 'undefined' ? steps : 0}`;
-    
-    document.querySelector('footer p').textContent = d.footer;
-    
-    const themeBtn = document.getElementById('themeToggle');
-    themeBtn.textContent = document.body.classList.contains('dark-mode') ? d.switchToLight : d.switchToDark;
-    
-    const langBtn = document.getElementById('langToggle');
-    if (langBtn) langBtn.textContent = currentLang === 'cz' ? 'CZ' : 'EN';
+
+    document.getElementById('creditCounter').textContent = `${d.coins}: 0`;
+    document.getElementById('stepCounter').textContent   = `${d.steps}: 0`;
+
+    document.getElementById('footerText').textContent = d.footer;
+    document.getElementById("infoPanel").textContent  = d.steps + " " + d.willAppear;
+
+    updateLangToggleUI();
 }
 
-applyLanguage();
+document.addEventListener('DOMContentLoaded', () => {
+    applyTheme();
+    applyLanguage();
+});
+
+window.addEventListener('load', () => {
+    document.body.classList.add('page-loaded');
+});

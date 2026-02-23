@@ -13,6 +13,12 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+body.page-loaded {
+    opacity: 1;
 }
 
 #container {
@@ -253,7 +259,7 @@ body:not(.dark-mode) #infoPanel div {
 
 footer {
     background: #f8f9fa;
-    padding: 15px;
+    padding: 10px 20px;
     text-align: center;
     font-size: 0.9rem;
     border-top: 1px solid #ddd;
@@ -262,8 +268,10 @@ footer {
     bottom: 0;
     width: 100%;
     box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-    margin-top: 0;
     z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 footer p {
@@ -271,23 +279,80 @@ footer p {
     color: #555;
 }
 
-footer button {
-    margin-top: 10px;
-    padding: 10px 15px;
-    font-size: 0.9rem;
-    border: none;
-    border-radius: 5px;
-    background: #2a7a9b;
-    color: white;
+.footer-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.toggle-pill {
+    display: flex;
+    align-items: center;
+    background: #e0e0e0;
+    border-radius: 999px;
+    padding: 3px;
+    gap: 2px;
     cursor: pointer;
+    user-select: none;
     transition: background 0.3s ease;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.15);
 }
 
-footer button:hover {
-    background: #238091;
+.toggle-pill:hover {
+    background: #d0d0d0;
 }
 
-/* Log entry styling controlled by class so theme switching updates existing entries */
+.toggle-option {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #777;
+    transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+}
+
+.toggle-option img {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    object-fit: cover;
+    opacity: 0.55;
+    transition: opacity 0.25s ease;
+}
+
+.toggle-option.active {
+    background: #ffffff;
+    color: #2a7a9b;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+    transform: scale(1.05);
+}
+
+.toggle-option.active img {
+    opacity: 1;
+}
+
+#pageTransitionOverlay {
+    position: fixed;
+    inset: 0;
+    background: #ffffff;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transition: opacity 0.35s ease;
+}
+
+#pageTransitionOverlay.visible {
+    opacity: 1;
+    pointer-events: all;
+}
+
+body.dark-mode #pageTransitionOverlay {
+    background: #1e1e1e;
+}
+
 #infoPanel .log-entry {
     margin-bottom: 10px;
     padding: 10px;
@@ -342,10 +407,27 @@ body.dark-mode header {
     color: #e0e0e0;
 }
 
-body.dark-mode footer {
-    background: #2a2a2a;
-    color: #e0e0e0;
-    border-color: #444;
+body.dark-mode .toggle-pill {
+    background: #3a3a3a;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+}
+
+body.dark-mode .toggle-pill:hover {
+    background: #444;
+}
+
+body.dark-mode .toggle-option {
+    color: #888;
+}
+
+body.dark-mode .toggle-option.active {
+    background: #2a7a9b;
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+body.dark-mode #pageTransitionOverlay {
+    background: #1e1e1e;
 }
 
 body.dark-mode #trackers div {
@@ -353,12 +435,12 @@ body.dark-mode #trackers div {
     color: #ccc;
 }
 
-body.dark-mode button {
+body.dark-mode button:not(.toggle-option) {
     background: #444;
     color: #e0e0e0;
 }
 
-body.dark-mode button:hover {
+body.dark-mode button:not(.toggle-option):hover {
     background: #666;
 }
 
@@ -374,7 +456,8 @@ body.dark-mode #container {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
 }
 
-body.dark-mode input[type="number"], body.dark-mode button {
+body.dark-mode input[type="number"],
+body.dark-mode button:not(.toggle-option) {
     background: #444;
     color: #f1f1f1;
     border: 1px solid #666;

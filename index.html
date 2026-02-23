@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
+<div id="pageTransitionOverlay"></div>
 <div id="container">
     <header>
         <h1>Amortized complexity for vector<></h1>
@@ -75,10 +76,29 @@
 <script src="dynamicArray.js"></script>
 
 <footer>
-    <p>2024 by Jakub Cernik. Designed for educational purposes as a Bachelor Thesis.</p>
-    <div style="display:flex; gap:10px; justify-content:center; align-items:center;">
-        <button id="langToggle" onclick="toggleLanguage()">CZ</button>
-        <button id="themeToggle" onclick="toggleTheme()">Switch to Dark Mode</button>
+    <p id="footerText"></p>
+    <div class="footer-controls">
+
+        <div class="toggle-pill" id="langToggle" onclick="toggleLanguage()" title="Změnit jazyk / Change language">
+            <div class="toggle-option" id="langOptCZ">
+                <img src="sources/czech-republic.png" alt="CZ">
+                <span>CZ</span>
+            </div>
+            <div class="toggle-option" id="langOptEN">
+                <img src="sources/united-kingdom.png" alt="EN">
+                <span>EN</span>
+            </div>
+        </div>
+
+        <div class="toggle-pill" id="themeToggle" onclick="toggleTheme()" title="Přepnout téma / Switch theme">
+            <div class="toggle-option" id="themeOptLight">
+                <span>☀️</span>
+            </div>
+            <div class="toggle-option" id="themeOptDark">
+                <img src="sources/night-mode.png" alt="Dark">
+            </div>
+        </div>
+
     </div>
 </footer>
 </body>
