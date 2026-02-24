@@ -16,11 +16,28 @@ const dict = {
         footer: '2025 by Jakub Cernik. Developed for educational purposes as a Bachelor Thesis.',
         pleaseEnterValidNumber: 'Please enter a valid number.',
         invalidInput: 'Invalid input. Please check the values and try again.',
-        arrayFull: 'Array full. Resizing needed.',
-        noCoinsLeft: 'No coins left for insertion in slot',
-        addedValue: 'Added value',
-        newSlotHas: 'New slot has',
-        spentInsertion: 'Spent 1 coin for insertion.'
+
+        // --- Insertion ---
+        insertTitle:        (val, idx) => `Inserting <strong>${val}</strong> into slot [${idx}]`,
+        insertAllocCoins:   (n)        => `Allocated <strong>${n} coins</strong> to the slot (amortized prepayment).`,
+        insertPaySelf:      ()         => `Spent <strong>1 coin</strong> for the insertion itself.`,
+        insertPayCopy:      ()         => `Saved <strong>1 coin</strong> for a future copy during resize.`,
+        insertRemaining:    (n)        => `Slot now holds <strong>${n} coin${n !== 1 ? 's' : ''}</strong> in reserve.`,
+
+        // --- Resize ---
+        resizeTitle:        (old, nw)  => `Array full — resizing from capacity <strong>${old} → ${nw}</strong>`,
+        resizeWhy:          ()         => `Each element had 1 saved coin. These coins now pay for copying — no extra cost!`,
+        resizeCopySlot:     (i)        => `Slot [${i}]: spent <strong>1 saved coin</strong> to copy its value.`,
+        resizeDoneSlots:    (n)        => `All <strong>${n} elements</strong> copied. Total coins spent = ${n} (already prepaid).`,
+        resizeNewSlots:     (old, nw)  => `Created <strong>${nw - old} new empty slots</strong> [${old}–${nw - 1}].`,
+
+        // --- Random ---
+        randomGenerating:   (n, mn, mx)=> `Generating <strong>${n}</strong> random numbers in range [${mn}, ${mx}].`,
+        randomDone:         (n)        => `Done — inserted <strong>${n}</strong> values.`,
+
+        // --- Errors ---
+        arrayFull:          'Array full. Resizing needed.',
+        noCoinsLeft:        'No coins left for insertion in slot',
     },
     cz: {
         manual: 'Manuálně',
@@ -36,11 +53,28 @@ const dict = {
         footer: '2024 by Jakub Cernik. Vyvinuto pro vzdělávací účely jako bakalářská práce.',
         pleaseEnterValidNumber: 'Zadejte platné číslo.',
         invalidInput: 'Neplatný vstup. Zkontrolujte hodnoty a zkuste to znovu.',
-        arrayFull: 'Pole je plné. Potřeba zvětšení.',
-        noCoinsLeft: 'V poli není dost mincí pro vložení na pozici',
-        addedValue: 'Přidána hodnota',
-        newSlotHas: 'Nové políčko má',
-        spentInsertion: 'Utracena 1 mince za vložení.'
+
+        // --- Vložení ---
+        insertTitle:        (val, idx) => `Vkládám <strong>${val}</strong> na pozici [${idx}]`,
+        insertAllocCoins:   (n)        => `Přiděleno <strong>${n} mincí</strong> políčku (amortizovaná záloha).`,
+        insertPaySelf:      ()         => `Utracena <strong>1 mince</strong> za samotné vložení.`,
+        insertPayCopy:      ()         => `Ušetřena <strong>1 mince</strong> jako záloha na budoucí kopírování při resize.`,
+        insertRemaining:    (n)        => `Na políčku zbývá <strong>${n} ${n === 1 ? 'mince' : (n >= 2 && n <= 4 ? 'mince' : 'mincí')}</strong> v záloze.`,
+
+        // --- Resize ---
+        resizeTitle:        (old, nw)  => `Pole plné — zvětšuji kapacitu <strong>${old} → ${nw}</strong>`,
+        resizeWhy:          ()         => `Každý prvek měl 1 ušetřenou minci. Ty teď platí za kopírování — žádná extra cena!`,
+        resizeCopySlot:     (i)        => `Pozice [${i}]: utracena <strong>1 ušetřená mince</strong> za zkopírování hodnoty.`,
+        resizeDoneSlots:    (n)        => `Všech <strong>${n} prvků</strong> zkopírováno. Celkem utraceno = ${n} mincí (již zálohovány).`,
+        resizeNewSlots:     (old, nw)  => `Vytvořeno <strong>${nw - old} nových prázdných políček</strong> [${old}–${nw - 1}].`,
+
+        // --- Náhodné ---
+        randomGenerating:   (n, mn, mx)=> `Generuji <strong>${n}</strong> náhodných čísel v rozsahu [${mn}, ${mx}].`,
+        randomDone:         (n)        => `Hotovo — vloženo <strong>${n}</strong> hodnot.`,
+
+        // --- Chyby ---
+        arrayFull:          'Pole je plné. Potřeba zvětšení.',
+        noCoinsLeft:        'V poli není dost mincí pro vložení na pozici',
     }
 };
 
