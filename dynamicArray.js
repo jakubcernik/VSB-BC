@@ -1,22 +1,3 @@
-// ============================================================
-//  dynamicArray.js – algoritmus dynamického pole s amortizací
-//  (první algoritmus – vector<> / push_back)
-//
-//  Banker's method:
-//    Každé vložení zaplatí amortizovanou cenu 3:
-//      • 1 mince  = skutečná cena vložení (write)
-//      • 1 mince  = záloha na kopírování tohoto prvku při příštím resize
-//      • 1 mince  = záloha na kopírování jednoho již existujícího prvku
-//                   (při zdvojení kapacity musíme zkopírovat n starých prvků,
-//                    ale zálohy na první n/2 z nich jsme vyčerpali dřív –
-//                    proto každý nový prvek přispívá i za jednoho starého)
-//
-//  Zjednodušená vizualizační varianta (2 mince):
-//    • 1 mince  = cena vložení  → utracena ihned
-//    • 1 mince  = záloha na kopírování → zůstane na políčku
-//  Resize pak projde každý prvek a utratí jeho ušetřenou minci za copy.
-// ============================================================
-
 let array = [];             // Vložená čísla
 let capacity = 1;           // Aktuální kapacita pole
 let creditsPerSlot = [];    // Mince nad každým políčkem
@@ -42,10 +23,20 @@ function resetValues()
     document.getElementById("creditCounter").textContent = `${d.coins}: 0`;
     document.getElementById("stepCounter").textContent   = `${d.steps}: 0`;
     document.getElementById("arrayVisualization").innerHTML = "";
-    document.getElementById("infoPanel").textContent = d.steps + " " + d.willAppear;
-}
 
-// ── Vizualizace ───────────────────────────────────────────────
+    // Clear log panel and show initial message
+    const infoPanel = document.getElementById("infoPanel");
+    infoPanel.innerHTML = "";
+    const initialEntry = document.createElement("div");
+    initialEntry.classList.add('log-entry', 'info');
+    initialEntry.innerHTML = `
+        <div class="log-header">
+            <span class="log-icon">👋</span>
+            <span>${d.steps} ${d.willAppear}</span>
+        </div>
+    `;
+    infoPanel.appendChild(initialEntry);
+}
 
 function visualizeArray()
 {
@@ -107,39 +98,27 @@ async function animateCoinUpdate(frameIndex, coinsNeeded)
     }
 }
 
-// ── Resize ────────────────────────────────────────────────────
-//
-//  Správná amortizovaná logika:
-//  Při resize NEALOKUJEME mince na nová prázdná políčka.
-//  Každý stávající prvek má 1 ušetřenou minci → ta platí jeho kopírování.
-//  Nová prázdná políčka zatím žádné mince nemají (dostanou je při vložení).
-
 async function resizeArray()
 {
     const d = dict[currentLang];
     const oldCapacity = capacity;
     capacity *= 2;
 
-    // Nová prázdná políčka – žádné mince, zatím prázdná
     for (let i = oldCapacity; i < capacity; i++)
     {
-        creditsPerSlot[i] = 0;
+        creditsPerSlot[i] = 2;
     }
 
-    // Log: hlavička resize
     updateInfoPanelWithDetails(
         d.resizeTitle(oldCapacity, capacity),
         d.resizeWhy()
     );
 
-    // Vizualizuj rozšířenou strukturu (nová prázdná políčka)
     visualizeArray();
     await new Promise(resolve => setTimeout(resolve, 400));
 
-    // Informace o nových prázdných slotech
     updateInfoPanel(d.resizeNewSlots(oldCapacity, capacity));
 
-    // Kopírování – každý starý prvek utratí svou 1 ušetřenou minci
     for (let i = 0; i < oldCapacity; i++)
     {
         if (creditsPerSlot[i] > 0)
@@ -151,20 +130,36 @@ async function resizeArray()
         }
         else
         {
-            // Nemělo by nastat při správném průběhu – pojistka
-            updateInfoPanel(`⚠️ Slot [${i}] had no saved coin for copy — invariant violated!`);
+            let lenderIndex = -1;
+            for (let j = oldCapacity; j < capacity; j++)
+            {
+                if (creditsPerSlot[j] > 0)
+                {
+                    lenderIndex = j;
+                    break;
+                }
+            }
+
+            if (lenderIndex !== -1)
+            {
+                updateInfoPanel(
+                    `Pozice <span class="log-badge slot">[${i}]</span> má <span class="log-badge coin">0 mincí</span> — půjčujeme z <span class="log-badge slot">[${lenderIndex}]</span>`
+                );
+                creditsPerSlot[lenderIndex]--;
+                updateCredits();
+                await animateCoinUpdate(lenderIndex, creditsPerSlot[lenderIndex]);
+                await new Promise(resolve => setTimeout(resolve, 400));
+            }
+            else
+            {
+                updateInfoPanel(`⚠️ Pozice <span class="log-badge slot">[${i}]</span> — invariant porušen, žádné mince!`);
+            }
         }
     }
 
     updateInfoPanel(d.resizeDoneSlots(oldCapacity));
     visualizeArray();
 }
-
-// ── Vložení prvku ─────────────────────────────────────────────
-//
-//  Amortizovaná cena každého vložení = 2 mince:
-//    • 1 mince utracena ihned za write (vložení)
-//    • 1 mince zůstane jako záloha na budoucí kopírování
 
 async function addElement()
 {
@@ -179,23 +174,22 @@ async function addElement()
     }
 
     steps++;
-    const slotIndex = array.length; // index políčka, kam vložíme
+    const slotIndex = array.length;
 
-    // --- Resize pokud je pole plné ---
     if (array.length === capacity)
     {
         updateInfoPanel(d.arrayFull);
         await resizeArray();
     }
+    else
+    {
+        creditsPerSlot[slotIndex] = 2;
+        updateCredits();
+    }
 
-    // --- Alokace 2 mincí na cílové políčko ---
-    // (políčko je buď nové z resize s 0 mincemi, nebo první vložení)
-    creditsPerSlot[slotIndex] = 2;
-    updateCredits();
     visualizeArray();
     await animateCoinUpdate(slotIndex, 2);
 
-    // Log: přidělení mincí
     updateInfoPanelWithDetails(
         d.insertTitle(value, slotIndex),
         [
@@ -205,24 +199,19 @@ async function addElement()
         ].join('<br>')
     );
 
-    // --- Vložení hodnoty ---
     array.push(value);
     visualizeArray();
     await new Promise(resolve => setTimeout(resolve, 400));
 
-    // --- Utrat 1 minci za vložení ---
     creditsPerSlot[slotIndex]--;
     updateCredits();
     await animateCoinUpdate(slotIndex, creditsPerSlot[slotIndex]);
 
-    // Log: výsledný stav políčka
     const remaining = creditsPerSlot[slotIndex];
     updateInfoPanel(d.insertRemaining(remaining));
 
     input.value = "";
 }
-
-// ── Náhodné generování ────────────────────────────────────────
 
 function getRandomNumber(min, max)
 {
@@ -252,8 +241,6 @@ async function generateRandomArray()
 
     updateInfoPanel(d.randomDone(count));
 }
-
-// ── Best / Worst case (zatím připravené kostrami) ─────────────
 
 function runBestCase()
 {
