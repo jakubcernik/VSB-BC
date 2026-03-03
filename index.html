@@ -54,19 +54,50 @@
 
         <!-- Best Case Mode -->
         <section id="bestMode" class="mode">
-            <h2>Best Case</h2>
-            <button onclick="runBestCase()">Run Best Case</button>
+            <h2 id="bestCaseTitle">Best Case</h2>
+            <div class="description-box">
+                <p id="bestCaseDesc">
+                    The <strong>Best Case</strong> scenario occurs when the array still has <strong>unused capacity</strong>.
+                    Inserting a new element is instant because no resizing or copying is needed.
+                    <br><br>
+                    Complexity: <strong>O(1)</strong>
+                </p>
+
+                <div class="control-panel">
+                    <button onclick="prepareBestCase()" id="btnRunBest">Prepare Best Case</button>
+
+                    <div id="bestCaseInputGroup" class="input-group" style="display:none; margin-top: 15px;">
+                        <input type="number" id="bestInput" placeholder="Enter number">
+                        <button onclick="finishBestCase()">Insert</button>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- Worst Case Mode -->
         <section id="worstMode" class="mode">
-            <h2>Worst Case</h2>
-            <button onclick="runWorstCase()">Run Worst Case</button>
-        </section>
-    </main>
+            <h2 id="worstCaseTitle">Worst Case</h2>
+            <div class="description-box">
+                <p id="worstCaseDesc">
+                    The <strong>Worst Case</strong> scenario occurs when the array is <strong>completely full</strong>.
+                    Inserting a new element forces a <strong>resize</strong>—allocating a larger array, copying all elements, and then inserting.
+                    <br><br>
+                    Complexity: <strong>O(N)</strong>
+                </p>
 
-    <!-- Visual elements -->
-    <section id="arrayVisualization"></section>
+                <div class="control-panel">
+                    <button onclick="prepareWorstCase()" id="btnRunWorst">Prepare Worst Case</button>
+
+                    <div id="worstCaseInputGroup" class="input-group" style="display:none; margin-top: 15px;">
+                        <input type="number" id="worstInput" placeholder="Enter number">
+                        <button onclick="finishWorstCase()">Insert</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div id="arrayVisualization"></div>
+    </main>
 
     <!-- log -->
     <div id="infoPanel">Steps will appear here</div>

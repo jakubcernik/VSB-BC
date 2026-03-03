@@ -1,4 +1,3 @@
-
 let currentLang = localStorage.getItem('lang') || 'cz';
 
 // Pevná pomalá rychlost animací
@@ -15,6 +14,26 @@ const dict = {
     en: {
         manual: 'Manual',
         random: 'Random',
+
+        bestCase: {
+            title: 'Best Case',
+            desc: `The <strong>Best Case</strong> scenario occurs when the array still has <strong class="highlight-green">unused capacity</strong>.<br>
+                   Inserting a new element is instant because no resizing or copying is needed.<br><br>
+                   Complexity: <strong class="badge">O(1)</strong>`,
+            btn: 'Prepare Best Case',
+            insert: 'Insert into Best Case',
+            ready: '✅ Best Case prepared! Array has capacity [4] but only 3 elements. Adding a number will be instant.',
+        },
+        worstCase: {
+            title: 'Worst Case',
+            desc: `The <strong>Worst Case</strong> scenario occurs when the array is <strong class="highlight-red">completely full</strong>.<br>
+                   Inserting a new element forces a <strong>resize</strong>—allocating a larger array, copying all elements, and then inserting.<br><br>
+                   Complexity: <strong class="badge">O(N)</strong>`,
+            btn: 'Prepare Worst Case',
+            insert: 'Insert into Worst Case',
+            ready: '⚠️ Worst Case prepared! Array is full [4/4]. Adding a number will trigger a resize.',
+        },
+
         best: 'Best Case',
         worst: 'Worst Case',
         addNumber: 'Add Number',
@@ -52,6 +71,26 @@ const dict = {
     cz: {
         manual: 'Manuálně',
         random: 'Náhodně',
+
+        bestCase: {
+            title: 'Nejlepší případ',
+            desc: `<strong>Nejlepší případ</strong> nastává, když má pole stále <strong class="highlight-green">volnou kapacitu</strong>.<br>
+                   Vložení nového prvku je okamžité, protože není potřeba zvětšovat pole ani kopírovat prvky.<br><br>
+                   Složitost: <strong class="badge">O(1)</strong>`,
+            btn: 'Připravit Nejlepší případ',
+            insert: 'Vložit do Nejlepšího případu',
+            ready: '✅ Nejlepší případ připraven! Pole má kapacitu [4], ale jen 3 prvky. Vložení bude okamžité.',
+        },
+        worstCase: {
+            title: 'Nejhorší případ',
+            desc: `<strong>Nejhorší případ</strong> nastává, když je pole <strong class="highlight-red">zcela zaplněné</strong>.<br>
+                   Vložení nového prvku vynutí <strong>zvětšení (resize)</strong> — alokaci většího pole, zkopírování všech prvků a teprve poté vložení.<br><br>
+                   Složitost: <strong class="badge">O(N)</strong>`,
+            btn: 'Připravit Nejhorší případ',
+            insert: 'Vložit do Nejhoršího případu',
+            ready: '⚠️ Nejhorší případ připraven! Pole je plné [4/4]. Vložení spustí resize.',
+        },
+
         best: 'Nejlepší případ',
         worst: 'Nejhorší případ',
         addNumber: 'Přidat číslo',
@@ -145,6 +184,13 @@ function setMode(mode)
 
     document.getElementById(`${mode}Tab`).classList.add('active');
     document.getElementById(`${mode}Mode`).classList.add('active');
+
+    // Reset special UI states for best/worst
+    document.getElementById('bestCaseInputGroup').style.display = 'none';
+    document.getElementById('btnRunBest').style.display = 'inline-block';
+
+    document.getElementById('worstCaseInputGroup').style.display = 'none';
+    document.getElementById('btnRunWorst').style.display = 'inline-block';
 }
 
 // Log types with icons
@@ -263,6 +309,22 @@ function applyLanguage()
     document.getElementById('randomTab').textContent = d.random;
     document.getElementById('bestTab').textContent = d.best;
     document.getElementById('worstTab').textContent = d.worst;
+
+    if (d.bestCase) {
+        document.getElementById('bestCaseTitle').textContent = d.bestCase.title;
+        document.getElementById('bestCaseDesc').innerHTML = d.bestCase.desc;
+        document.getElementById('btnRunBest').textContent = d.bestCase.btn;
+        document.getElementById('bestInput').placeholder = d.enterNumber;
+        document.querySelector('#bestCaseInputGroup button').textContent = d.addNumber;
+    }
+
+    if (d.worstCase) {
+        document.getElementById('worstCaseTitle').textContent = d.worstCase.title;
+        document.getElementById('worstCaseDesc').innerHTML = d.worstCase.desc;
+        document.getElementById('btnRunWorst').textContent = d.worstCase.btn;
+        document.getElementById('worstInput').placeholder = d.enterNumber;
+        document.querySelector('#worstCaseInputGroup button').textContent = d.addNumber;
+    }
 
     document.querySelector('#manualMode .input-group button').textContent = d.addNumber;
     document.getElementById('manualInput').placeholder = d.enterNumber;

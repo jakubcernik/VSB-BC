@@ -767,3 +767,8 @@ body.dark-mode footer button {
 body.dark-mode footer button:hover {
     background: #666;
 }
+
+#bestMode
+{
+    margin-bottom: 50px;
+}

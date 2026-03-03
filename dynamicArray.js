@@ -22,7 +22,6 @@ function resetValues()
     const d = dict[currentLang];
     document.getElementById("creditCounter").textContent = `${d.coins}: 0`;
     document.getElementById("stepCounter").textContent   = `${d.steps}: 0`;
-    document.getElementById("arrayVisualization").innerHTML = "";
 
     // Clear log panel and show initial message
     const infoPanel = document.getElementById("infoPanel");
@@ -36,6 +35,8 @@ function resetValues()
         </div>
     `;
     infoPanel.appendChild(initialEntry);
+
+    visualizeArray();
 }
 
 function visualizeArray()
@@ -209,8 +210,6 @@ async function addElement()
     updateCredits();
     await animateCoinUpdate(slotIndex, creditsPerSlot[slotIndex]);
 
-    const remaining = creditsPerSlot[slotIndex];
-
     endLogGroup();
     input.value = "";
 }
@@ -244,14 +243,96 @@ async function generateRandomArray()
     updateInfoPanel(d.randomDone(count));
 }
 
-function runBestCase()
+function prepareBestCase()
 {
     resetValues();
-    // TODO: implementace nejlepšího případu
+    const d = dict[currentLang];
+
+    // Setup: Capacity 4, 3 items filled (Last spot free)
+    capacity = 4;
+    array = [10, 20, 30];
+    creditsPerSlot = [0, 0, 1, 0];
+    steps = 3;
+
+    visualizeArray();
+    updateCredits();
+
+    // Toggle UI
+    document.getElementById('btnRunBest').style.display = 'none';
+    document.getElementById('bestCaseInputGroup').style.display = 'flex';
+    document.getElementById('bestInput').focus();
+    
+    // Override log
+    const infoPanel = document.getElementById("infoPanel");
+    infoPanel.innerHTML = "";
+    createLogEntry(LOG_TYPES.SUCCESS, d.bestCase.ready);
 }
 
-function runWorstCase()
+async function finishBestCase()
+{
+    const input = document.getElementById("bestInput");
+    const value = parseInt(input.value);
+    const d = dict[currentLang];
+
+    if (isNaN(value)) {
+        updateInfoPanel(d.pleaseEnterValidNumber);
+        return;
+    }
+
+    // Reuse logic
+    document.getElementById("manualInput").value = value;
+    await addElement();
+    
+    // Disable input after done
+    input.value = "";
+    document.getElementById('bestCaseInputGroup').style.display = 'none';
+    
+    createLogEntry(LOG_TYPES.SUCCESS, "Best Case - only one coin spent for push.");
+}
+
+function prepareWorstCase()
 {
     resetValues();
-    // TODO: implementace nejhoršího případu
+    const d = dict[currentLang];
+
+    // Setup: Capacity 4, 4 items filled (FULL)
+    capacity = 4;
+    array = [10, 20, 30, 40];
+    creditsPerSlot = [1, 1, 1, 1]; 
+    steps = 4;
+
+    visualizeArray();
+    updateCredits();
+
+    // Toggle UI
+    document.getElementById('btnRunWorst').style.display = 'none';
+    document.getElementById('worstCaseInputGroup').style.display = 'flex';
+    document.getElementById('worstInput').focus();
+
+    // Override log
+    const infoPanel = document.getElementById("infoPanel");
+    infoPanel.innerHTML = "";
+    createLogEntry(LOG_TYPES.WARNING, d.worstCase.ready);
+}
+
+async function finishWorstCase()
+{
+    const input = document.getElementById("worstInput");
+    const value = parseInt(input.value);
+    const d = dict[currentLang];
+
+    if (isNaN(value)) {
+        updateInfoPanel(d.pleaseEnterValidNumber);
+        return;
+    }
+
+    // Reuse logic
+    document.getElementById("manualInput").value = value;
+    await addElement();
+
+    // Disable input after done
+    input.value = "";
+    document.getElementById('worstCaseInputGroup').style.display = 'none';
+
+    createLogEntry(LOG_TYPES.SUCCESS, "Worst Case - full array caused resize + coins spent for push.");
 }
