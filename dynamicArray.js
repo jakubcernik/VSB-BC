@@ -81,7 +81,7 @@ async function animateCoinUpdate(frameIndex, coinsNeeded)
             const coin = document.createElement("div");
             coin.classList.add("coin", "adding");
             frame.appendChild(coin);
-            await new Promise(resolve => setTimeout(resolve, 300));
+            await new Promise(resolve => setTimeout(resolve, getDelay(300)));
             coin.classList.remove("adding");
         }
     }
@@ -92,7 +92,7 @@ async function animateCoinUpdate(frameIndex, coinsNeeded)
             const coin = frame.lastChild;
             if (!coin) break;
             coin.classList.add("removing");
-            await new Promise(resolve => setTimeout(resolve, 300));
+            await new Promise(resolve => setTimeout(resolve, getDelay(300)));
             coin.remove();
         }
     }
@@ -115,7 +115,7 @@ async function resizeArray()
     );
 
     visualizeArray();
-    await new Promise(resolve => setTimeout(resolve, 400));
+    await new Promise(resolve => setTimeout(resolve, getDelay(400)));
 
     updateInfoPanel(d.resizeNewSlots(oldCapacity, capacity));
 
@@ -148,7 +148,7 @@ async function resizeArray()
                 creditsPerSlot[lenderIndex]--;
                 updateCredits();
                 await animateCoinUpdate(lenderIndex, creditsPerSlot[lenderIndex]);
-                await new Promise(resolve => setTimeout(resolve, 400));
+                await new Promise(resolve => setTimeout(resolve, getDelay(400)));
             }
             else
             {
@@ -176,6 +176,8 @@ async function addElement()
     steps++;
     const slotIndex = array.length;
 
+    beginLogGroup(value, steps);
+
     if (array.length === capacity)
     {
         updateInfoPanel(d.arrayFull);
@@ -201,15 +203,15 @@ async function addElement()
 
     array.push(value);
     visualizeArray();
-    await new Promise(resolve => setTimeout(resolve, 400));
+    await new Promise(resolve => setTimeout(resolve, getDelay(400)));
 
     creditsPerSlot[slotIndex]--;
     updateCredits();
     await animateCoinUpdate(slotIndex, creditsPerSlot[slotIndex]);
 
     const remaining = creditsPerSlot[slotIndex];
-    updateInfoPanel(d.insertRemaining(remaining));
 
+    endLogGroup();
     input.value = "";
 }
 

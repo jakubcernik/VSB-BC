@@ -250,6 +250,51 @@ button:hover {
     box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.log-group {
+    margin-bottom: 18px;
+    border-radius: 10px;
+    border: 2px solid #c8dce8;
+    background: #f0f6fa;
+    overflow: hidden;
+    animation: slideIn 0.3s ease;
+}
+
+.log-group-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: #2a7a9b;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.01em;
+}
+
+.log-group-icon {
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+.log-group-title strong {
+    color: #ffe082;
+}
+
+.log-group-body {
+    padding: 10px 10px 4px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.log-group-body .log-entry {
+    margin-bottom: 8px;
+}
+
+.log-group-body .log-entry:last-child {
+    margin-bottom: 4px;
+}
+
 /* Log entry styles */
 .log-entry {
     margin-bottom: 12px;
@@ -497,6 +542,19 @@ body.dark-mode #infoPanel {
     border-top: 1px solid #444;
 }
 
+body.dark-mode .log-group {
+    border-color: #3a5a6e;
+    background: #252f35;
+}
+
+body.dark-mode .log-group-header {
+    background: #1a5570;
+}
+
+body.dark-mode .log-group-title strong {
+    color: #ffd54f;
+}
+
 body.dark-mode .log-entry {
     background: #333 !important;
     color: #e0e0e0 !important;
@@ -611,6 +669,7 @@ body.dark-mode #trackers div {
     background: #333;
     color: #ccc;
 }
+
 
 body.dark-mode button:not(.toggle-option) {
     background: #444;

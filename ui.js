@@ -1,6 +1,16 @@
 
 let currentLang = localStorage.getItem('lang') || 'cz';
 
+// Pevná pomalá rychlost animací
+const animationDelay = 1;
+
+// Vrátí zpoždění v ms pro danou základní hodnotu
+function getDelay(base = 1) {
+    const multipliers = { 1: 4, 2: 2, 3: 1, 4: 0.4, 5: 0.15 };
+    return Math.round(base * (multipliers[animationDelay] || 1));
+}
+
+
 const dict = {
     en: {
         manual: 'Manual',
@@ -13,7 +23,7 @@ const dict = {
         coins: 'Coins',
         steps: 'Steps',
         willAppear: 'will appear here.',
-        footer: '2025 by Jakub Cernik. Developed for educational purposes as a Bachelor Thesis.',
+        footer: '2026 by Jakub Cernik. Developed for educational purposes as a Bachelor Thesis.',
         pleaseEnterValidNumber: 'Please enter a valid number.',
         invalidInput: 'Invalid input. Please check the values and try again.',
 
@@ -22,7 +32,6 @@ const dict = {
         insertAllocCoins:   (n)        => `💰 Allocated <span class="coin-text">${n} coin${n !== 1 ? 's' : ''}</span> (amortized prepayment)`,
         insertPaySelf:      ()         => `💳 Spent <span class="coin-text">1 coin</span> for insertion`,
         insertPayCopy:      ()         => `🏦 Saved <span class="coin-text">1 coin</span> for future copy`,
-        insertRemaining:    (n)        => `Slot now holds <span class="coin-text">${n} coin${n !== 1 ? 's' : ''}</span>`,
 
         // --- Resize ---
         resizeTitle:        (old, nw)  => `Array full — resizing <span class="log-badge capacity">${old} → ${nw}</span>`,
@@ -38,6 +47,7 @@ const dict = {
         // --- Errors ---
         arrayFull:          '🔴 Array full. Resizing needed!',
         noCoinsLeft:        'No coins left for insertion in slot',
+        groupLabel:         (val, step) => `Step ${step} — inserting <strong>${val}</strong>`,
     },
     cz: {
         manual: 'Manuálně',
@@ -50,7 +60,7 @@ const dict = {
         coins: 'Mince',
         steps: 'Kroky',
         willAppear: 'se budou zobrazovat zde.',
-        footer: '2024 by Jakub Cernik. Vyvinuto pro vzdělávací účely jako bakalářská práce.',
+        footer: '2026 by Jakub Cernik. Vyvinuto pro vzdělávací účely jako bakalářská práce.',
         pleaseEnterValidNumber: 'Zadejte platné číslo.',
         invalidInput: 'Neplatný vstup. Zkontrolujte hodnoty a zkuste to znovu.',
 
@@ -59,7 +69,6 @@ const dict = {
         insertAllocCoins:   (n)        => `💰 Přiděleno <span class="coin-text">${n} ${n === 1 ? 'mince' : (n >= 2 && n <= 4 ? 'mince' : 'mincí')}</span> (amortizovaná záloha)`,
         insertPaySelf:      ()         => `💳 Utracena <span class="coin-text">1 mince</span> za samotné vložení`,
         insertPayCopy:      ()         => `🏦 Ušetřena <span class="coin-text">1 mince</span> na budoucí kopírování`,
-        insertRemaining:    (n)        => `Na políčku zbývá <span class="coin-text">${n} ${n === 1 ? 'mince' : (n >= 2 && n <= 4 ? 'mince' : 'mincí')}</span>`,
 
         // --- Resize ---
         resizeTitle:        (old, nw)  => `Pole plné — zvětšuji <span class="log-badge capacity">${old} → ${nw}</span>`,
@@ -75,6 +84,7 @@ const dict = {
         // --- Chyby ---
         arrayFull:          '🔴 Pole je plné. Potřeba zvětšení!',
         noCoinsLeft:        'Nedostatek mincí na pozici',
+        groupLabel:         (val, step) => `Krok ${step} — vkládám <strong>${val}</strong>`,
     }
 };
 
@@ -148,9 +158,41 @@ const LOG_TYPES = {
     SUCCESS: { class: 'insert', icon: '✓' }
 };
 
+// Aktuálně otevřená skupina kroků
+let currentLogGroup = null;
+
+function beginLogGroup(value, stepNum) {
+    const infoPanel = document.getElementById("infoPanel");
+    const d = dict[currentLang];
+
+    const group = document.createElement("div");
+    group.classList.add("log-group");
+
+    const header = document.createElement("div");
+    header.classList.add("log-group-header");
+    header.innerHTML = `
+        <span class="log-group-icon">▶</span>
+        <span class="log-group-title">${d.groupLabel ? d.groupLabel(value, stepNum) : `Krok ${stepNum} — vkládám <strong>${value}</strong>`}</span>
+    `;
+
+    const body = document.createElement("div");
+    body.classList.add("log-group-body");
+
+    group.appendChild(header);
+    group.appendChild(body);
+    infoPanel.appendChild(group);
+    infoPanel.scrollTop = infoPanel.scrollHeight;
+
+    currentLogGroup = body;
+}
+
+function endLogGroup() {
+    currentLogGroup = null;
+}
+
 function createLogEntry(type, title, details = null)
 {
-    const infoPanel = document.getElementById("infoPanel");
+    const target = currentLogGroup || document.getElementById("infoPanel");
     const logEntry = document.createElement("div");
     logEntry.classList.add('log-entry', type.class);
 
@@ -158,7 +200,7 @@ function createLogEntry(type, title, details = null)
         <div class="log-header">
             <span class="log-icon">${type.icon}</span>
             <span class="log-title">${title}</span>
-            <span class="log-step">Krok ${steps}</span>
+            ${!currentLogGroup ? `<span class="log-step">Krok ${steps}</span>` : ''}
         </div>
     `;
 
@@ -172,9 +214,10 @@ function createLogEntry(type, title, details = null)
     }
 
     logEntry.innerHTML = html;
-    infoPanel.appendChild(logEntry);
+    target.appendChild(logEntry);
 
     // Auto-scroll to bottom
+    const infoPanel = document.getElementById("infoPanel");
     infoPanel.scrollTop = infoPanel.scrollHeight;
 }
 
