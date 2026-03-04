@@ -6,6 +6,7 @@ const theoryDict = {
     en: {
         pageTitle:      'Amortized Complexity — Dynamic Array',
         footer:         '2026 by Jakub Cernik. Developed for educational purposes as a Bachelor Thesis.',
+        navHome:        'Home',
         navSimulation:  'Simulation',
         navTheory:      'Theory',
 
@@ -98,6 +99,7 @@ const theoryDict = {
     cz: {
         pageTitle:      'Amortizovaná složitost — Dynamické pole',
         footer:         '2026 by Jakub Cernik. Vyvinuto pro vzdělávací účely jako bakalářská práce.',
+        navHome:        'Domů',
         navSimulation:  'Simulace',
         navTheory:      'Teorie',
 
@@ -249,10 +251,11 @@ function showMethod(id) {
 function applyLanguage() {
     const d = theoryDict[currentLang];
 
-    document.title                                      = d.pageTitle;
-    document.getElementById('theoryMainTitle').innerHTML = d.mainTitle;
-    document.getElementById('footerText').textContent   = d.footer;
-    document.getElementById('navSimLabel').textContent  = d.navSimulation;
+    document.title                                        = d.pageTitle;
+    document.getElementById('theoryMainTitle').innerHTML  = d.mainTitle;
+    document.getElementById('footerText').textContent     = d.footer;
+    document.getElementById('navHomeLabel').textContent   = d.navHome;
+    document.getElementById('navSimLabel').textContent    = d.navSimulation;
     document.getElementById('navTheoryLabel').textContent = d.navTheory;
 
     // Section titles

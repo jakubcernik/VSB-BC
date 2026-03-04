@@ -1,0 +1,207 @@
+/* ── Layout ─────────────────────────────────────────────────── */
+
+#homeContainer {
+    width: 100%;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 24px 110px;
+}
+
+/* ── Header ─────────────────────────────────────────────────── */
+
+#homeHeader {
+    text-align: center;
+    margin-bottom: 48px;
+}
+
+#homeTitle {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #2a7a9b;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+}
+
+#homeSubtitle {
+    font-size: 1rem;
+    color: #666;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* ── Cards grid ──────────────────────────────────────────────── */
+
+#homeMain {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ── Single algorithm card ───────────────────────────────────── */
+
+.algo-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 28px 28px 24px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    border: 2px solid transparent;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    animation: fadeUp 0.4s ease both;
+}
+
+.algo-card:nth-child(1) { animation-delay: 0.05s; }
+.algo-card:nth-child(2) { animation-delay: 0.13s; }
+.algo-card:nth-child(3) { animation-delay: 0.21s; }
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* Available cards are clickable */
+.algo-card.available:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 28px rgba(42, 122, 155, 0.18);
+    border-color: #2a7a9b;
+}
+
+/* Coming-soon cards are muted */
+.algo-card.coming-soon {
+    opacity: 0.55;
+    cursor: not-allowed;
+    filter: grayscale(0.35);
+}
+
+/* ── Card icon ───────────────────────────────────────────────── */
+
+.algo-card-icon {
+    font-size: 2.8rem;
+    line-height: 1;
+    flex-shrink: 0;
+    width: 56px;
+    text-align: center;
+    margin-top: 4px;
+}
+
+/* ── Card body ───────────────────────────────────────────────── */
+
+.algo-card-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.algo-card-tag {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 999px;
+    margin-bottom: 8px;
+    background: #e6f7ee;
+    color: #2e7d32;
+}
+
+.algo-card-tag.tag-soon {
+    background: #fff3e0;
+    color: #e65100;
+}
+
+.algo-card-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+}
+
+.algo-card-title code {
+    font-family: 'Courier New', monospace;
+    font-size: 0.95em;
+    background: #eef5f9;
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: #2a7a9b;
+}
+
+.algo-card-desc {
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.65;
+    margin-bottom: 14px;
+}
+
+.algo-card-desc code {
+    font-family: 'Courier New', monospace;
+    font-size: 0.88em;
+    background: #f0f4f6;
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: #2a7a9b;
+}
+
+/* ── Chips ───────────────────────────────────────────────────── */
+
+.algo-card-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.chip {
+    display: inline-block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.chip-sim {
+    background: #e8f2f7;
+    color: #1565c0;
+}
+
+.chip-theory {
+    background: #fdf3e3;
+    color: #b45309;
+}
+
+.chip-locked {
+    background: #f0f0f0;
+    color: #999;
+}
+
+/* ═══════════════ DARK MODE ════════════════════════════════════ */
+
+body.dark-mode #homeTitle    { color: #64b5d6; }
+body.dark-mode #homeSubtitle { color: #aaa; }
+
+body.dark-mode .algo-card {
+    background: #2e2e2e;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .algo-card.available:hover {
+    border-color: #64b5d6;
+    box-shadow: 0 8px 28px rgba(42, 122, 155, 0.3);
+}
+
+body.dark-mode .algo-card-title      { color: #e0e0e0; }
+body.dark-mode .algo-card-desc       { color: #aaa; }
+body.dark-mode .algo-card-desc code  { background: #1a3a4a; color: #80d4f0; }
+body.dark-mode .algo-card-title code { background: #1a3a4a; color: #80d4f0; }
+
+body.dark-mode .algo-card-tag              { background: #1a3020; color: #a5d6a7; }
+body.dark-mode .algo-card-tag.tag-soon     { background: #3a2010; color: #ffcc80; }
+
+body.dark-mode .chip-sim    { background: #1a2a3a; color: #64b5f6; }
+body.dark-mode .chip-theory { background: #2e200a; color: #ffb74d; }
+body.dark-mode .chip-locked { background: #2a2a2a; color: #666; }
+

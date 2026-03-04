@@ -16,6 +16,7 @@ const dict = {
         random: 'Random',
         pageTitle: 'Amortized complexity for vector<>',
         randomModeTitle: 'Random Mode',
+        pageNavHome:   'Home',
         pageNavSim:    'Simulation',
         pageNavTheory: 'Theory',
 
@@ -92,6 +93,7 @@ const dict = {
         random: 'Náhodně',
         pageTitle: 'Amortizovaná složitost pro vector<>',
         randomModeTitle: 'Náhodný režim',
+        pageNavHome:   'Domů',
         pageNavSim:    'Simulace',
         pageNavTheory: 'Teorie',
 
@@ -386,7 +388,8 @@ function applyLanguage()
     document.querySelector('#randomMode button').textContent = d.generateRandom;
 
     document.querySelector('header h1').textContent = d.pageTitle;
-    document.getElementById('pageNavSimLabel').textContent   = d.pageNavSim;
+    document.getElementById('pageNavHomeLabel').textContent   = d.pageNavHome;
+    document.getElementById('pageNavSimLabel').textContent    = d.pageNavSim;
     document.getElementById('pageNavTheoryLabel').textContent = d.pageNavTheory;
 
     document.getElementById('creditCounter').textContent = `${d.coins}: 0`;

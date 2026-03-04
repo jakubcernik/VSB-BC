@@ -3,118 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Array Simulation</title>
+    <title>Algorithm Visualizer</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="home.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 <div id="pageTransitionOverlay"></div>
-<div id="container">
-    <header>
-        <h1>Amortized complexity for vector<></h1>
-        <nav id="pageNav">
-            <span id="pageNavSimActive">⚙️ <span id="pageNavSimLabel">Simulation</span></span>
-            <span class="page-nav-divider">|</span>
-            <a href="theory.html" id="pageNavTheory" onclick="navigateToPage(event, 'theory.html')">📖 <span id="pageNavTheoryLabel">Theory</span></a>
-        </nav>
+
+<div id="homeContainer">
+
+    <header id="homeHeader">
+        <h1 id="homeTitle">Algorithm Visualizer</h1>
+        <p id="homeSubtitle">Pick an algorithm to explore its theory and interactive simulation.</p>
     </header>
 
-    <!-- Input mode -->
-    <nav id="navigation">
-        <button onclick="setMode('manual')" id="manualTab" class="active">Manual</button>
-        <button onclick="setMode('random')" id="randomTab">Random</button>
-        <button onclick="setMode('best')" id="bestTab">Best Case</button>
-        <button onclick="setMode('worst')" id="worstTab">Worst Case</button>
-    </nav>
+    <main id="homeMain">
 
-    <!-- Trackers -->
-    <div id="trackers">
-        <div id="creditCounter">Coins: 0</div>
-        <div id="stepCounter">Steps: 0</div>
-    </div>
-
-    <main id="mainContent">
-        <!-- Manual Mode -->
-        <section id="manualMode" class="mode active">
-            <div class="input-group">
-                <label id="manualInputLabel" for="manualInput" class="visually-hidden">Enter a number</label>
-                <input type="number" id="manualInput" placeholder="Enter a number">
-                <button onclick="addElement()">Add Number</button>
-            </div>
-        </section>
-
-        <!-- Random Mode -->
-        <section id="randomMode" class="mode">
-            <h2>Random Mode</h2>
-            <div class="input-group">
-                <label for="randomCount">Count:</label>
-                <input type="number" id="randomCount" placeholder="Enter count" min="1">
-                <label for="randomMin">Min:</label>
-                <input type="number" id="randomMin" placeholder="Min value">
-                <label for="randomMax">Max:</label>
-                <input type="number" id="randomMax" placeholder="Max value">
-            </div>
-            <button onclick="generateRandomArray()">Generate Random Array</button>
-        </section>
-
-        <!-- Best Case Mode -->
-        <section id="bestMode" class="mode">
-            <h2 id="bestCaseTitle">Best Case</h2>
-            <div class="description-box">
-                <p id="bestCaseDesc">
-                    The <strong>Best Case</strong> scenario occurs when the array still has <strong>unused capacity</strong>.
-                    Inserting a new element is instant because no resizing or copying is needed.
-                    <br><br>
-                    Complexity: <strong>O(1)</strong>
+        <!-- Algorithm 1 — Dynamic Array -->
+        <a class="algo-card available" href="vector.html" onclick="navigateHome(event, 'vector.html')">
+            <div class="algo-card-icon">📦</div>
+            <div class="algo-card-body">
+                <div class="algo-card-tag" id="tagAvailable1">Available</div>
+                <h2 class="algo-card-title" id="algoTitle1">Dynamic Array <code>vector&lt;&gt;</code></h2>
+                <p class="algo-card-desc" id="algoDesc1">
+                    Explore how a dynamic array grows automatically and learn why repeated
+                    <code>push_back</code> runs in amortized O(1) using the coin-based accounting method.
                 </p>
-
-                <div class="control-panel">
-                    <button onclick="prepareBestCase()" id="btnRunBest">Prepare Best Case</button>
-
-                    <div id="bestCaseInputGroup" class="input-group" style="display:none; margin-top: 15px;">
-                        <input type="number" id="bestInput" placeholder="Enter number">
-                        <button onclick="finishBestCase()">Insert</button>
-                    </div>
+                <div class="algo-card-links">
+                    <span class="chip chip-sim" id="chip1Sim">⚙️ Simulation</span>
+                    <span class="chip chip-theory" id="chip1Theory">📖 Theory</span>
                 </div>
             </div>
-        </section>
+        </a>
 
-        <!-- Worst Case Mode -->
-        <section id="worstMode" class="mode">
-            <h2 id="worstCaseTitle">Worst Case</h2>
-            <div class="description-box">
-                <p id="worstCaseDesc">
-                    The <strong>Worst Case</strong> scenario occurs when the array is <strong>completely full</strong>.
-                    Inserting a new element forces a <strong>resize</strong>—allocating a larger array, copying all elements, and then inserting.
-                    <br><br>
-                    Complexity: <strong>O(N)</strong>
+        <!-- Algorithm 2 — Coming Soon -->
+        <div class="algo-card coming-soon">
+            <div class="algo-card-icon">🔗</div>
+            <div class="algo-card-body">
+                <div class="algo-card-tag tag-soon" id="tagSoon2">Coming Soon</div>
+                <h2 class="algo-card-title" id="algoTitle2">Algorithm 2</h2>
+                <p class="algo-card-desc" id="algoDesc2">
+                    This algorithm is currently being prepared. Check back later.
                 </p>
-
-                <div class="control-panel">
-                    <button onclick="prepareWorstCase()" id="btnRunWorst">Prepare Worst Case</button>
-
-                    <div id="worstCaseInputGroup" class="input-group" style="display:none; margin-top: 15px;">
-                        <input type="number" id="worstInput" placeholder="Enter number">
-                        <button onclick="finishWorstCase()">Insert</button>
-                    </div>
+                <div class="algo-card-links">
+                    <span class="chip chip-locked">🔒 <span id="chipLocked2">Not yet available</span></span>
                 </div>
             </div>
-        </section>
+        </div>
 
-        <div id="arrayVisualization"></div>
+        <!-- Algorithm 3 — Coming Soon -->
+        <div class="algo-card coming-soon">
+            <div class="algo-card-icon">🌳</div>
+            <div class="algo-card-body">
+                <div class="algo-card-tag tag-soon" id="tagSoon3">Coming Soon</div>
+                <h2 class="algo-card-title" id="algoTitle3">Algorithm 3</h2>
+                <p class="algo-card-desc" id="algoDesc3">
+                    This algorithm is currently being prepared. Check back later.
+                </p>
+                <div class="algo-card-links">
+                    <span class="chip chip-locked">🔒 <span id="chipLocked3">Not yet available</span></span>
+                </div>
+            </div>
+        </div>
+
     </main>
-
-    <!-- log -->
-    <div id="infoPanel">Steps will appear here</div>
 </div>
-
-<script src="ui.js"></script>
-<script src="dynamicArray.js"></script>
 
 <footer>
     <p id="footerText"></p>
     <div class="footer-controls">
-
         <div class="toggle-pill" id="langToggle" onclick="toggleLanguage()" title="Změnit jazyk / Change language">
             <div class="toggle-option" id="langOptCZ">
                 <img src="sources/czech-republic.png" alt="CZ">
@@ -123,17 +81,14 @@
                 <img src="sources/united-kingdom.png" alt="EN">
             </div>
         </div>
-
         <div class="toggle-pill" id="themeToggle" onclick="toggleTheme()" title="Přepnout téma / Switch theme">
-            <div class="toggle-option" id="themeOptLight">
-                <span>☀️</span>
-            </div>
-            <div class="toggle-option" id="themeOptDark">
-                <img src="sources/night-mode.png" alt="Dark">
-            </div>
+            <div class="toggle-option" id="themeOptLight"><span>☀️</span></div>
+            <div class="toggle-option" id="themeOptDark"><img src="sources/night-mode.png" alt="Dark"></div>
         </div>
-
     </div>
 </footer>
+
+<script src="home.js"></script>
 </body>
 </html>
+

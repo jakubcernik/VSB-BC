@@ -802,6 +802,7 @@ body.dark-mode footer button:hover {
     color: #bbb;
 }
 
+#pageNavHome,
 #pageNavTheory {
     color: #2a7a9b;
     text-decoration: none;
@@ -810,6 +811,7 @@ body.dark-mode footer button:hover {
     transition: background 0.2s;
 }
 
+#pageNavHome:hover,
 #pageNavTheory:hover {
     background: #e6f3f8;
 }
@@ -819,10 +821,12 @@ body.dark-mode #pageNavSimActive {
     background: #3a3020;
 }
 
+body.dark-mode #pageNavHome,
 body.dark-mode #pageNavTheory {
     color: #64b5d6;
 }
 
+body.dark-mode #pageNavHome:hover,
 body.dark-mode #pageNavTheory:hover {
     background: #2a3a44;
 }
