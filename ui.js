@@ -14,6 +14,8 @@ const dict = {
     en: {
         manual: 'Manual',
         random: 'Random',
+        pageTitle: 'Amortized complexity for vector<>',
+        randomModeTitle: 'Random Mode',
 
         bestCase: {
             title: 'Best Case',
@@ -39,6 +41,12 @@ const dict = {
         addNumber: 'Add Number',
         enterNumber: 'Enter a number',
         generateRandom: 'Generate Random Array',
+        randomCountLabel: 'Count:',
+        randomMinLabel: 'Min:',
+        randomMaxLabel: 'Max:',
+        randomCountPlaceholder: 'Enter count',
+        randomMinPlaceholder: 'Min value',
+        randomMaxPlaceholder: 'Max value',
         coins: 'Coins',
         steps: 'Steps',
         willAppear: 'will appear here.',
@@ -67,10 +75,21 @@ const dict = {
         arrayFull:          '🔴 Array full. Resizing needed!',
         noCoinsLeft:        'No coins left for insertion in slot',
         groupLabel:         (val, step) => `Step ${step} — inserting <strong>${val}</strong>`,
+        logStep:            (n)         => `Step ${n}`,
+
+        // --- Borrow / Invariant ---
+        borrowFromSlot:     (i, lender) => `Slot <span class="log-badge slot">[${i}]</span> has <span class="log-badge coin">0 coins</span> — borrowing from <span class="log-badge slot">[${lender}]</span>`,
+        invariantBroken:    (i)         => `⚠️ Slot <span class="log-badge slot">[${i}]</span> — invariant broken, no coins!`,
+
+        // --- Best / Worst finish ---
+        bestCaseDone:       'Best Case — only one coin spent for push.',
+        worstCaseDone:      'Worst Case — full array caused resize + coins spent for push.',
     },
     cz: {
         manual: 'Manuálně',
         random: 'Náhodně',
+        pageTitle: 'Amortizovaná složitost pro vector<>',
+        randomModeTitle: 'Náhodný režim',
 
         bestCase: {
             title: 'Nejlepší případ',
@@ -96,6 +115,12 @@ const dict = {
         addNumber: 'Přidat číslo',
         enterNumber: 'Zadej číslo',
         generateRandom: 'Vygenerovat pole',
+        randomCountLabel: 'Počet:',
+        randomMinLabel: 'Min:',
+        randomMaxLabel: 'Max:',
+        randomCountPlaceholder: 'Zadej počet',
+        randomMinPlaceholder: 'Min hodnota',
+        randomMaxPlaceholder: 'Max hodnota',
         coins: 'Mince',
         steps: 'Kroky',
         willAppear: 'se budou zobrazovat zde.',
@@ -124,6 +149,15 @@ const dict = {
         arrayFull:          '🔴 Pole je plné. Potřeba zvětšení!',
         noCoinsLeft:        'Nedostatek mincí na pozici',
         groupLabel:         (val, step) => `Krok ${step} — vkládám <strong>${val}</strong>`,
+        logStep:            (n)         => `Krok ${n}`,
+
+        // --- Půjčování / Invariant ---
+        borrowFromSlot:     (i, lender) => `Pozice <span class="log-badge slot">[${i}]</span> má <span class="log-badge coin">0 mincí</span> — půjčujeme z <span class="log-badge slot">[${lender}]</span>`,
+        invariantBroken:    (i)         => `⚠️ Pozice <span class="log-badge slot">[${i}]</span> — invariant porušen, žádné mince!`,
+
+        // --- Dokončení Best / Worst ---
+        bestCaseDone:       'Nejlepší případ — utracena pouze jedna mince za vložení.',
+        worstCaseDone:      'Nejhorší případ — plné pole vyvolalo resize + mince utraceny za vložení.',
     }
 };
 
@@ -218,7 +252,7 @@ function beginLogGroup(value, stepNum) {
     header.classList.add("log-group-header");
     header.innerHTML = `
         <span class="log-group-icon">▶</span>
-        <span class="log-group-title">${d.groupLabel ? d.groupLabel(value, stepNum) : `Krok ${stepNum} — vkládám <strong>${value}</strong>`}</span>
+        <span class="log-group-title">${d.groupLabel ? d.groupLabel(value, stepNum) : d.logStep(stepNum) + ` — ${value}`}</span>
     `;
 
     const body = document.createElement("div");
@@ -242,11 +276,12 @@ function createLogEntry(type, title, details = null)
     const logEntry = document.createElement("div");
     logEntry.classList.add('log-entry', type.class);
 
+    const d = dict[currentLang];
     let html = `
         <div class="log-header">
             <span class="log-icon">${type.icon}</span>
             <span class="log-title">${title}</span>
-            ${!currentLogGroup ? `<span class="log-step">Krok ${steps}</span>` : ''}
+            ${!currentLogGroup ? `<span class="log-step">${d.logStep(steps)}</span>` : ''}
         </div>
     `;
 
@@ -315,7 +350,7 @@ function applyLanguage()
         document.getElementById('bestCaseDesc').innerHTML = d.bestCase.desc;
         document.getElementById('btnRunBest').textContent = d.bestCase.btn;
         document.getElementById('bestInput').placeholder = d.enterNumber;
-        document.querySelector('#bestCaseInputGroup button').textContent = d.addNumber;
+        document.querySelector('#bestCaseInputGroup button').textContent = d.bestCase.insert;
     }
 
     if (d.worstCase) {
@@ -323,12 +358,22 @@ function applyLanguage()
         document.getElementById('worstCaseDesc').innerHTML = d.worstCase.desc;
         document.getElementById('btnRunWorst').textContent = d.worstCase.btn;
         document.getElementById('worstInput').placeholder = d.enterNumber;
-        document.querySelector('#worstCaseInputGroup button').textContent = d.addNumber;
+        document.querySelector('#worstCaseInputGroup button').textContent = d.worstCase.insert;
     }
 
     document.querySelector('#manualMode .input-group button').textContent = d.addNumber;
     document.getElementById('manualInput').placeholder = d.enterNumber;
+
+    document.querySelector('#randomMode h2').textContent = d.randomModeTitle;
+    document.querySelector('label[for="randomCount"]').textContent = d.randomCountLabel;
+    document.querySelector('label[for="randomMin"]').textContent   = d.randomMinLabel;
+    document.querySelector('label[for="randomMax"]').textContent   = d.randomMaxLabel;
+    document.getElementById('randomCount').placeholder = d.randomCountPlaceholder;
+    document.getElementById('randomMin').placeholder   = d.randomMinPlaceholder;
+    document.getElementById('randomMax').placeholder   = d.randomMaxPlaceholder;
     document.querySelector('#randomMode button').textContent = d.generateRandom;
+
+    document.querySelector('header h1').textContent = d.pageTitle;
 
     document.getElementById('creditCounter').textContent = `${d.coins}: 0`;
     document.getElementById('stepCounter').textContent   = `${d.steps}: 0`;

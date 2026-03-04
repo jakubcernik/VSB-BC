@@ -143,9 +143,7 @@ async function resizeArray()
 
             if (lenderIndex !== -1)
             {
-                updateInfoPanel(
-                    `Pozice <span class="log-badge slot">[${i}]</span> má <span class="log-badge coin">0 mincí</span> — půjčujeme z <span class="log-badge slot">[${lenderIndex}]</span>`
-                );
+                updateInfoPanel(d.borrowFromSlot(i, lenderIndex));
                 creditsPerSlot[lenderIndex]--;
                 updateCredits();
                 await animateCoinUpdate(lenderIndex, creditsPerSlot[lenderIndex]);
@@ -153,7 +151,7 @@ async function resizeArray()
             }
             else
             {
-                updateInfoPanel(`⚠️ Pozice <span class="log-badge slot">[${i}]</span> — invariant porušen, žádné mince!`);
+                updateInfoPanel(d.invariantBroken(i));
             }
         }
     }
@@ -287,7 +285,7 @@ async function finishBestCase()
     input.value = "";
     document.getElementById('bestCaseInputGroup').style.display = 'none';
     
-    createLogEntry(LOG_TYPES.SUCCESS, "Best Case - only one coin spent for push.");
+    createLogEntry(LOG_TYPES.SUCCESS, d.bestCaseDone);
 }
 
 function prepareWorstCase()
@@ -334,5 +332,5 @@ async function finishWorstCase()
     input.value = "";
     document.getElementById('worstCaseInputGroup').style.display = 'none';
 
-    createLogEntry(LOG_TYPES.SUCCESS, "Worst Case - full array caused resize + coins spent for push.");
+    createLogEntry(LOG_TYPES.SUCCESS, d.worstCaseDone);
 }
