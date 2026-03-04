@@ -1,0 +1,483 @@
+/* ═══════════════════════════════════════════════════════════════
+   theory.css  —  styles for the Theory page
+   Shares: body, footer, .toggle-pill, dark-mode from style.css
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Layout ─────────────────────────────────────────────────── */
+
+#theoryContainer {
+    width: 100%;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 30px 30px 100px;   /* bottom pad clears fixed footer */
+}
+
+/* ── Header ─────────────────────────────────────────────────── */
+
+#theoryContainer header h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #2a7a9b;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+/* ── Top navigation bar ──────────────────────────────────────── */
+
+#theoryNav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 32px;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+#theoryNav a {
+    color: #2a7a9b;
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+#theoryNav a:hover {
+    background: #e6f3f8;
+}
+
+.nav-divider {
+    color: #bbb;
+}
+
+#navTheoryActive {
+    color: #f0ad4e;
+    padding: 6px 14px;
+    border-radius: 8px;
+    background: #fff8ee;
+}
+
+/* ── Section cards ───────────────────────────────────────────── */
+
+.theory-section {
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
+    margin-bottom: 28px;
+    overflow: hidden;
+    animation: fadeUp 0.4s ease both;
+}
+
+.theory-section:nth-child(1) { animation-delay: 0.05s; }
+.theory-section:nth-child(2) { animation-delay: 0.10s; }
+.theory-section:nth-child(3) { animation-delay: 0.15s; }
+.theory-section:nth-child(4) { animation-delay: 0.20s; }
+.theory-section:nth-child(5) { animation-delay: 0.25s; }
+.theory-section:nth-child(6) { animation-delay: 0.30s; }
+.theory-section:nth-child(7) { animation-delay: 0.35s; }
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0);    }
+}
+
+.section-title {
+    background: #2a7a9b;
+    color: #ffffff;
+    padding: 14px 20px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.section-body {
+    padding: 20px 24px;
+    line-height: 1.75;
+    color: #333;
+}
+
+.section-body p {
+    margin-bottom: 12px;
+}
+
+.section-body code {
+    background: #eef5f9;
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.88em;
+    color: #2a7a9b;
+}
+
+/* ── Info box ────────────────────────────────────────────────── */
+
+.info-box {
+    background: #eef8f0;
+    border-left: 4px solid #4caf50;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    color: #2e7d32;
+    margin-top: 8px;
+}
+
+/* ── Two-column case cards ───────────────────────────────────── */
+
+.two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+@media (max-width: 600px) {
+    .two-col { grid-template-columns: 1fr; }
+}
+
+.case-card {
+    border-radius: 10px;
+    padding: 18px;
+    text-align: center;
+}
+
+.case-card.best {
+    background: #f1f8f4;
+    border: 2px solid #4caf50;
+}
+
+.case-card.worst {
+    background: #fff8f0;
+    border: 2px solid #ff9800;
+}
+
+.case-icon {
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+.case-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.case-card.best  h3 { color: #2e7d32; }
+.case-card.worst h3 { color: #e65100; }
+
+.case-card p {
+    font-size: 0.88rem;
+    color: #555;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ── Method tabs ────────────────────────────────────────────── */
+
+.method-tabs {
+    display: flex;
+    gap: 8px;
+    margin: 20px 0 0;
+    flex-wrap: wrap;
+}
+
+.method-tab {
+    background: #e8f2f7;
+    color: #2a7a9b;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 18px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.method-tab:hover {
+    background: #d0e8f2;
+}
+
+.method-tab.active {
+    background: #2a7a9b;
+    color: #fff;
+}
+
+.method-content {
+    display: none;
+    margin-top: 18px;
+    padding: 18px 20px;
+    border: 1px solid #dce8ee;
+    border-radius: 10px;
+    background: #f9fbfc;
+    animation: fadeUp 0.25s ease;
+}
+
+.method-content.active {
+    display: block;
+}
+
+.method-content h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2a7a9b;
+    margin-bottom: 10px;
+}
+
+/* ── Math blocks ────────────────────────────────────────────── */
+
+.math-block {
+    background: #1e2a38;
+    color: #e8f4fd;
+    font-family: 'Courier New', monospace;
+    font-size: 0.88rem;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 12px 0;
+    white-space: pre-wrap;
+    line-height: 1.7;
+}
+
+/* ── Coin demo (accounting) ──────────────────────────────────── */
+
+.coin-demo {
+    display: flex;
+    gap: 16px;
+    margin: 16px 0;
+    flex-wrap: wrap;
+}
+
+.coin-step {
+    flex: 1;
+    min-width: 160px;
+    background: #fffbf0;
+    border: 1px solid #ffe082;
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+}
+
+.demo-coins {
+    font-size: 1.6rem;
+    margin-bottom: 8px;
+}
+
+.coin-step p {
+    font-size: 0.83rem;
+    color: #555;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* ── Growth factor table ─────────────────────────────────────── */
+
+.growth-table-wrapper {
+    overflow-x: auto;
+    margin: 16px 0;
+}
+
+.growth-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.growth-table th,
+.growth-table td {
+    padding: 10px 14px;
+    border: 1px solid #d0dde5;
+    text-align: left;
+}
+
+.growth-table thead th {
+    background: #2a7a9b;
+    color: #fff;
+    font-weight: 600;
+}
+
+.growth-table tbody tr:nth-child(even) {
+    background: #f4f9fb;
+}
+
+.growth-table .highlight-row {
+    background: #fffbe6 !important;
+    font-weight: 600;
+}
+
+/* ── Complexity grid ────────────────────────────────────────── */
+
+.complexity-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.complexity-card {
+    border-radius: 10px;
+    border: 1px solid #dce8ee;
+    padding: 16px;
+    background: #f9fbfc;
+    text-align: center;
+}
+
+.complexity-op {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 6px;
+}
+
+.complexity-val {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.best-val      { color: #2e7d32; }
+.amortized-val { color: #f57c00; }
+.worst-val     { color: #c62828; }
+
+.complexity-note {
+    font-size: 0.78rem;
+    color: #888;
+    line-height: 1.4;
+}
+
+.legend {
+    font-size: 0.82rem;
+    color: #666;
+    border-left: 3px solid #f0ad4e;
+    padding-left: 10px;
+    margin-top: 4px;
+}
+
+/* ── CTA section ────────────────────────────────────────────── */
+
+.cta-section {
+    box-shadow: none;
+    background: transparent;
+}
+
+.cta-box {
+    background: linear-gradient(135deg, #2a7a9b 0%, #1a5570 100%);
+    border-radius: 14px;
+    padding: 32px 28px;
+    text-align: center;
+    color: #fff;
+}
+
+.cta-box p {
+    font-size: 1rem;
+    margin-bottom: 18px;
+    opacity: 0.9;
+    line-height: 1.6;
+}
+
+.cta-button {
+    display: inline-block;
+    background: #f0ad4e;
+    color: #333;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: background 0.25s, transform 0.15s;
+}
+
+.cta-button:hover {
+    background: #e49d42;
+    transform: scale(1.03);
+}
+
+/* ═══════════════ DARK MODE ════════════════════════════════════ */
+
+body.dark-mode #theoryContainer header h1 {
+    color: #64b5d6;
+}
+
+body.dark-mode #theoryNav a {
+    color: #64b5d6;
+}
+
+body.dark-mode #theoryNav a:hover {
+    background: #2a3a44;
+}
+
+body.dark-mode #navTheoryActive {
+    color: #ffcc80;
+    background: #3a3020;
+}
+
+body.dark-mode .theory-section {
+    background: #2e2e2e;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .section-title {
+    background: #1a5570;
+}
+
+body.dark-mode .section-body {
+    color: #ddd;
+}
+
+body.dark-mode .section-body code {
+    background: #1a3a4a;
+    color: #80d4f0;
+}
+
+body.dark-mode .info-box {
+    background: #1a3020;
+    border-left-color: #4caf50;
+    color: #a5d6a7;
+}
+
+body.dark-mode .case-card.best  { background: #1a3020; border-color: #4caf50; }
+body.dark-mode .case-card.worst { background: #3a2010; border-color: #ff9800; }
+body.dark-mode .case-card p     { color: #aaa; }
+
+body.dark-mode .method-tab {
+    background: #3a3a3a;
+    color: #80d4f0;
+}
+body.dark-mode .method-tab:hover { background: #444; }
+body.dark-mode .method-tab.active {
+    background: #2a7a9b;
+    color: #fff;
+}
+
+body.dark-mode .method-content {
+    background: #252525;
+    border-color: #3a4a54;
+    color: #ddd;
+}
+
+body.dark-mode .coin-step {
+    background: #2e2810;
+    border-color: #b8860b;
+}
+body.dark-mode .coin-step p { color: #bbb; }
+
+body.dark-mode .growth-table th,
+body.dark-mode .growth-table td {
+    border-color: #3a4a54;
+    color: #ddd;
+}
+body.dark-mode .growth-table thead th  { background: #1a5570; }
+body.dark-mode .growth-table tbody tr:nth-child(even) { background: #2a2a2a; }
+body.dark-mode .growth-table .highlight-row {
+    background: #2e2810 !important;
+    color: #ffe082;
+}
+
+body.dark-mode .complexity-card {
+    background: #2a2a2a;
+    border-color: #3a4a54;
+}
+body.dark-mode .complexity-op   { color: #ccc; }
+body.dark-mode .complexity-note { color: #777; }
+
+body.dark-mode .legend { color: #999; border-left-color: #f0ad4e; }
+
+body.dark-mode .cta-box { background: linear-gradient(135deg, #1a5570 0%, #0e3347 100%); }
+

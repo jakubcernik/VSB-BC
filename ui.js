@@ -16,6 +16,8 @@ const dict = {
         random: 'Random',
         pageTitle: 'Amortized complexity for vector<>',
         randomModeTitle: 'Random Mode',
+        pageNavSim:    'Simulation',
+        pageNavTheory: 'Theory',
 
         bestCase: {
             title: 'Best Case',
@@ -90,6 +92,8 @@ const dict = {
         random: 'Náhodně',
         pageTitle: 'Amortizovaná složitost pro vector<>',
         randomModeTitle: 'Náhodný režim',
+        pageNavSim:    'Simulace',
+        pageNavTheory: 'Teorie',
 
         bestCase: {
             title: 'Nejlepší případ',
@@ -170,6 +174,14 @@ function reloadWithTransition(beforeReload)
         if (beforeReload) beforeReload();
         window.location.reload();
     }, 350);
+}
+
+function navigateToPage(event, url)
+{
+    event.preventDefault();
+    const overlay = document.getElementById('pageTransitionOverlay');
+    overlay.classList.add('visible');
+    setTimeout(() => { window.location.href = url; }, 350);
 }
 
 function toggleTheme()
@@ -374,6 +386,8 @@ function applyLanguage()
     document.querySelector('#randomMode button').textContent = d.generateRandom;
 
     document.querySelector('header h1').textContent = d.pageTitle;
+    document.getElementById('pageNavSimLabel').textContent   = d.pageNavSim;
+    document.getElementById('pageNavTheoryLabel').textContent = d.pageNavTheory;
 
     document.getElementById('creditCounter').textContent = `${d.coins}: 0`;
     document.getElementById('stepCounter').textContent   = `${d.steps}: 0`;

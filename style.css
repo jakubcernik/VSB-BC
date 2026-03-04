@@ -777,3 +777,53 @@ body.dark-mode footer button:hover {
 {
     margin-bottom: 50px;
 }
+
+/* ── Page navigation (Simulation ↔ Theory) ─────────────────── */
+
+#pageNav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    margin-top: 8px;
+    margin-bottom: 4px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+#pageNavSimActive {
+    color: #f0ad4e;
+    padding: 5px 12px;
+    border-radius: 8px;
+    background: #fff8ee;
+}
+
+.page-nav-divider {
+    color: #bbb;
+}
+
+#pageNavTheory {
+    color: #2a7a9b;
+    text-decoration: none;
+    padding: 5px 12px;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+#pageNavTheory:hover {
+    background: #e6f3f8;
+}
+
+body.dark-mode #pageNavSimActive {
+    color: #ffcc80;
+    background: #3a3020;
+}
+
+body.dark-mode #pageNavTheory {
+    color: #64b5d6;
+}
+
+body.dark-mode #pageNavTheory:hover {
+    background: #2a3a44;
+}
+
