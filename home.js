@@ -18,8 +18,8 @@ const homeDict = {
         algoTitle1: 'Dynamic Array — vector<>',
         algoDesc1:  'Explore how a dynamic array grows automatically and learn why repeated push_back runs in amortized O(1) using the coin-based accounting method.',
 
-        algoTitle2: 'Algorithm 2',
-        algoDesc2:  'This algorithm is currently being prepared. Check back later.',
+        algoTitle2: 'Binary Counter',
+        algoDesc2:  'Explore how a k-bit binary counter increments and learn why N increments cost only O(N) total — amortized O(1) each — using the coin-based accounting method.',
 
         algoTitle3: 'Algorithm 3',
         algoDesc3:  'This algorithm is currently being prepared. Check back later.',
@@ -39,8 +39,8 @@ const homeDict = {
         algoTitle1: 'Dynamické pole — vector<>',
         algoDesc1:  'Prozkoumej, jak se dynamické pole automaticky zvětšuje, a pochop proč opakovaný push_back běží v amortizovaném O(1) pomocí mincové účetní metody.',
 
-        algoTitle2: 'Algoritmus 2',
-        algoDesc2:  'Tento algoritmus se právě připravuje. Brzy bude dostupný.',
+        algoTitle2: 'Binární čítač',
+        algoDesc2:  'Prozkoumej, jak k-bitový binární čítač inkrementuje, a pochop proč N inkrementací stojí celkem O(N) — amortizovaně O(1) každá — pomocí mincové účetní metody.',
 
         algoTitle3: 'Algoritmus 3',
         algoDesc3:  'Tento algoritmus se právě připravuje. Brzy bude dostupný.',
@@ -101,12 +101,13 @@ function applyLanguage() {
     document.getElementById('footerText').textContent   = d.footer;
 
     document.getElementById('tagAvailable1').textContent = d.tagAvailable;
-    document.getElementById('tagSoon2').textContent      = d.tagSoon;
+    document.getElementById('tagAvailable2').textContent = d.tagAvailable;
     document.getElementById('tagSoon3').textContent      = d.tagSoon;
-    document.getElementById('chipLocked2').textContent   = d.chipLocked;
     document.getElementById('chipLocked3').textContent   = d.chipLocked;
     document.getElementById('chip1Sim').textContent      = d.chipSim;
     document.getElementById('chip1Theory').textContent   = d.chipTheory;
+    document.getElementById('chip2Sim').textContent      = d.chipSim;
+    document.getElementById('chip2Theory').textContent   = d.chipTheory;
 
     document.getElementById('algoTitle1').innerHTML = `${d.algoTitle1}`;
     document.getElementById('algoDesc1').textContent  = d.algoDesc1;

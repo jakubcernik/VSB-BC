@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theory — Binary Counter</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="theory.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<div id="pageTransitionOverlay"></div>
+
+<div id="theoryContainer">
+
+    <header>
+        <h1 id="theoryMainTitle">Amortized Complexity — Binary Counter</h1>
+    </header>
+
+    <!-- Page navigation -->
+    <nav id="theoryNav">
+        <a href="index.html" id="navHome" onclick="navigateTo(event, 'index.html')">🏠 <span id="navHomeLabel">Home</span></a>
+        <span class="nav-divider">|</span>
+        <a href="binary-counter.html" id="navSimulation" onclick="navigateTo(event, 'binary-counter.html')">⚙️ <span id="navSimLabel">Simulation</span></a>
+        <span class="nav-divider">|</span>
+        <span id="navTheoryActive">📖 <span id="navTheoryLabel">Theory</span></span>
+    </nav>
+
+    <main id="theoryContent">
+
+        <!-- 1. Introduction -->
+        <section class="theory-section" id="sec-intro">
+            <h2 class="section-title" id="titleIntro">1. What is a Binary Counter?</h2>
+            <div class="section-body">
+                <p id="introP1"></p>
+                <p id="introP2"></p>
+                <div class="info-box" id="introBox"></div>
+            </div>
+        </section>
+
+        <!-- 2. INCREMENT operation -->
+        <section class="theory-section" id="sec-increment">
+            <h2 class="section-title" id="titleIncrement">2. The INCREMENT Operation</h2>
+            <div class="section-body">
+                <p id="incrementP1"></p>
+                <div class="two-col">
+                    <div class="case-card best" id="cardBest">
+                        <div class="case-icon">✅</div>
+                        <h3 id="cardBestTitle">Best Case — O(1)</h3>
+                        <p id="cardBestDesc"></p>
+                    </div>
+                    <div class="case-card worst" id="cardWorst">
+                        <div class="case-icon">⚠️</div>
+                        <h3 id="cardWorstTitle">Worst Case — O(k)</h3>
+                        <p id="cardWorstDesc"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Naive analysis -->
+        <section class="theory-section" id="sec-naive">
+            <h2 class="section-title" id="titleNaive">3. Why Naive Analysis Overestimates</h2>
+            <div class="section-body">
+                <p id="naiveP1"></p>
+                <p id="naiveP2"></p>
+            </div>
+        </section>
+
+        <!-- 4. Amortized analysis -->
+        <section class="theory-section" id="sec-amortized">
+            <h2 class="section-title" id="titleAmortized">4. Amortized Analysis</h2>
+            <div class="section-body">
+                <p id="amortizedP1"></p>
+
+                <!-- Method tabs -->
+                <div class="method-tabs">
+                    <button class="method-tab active" onclick="showMethod('aggregate')" id="tabAggregate">Aggregate Method</button>
+                    <button class="method-tab" onclick="showMethod('accounting')" id="tabAccounting">Accounting Method</button>
+                    <button class="method-tab" onclick="showMethod('potential')" id="tabPotential">Potential Method</button>
+                </div>
+
+                <!-- Aggregate -->
+                <div class="method-content active" id="method-aggregate">
+                    <h3 id="aggregateTitle">Aggregate Method</h3>
+                    <p id="aggregateP1"></p>
+                    <div class="math-block" id="aggregateMath"></div>
+                    <p id="aggregateP2"></p>
+                    <div class="math-block" id="aggregateMath2"></div>
+                    <p id="aggregateConclusion"></p>
+                </div>
+
+                <!-- Accounting -->
+                <div class="method-content" id="method-accounting">
+                    <h3 id="accountingTitle">Accounting Method</h3>
+                    <p id="accountingP1"></p>
+                    <div class="coin-demo">
+                        <div class="coin-step">
+                            <div class="demo-coins">🪙🪙</div>
+                            <p id="coinStep1"></p>
+                        </div>
+                        <div class="coin-step">
+                            <div class="demo-coins">💳</div>
+                            <p id="coinStep2"></p>
+                        </div>
+                        <div class="coin-step">
+                            <div class="demo-coins">🏦</div>
+                            <p id="coinStep3"></p>
+                        </div>
+                        <div class="coin-step">
+                            <div class="demo-coins">💳</div>
+                            <p id="coinStep4"></p>
+                        </div>
+                    </div>
+                    <div class="math-block" id="accountingMath"></div>
+                    <p id="accountingConclusion"></p>
+                </div>
+
+                <!-- Potential -->
+                <div class="method-content" id="method-potential">
+                    <h3 id="potentialTitle">Potential Method</h3>
+                    <p id="potentialP1"></p>
+                    <div class="math-block" id="potentialMath"></div>
+                    <p id="potentialP2"></p>
+                    <div class="math-block" id="potentialMath2"></div>
+                    <p id="potentialConclusion"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Bit-flip table -->
+        <section class="theory-section" id="sec-table">
+            <h2 class="section-title" id="titleTable">5. Bit-Flip Frequency Table</h2>
+            <div class="section-body">
+                <p id="tableP1"></p>
+                <div class="growth-table-wrapper">
+                    <table class="growth-table">
+                        <thead>
+                            <tr>
+                                <th id="thBit">Bit position</th>
+                                <th id="thWeight">Weight 2^i</th>
+                                <th id="thFreq">Flips per N increments</th>
+                                <th id="thContrib">Contribution</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>bit 0 (LSB)</td><td>1</td>
+                                <td id="tdFreq0">N</td>
+                                <td id="tdContrib0">N · 1 = N</td>
+                            </tr>
+                            <tr>
+                                <td>bit 1</td><td>2</td>
+                                <td id="tdFreq1">N/2</td>
+                                <td id="tdContrib1">N/2 · 1 = N/2</td>
+                            </tr>
+                            <tr>
+                                <td>bit 2</td><td>4</td>
+                                <td id="tdFreq2">N/4</td>
+                                <td id="tdContrib2">N/4 · 1 = N/4</td>
+                            </tr>
+                            <tr class="highlight-row">
+                                <td id="tdBitK">bit k</td><td id="tdWeightK">2^k</td>
+                                <td id="tdFreqK">N/2^k</td>
+                                <td id="tdContribK">N/2^k · 1 = N/2^k</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p id="tableP2"></p>
+            </div>
+        </section>
+
+        <!-- 6. Complexity summary -->
+        <section class="theory-section" id="sec-summary">
+            <h2 class="section-title" id="titleSummary">6. Complexity Summary</h2>
+            <div class="section-body">
+                <div class="complexity-grid">
+                    <div class="complexity-card">
+                        <div class="complexity-op" id="opIncrement">INCREMENT (amortized)</div>
+                        <div class="complexity-val amortized-val">O(1)*</div>
+                        <div class="complexity-note" id="noteIncrement"></div>
+                    </div>
+                    <div class="complexity-card">
+                        <div class="complexity-op" id="opIncrementWorst">INCREMENT (worst)</div>
+                        <div class="complexity-val worst-val">O(k)</div>
+                        <div class="complexity-note" id="noteIncrementWorst"></div>
+                    </div>
+                    <div class="complexity-card">
+                        <div class="complexity-op" id="opNIncrements">N increments total</div>
+                        <div class="complexity-val best-val">O(N)</div>
+                        <div class="complexity-note" id="noteNIncrements"></div>
+                    </div>
+                    <div class="complexity-card">
+                        <div class="complexity-op" id="opSpace">Space</div>
+                        <div class="complexity-val best-val">O(k)</div>
+                        <div class="complexity-note" id="noteSpace"></div>
+                    </div>
+                </div>
+                <p class="legend" id="legendAmortized"></p>
+            </div>
+        </section>
+
+        <!-- 7. Go to simulation -->
+        <section class="theory-section cta-section" id="sec-cta">
+            <div class="cta-box">
+                <p id="ctaText"></p>
+                <a href="binary-counter.html" onclick="navigateTo(event, 'binary-counter.html')" class="cta-button" id="ctaButton">⚙️ Open Simulation</a>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<footer>
+    <p id="footerText"></p>
+    <div class="footer-controls">
+        <div class="toggle-pill" id="langToggle" onclick="toggleLanguage()" title="Změnit jazyk / Change language">
+            <div class="toggle-option" id="langOptCZ">
+                <img src="sources/czech-republic.png" alt="CZ">
+            </div>
+            <div class="toggle-option" id="langOptEN">
+                <img src="sources/united-kingdom.png" alt="EN">
+            </div>
+        </div>
+        <div class="toggle-pill" id="themeToggle" onclick="toggleTheme()" title="Přepnout téma / Switch theme">
+            <div class="toggle-option" id="themeOptLight"><span>☀️</span></div>
+            <div class="toggle-option" id="themeOptDark"><img src="sources/night-mode.png" alt="Dark"></div>
+        </div>
+    </div>
+</footer>
+
+<script src="binary-counter-theory.js"></script>
+</body>
+</html>
+
