@@ -30,8 +30,8 @@ const dict = {
 
         // Manual
         manualTitle:      'Manual Mode',
-        keyLabel:         'Key',
-        valueLabel:       'Value',
+        keyLabel:         'Key (int):',
+        valueLabel:       'Value (string/number):',
         keyPH:            'e.g. 13',
         valuePH:          'e.g. 42',
         btnInsert:        'Insert',
@@ -79,7 +79,12 @@ const dict = {
 
         insertCharge:     (c) => `💰 INSERT starts: received <span class="coin-text">${c} coins</span> (fixed amortized charge)`,
         probeCheck:       (i) => `🔎 Probe slot <span class="log-badge slot">[${i}]</span>`,
+        probeNext:        (i) => `➡️ Next slot to try: <span class="log-badge slot">[${i}]</span>`,
         probeCollision:   (i) => `💥 Collision at <span class="log-badge slot">[${i}]</span> — continue probing`,
+        updateFound:      (i) => `🛠️ Key already exists in <span class="log-badge slot">[${i}]</span> — performing <strong>UPDATE</strong> (standard hash table behavior)`,
+        updateBorrowCoin: (i) => `💳 Slot <span class="log-badge slot">[${i}]</span>: temporarily use the <span class="coin-text">saved coin</span> to pay for UPDATE`,
+        updateDone:       (i) => `✅ Updated value in <span class="log-badge slot">[${i}]</span> — spent <span class="coin-text">1 coin</span>`,
+        updateReturnCoin: (i) => `🏦 Returned <span class="coin-text">1 coin</span> back onto <span class="log-badge slot">[${i}]</span> (reserve stays for future rehash)`,
         placeElement:     (i) => `✅ Placed element into <span class="log-badge slot">[${i}]</span> — spent <span class="coin-text">1 coin</span>`,
         saveForRehash:    (i) => `🏦 Saved <span class="coin-text">1 coin</span> on <span class="log-badge slot">[${i}]</span> for future rehash`,
 
@@ -106,8 +111,8 @@ const dict = {
 
         // Manual
         manualTitle:      'Manuální režim',
-        keyLabel:         'Klíč',
-        valueLabel:       'Hodnota',
+        keyLabel:         'Klíč (int):',
+        valueLabel:       'Hodnota (string/číslo):',
         keyPH:            'např. 13',
         valuePH:          'např. 42',
         btnInsert:        'Vložit',
@@ -155,7 +160,12 @@ const dict = {
 
         insertCharge:     (c) => `💰 INSERT začíná: přijaty <span class="coin-text">${c} mince</span> (pevný amortizovaný poplatek)`,
         probeCheck:       (i) => `🔎 Kontroluji slot <span class="log-badge slot">[${i}]</span>`,
+        probeNext:        (i) => `➡️ Další slot: <span class="log-badge slot">[${i}]</span>`,
         probeCollision:   (i) => `💥 Kolize ve <span class="log-badge slot">[${i}]</span> — pokračuji dál`,
+        updateFound:      (i) => `🛠️ Klíč už existuje ve <span class="log-badge slot">[${i}]</span> — provádím <strong>UPDATE</strong> (standardní chování hash tabulky)`,
+        updateBorrowCoin: (i) => `💳 Slot <span class="log-badge slot">[${i}]</span>: dočasně používám <span class="coin-text">ušetřenou minci</span> na zaplacení UPDATE`,
+        updateDone:       (i) => `✅ Hodnota aktualizována ve <span class="log-badge slot">[${i}]</span> — utracena <span class="coin-text">1 mince</span>`,
+        updateReturnCoin: (i) => `🏦 Vracím <span class="coin-text">1 minci</span> zpět na <span class="log-badge slot">[${i}]</span> (rezerva zůstává pro budoucí rehash)`,
         placeElement:     (i) => `✅ Uloženo do <span class="log-badge slot">[${i}]</span> — utracena <span class="coin-text">1 mince</span>`,
         saveForRehash:    (i) => `🏦 Uložena <span class="coin-text">1 mince</span> na <span class="log-badge slot">[${i}]</span> pro budoucí rehash`,
 

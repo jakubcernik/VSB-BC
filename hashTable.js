@@ -17,7 +17,7 @@
 // ─── State ────────────────────────────────────────────────────────────────────
 const INITIAL_CAPACITY = 8;
 const LOAD_THRESHOLD = 0.75;
-const INSERT_CHARGE = 3;
+const INSERT_CHARGE = 2;
 
 let capacity = INITIAL_CAPACITY;
 let size = 0; // number of live entries
@@ -153,6 +153,8 @@ function findSlotForKey(keyInt, cap = capacity, arr = table) {
     const h = hashKey(keyInt) % cap;
     for (let offset = 0; offset < cap; offset++) {
         const i = (h + offset) % cap;
+        // Standard open-addressing rule: stop either on the matching key (UPDATE)
+        // or on the first empty slot (INSERT).
         if (!arr[i] || arr[i].key === keyInt) return i;
     }
     return -1; // full
@@ -223,28 +225,63 @@ async function insertKV(keyInt, value) {
         createLogEntry(LOG_TYPES.PROBE, d.probeCheck(i));
         await new Promise(r => setTimeout(r, getDelay(250)));
 
-        if (table[i] && table[i].key !== keyInt) {
-            // collision
-            if (bank > 0) bank--; // spend 1 coin for a probing step
+        // If the key already exists, a standard hash table performs UPDATE.
+        if (table[i] && table[i].key === keyInt) {
+            // (Coin model) UPDATE costs 1 step. We pay it using the coin saved on this element.
+            createLogEntry(LOG_TYPES.INFO, d.updateFound(i));
+            await new Promise(r => setTimeout(r, getDelay(180)));
+
+            if (coinsOnSlot[i] > 0) {
+                coinsOnSlot[i] -= 1;
+                bank += 1;
+                renderTable(i);
+                createLogEntry(LOG_TYPES.INFO, d.updateBorrowCoin(i));
+                await new Promise(r => setTimeout(r, getDelay(160)));
+            }
+
+            // do the update
+            table[i].value = value;
+            if (bank > 0) bank -= 1;
+            createLogEntry(LOG_TYPES.SUCCESS, d.updateDone(i));
+            await new Promise(r => setTimeout(r, getDelay(160)));
+
+            // return the coin back to the element so invariants for rehash stay intact
+            if (coinsOnSlot[i] === 0) {
+                coinsOnSlot[i] = 1;
+                renderTable(i);
+                createLogEntry(LOG_TYPES.INFO, d.updateReturnCoin(i));
+                await new Promise(r => setTimeout(r, getDelay(140)));
+            }
+
+            placedAt = i;
+            renderTable(i);
+            break;
+        }
+
+        // Occupied by a different key => collision, continue probing
+        if (table[i]) {
+            if (bank > 0) bank--; // spend 1 coin for probing
             createLogEntry(LOG_TYPES.WARNING, d.probeCollision(i));
             await new Promise(r => setTimeout(r, getDelay(200)));
+
+            const next = (i + 1) % capacity;
+            renderTable(next);
+            createLogEntry(LOG_TYPES.PROBE, d.probeNext(next));
+            await new Promise(r => setTimeout(r, getDelay(180)));
             continue;
         }
 
-        // write / update
-        const isNew = !table[i];
+        // write
         table[i] = { key: keyInt, value };
-        if (isNew) size++;
+        size++;
 
         // 1 coin pays for placement
         if (bank > 0) bank--;
         createLogEntry(LOG_TYPES.SUCCESS, d.placeElement(i));
 
-        // 1 coin saved on element for future rehash (only if new)
-        if (isNew) {
-            coinsOnSlot[i] = 1;
-            createLogEntry(LOG_TYPES.INFO, d.saveForRehash(i));
-        }
+        // Save 1 coin on the element for future rehash.
+        coinsOnSlot[i] = 1;
+        createLogEntry(LOG_TYPES.INFO, d.saveForRehash(i));
 
         placedAt = i;
         renderTable(i);

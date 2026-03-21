@@ -46,11 +46,11 @@ const theoryDict = {
         aggregateConclusion: 'Total cost is O(N), so amortized cost per INSERT is O(1).',
 
         accountingTitle: 'Accounting Method',
-        accountingP1:    'Charge each INSERT a fixed fee of 3 coins. Spend and save coins so that future rehashes are always paid without going into debt:',
-        coinStep1: '<strong>3 coins</strong> are received at the start of every INSERT (fixed amortized charge).',
-        coinStep2: '<strong>1 coin</strong> pays for placing the new element into the table.',
+        accountingP1:    'Charge each INSERT a fixed fee of 2 coins. Spend and save coins so that future rehashes are always paid without going into debt:',
+        coinStep1: '<strong>2 coins</strong> are received at the start of every INSERT (fixed amortized charge).',
+        coinStep2: '<strong>1 coin</strong> pays for placing the new element into the table (the write).',
         coinStep3: '<strong>1 coin</strong> is saved <em>on that element</em> to pay for moving it during a future rehash.',
-        coinStep4: 'The remaining <strong>1 coin</strong> is a small reserve used to pay for probing steps caused by collisions.',
+        coinStep4: 'Collisions (probing) can still make a single operation slower, but rehashing itself is fully paid by the saved coins.',
         accountingMath: 'When resize happens, each of the n stored elements spends its saved coin to pay for exactly one move into the new table. Therefore the rehash cost is fully paid by saved coins.',
         accountingConclusion: 'Since each INSERT is charged a constant number of coins and we never borrow from the future, INSERT runs in amortized O(1).',
 
@@ -122,11 +122,11 @@ const theoryDict = {
         aggregateConclusion: 'Celková cena je O(N), takže amortizovaně vychází INSERT jako O(1).',
 
         accountingTitle: 'Účetní metoda',
-        accountingP1:    'Každému INSERT naúčtujeme pevný poplatek 3 mince. Mince utratíme a uložíme tak, aby byly budoucí rehashe vždy zaplacené bez dluhu:',
-        coinStep1: '<strong>3 mince</strong> se přidělí na začátku každého INSERT (pevný amortizovaný poplatek).',
-        coinStep2: '<strong>1 mince</strong> zaplatí uložení nového prvku do tabulky.',
+        accountingP1:    'Každému INSERT naúčtujeme pevný poplatek 2 mince. Mince utratíme a uložíme tak, aby byly budoucí rehashe vždy zaplacené bez dluhu:',
+        coinStep1: '<strong>2 mince</strong> se přidělí na začátku každého INSERT (pevný amortizovaný poplatek).',
+        coinStep2: '<strong>1 mince</strong> zaplatí uložení nového prvku do tabulky (zápis).',
         coinStep3: '<strong>1 mince</strong> se uloží <em>na tento prvek</em> a později zaplatí jeho přesun při rehashi.',
-        coinStep4: 'Zbývající <strong>1 mince</strong> je malá rezerva na probing kroky způsobené kolizemi.',
+        coinStep4: 'Kolize (probing) mohou jednu operaci zpomalit, ale samotný rehash je plně zaplacen ušetřenými mincemi.',
         accountingMath: 'Když nastane resize, každý z n uložených prvků utratí svou ušetřenou minci a zaplatí přesně jeden přesun do nové tabulky. Rehash je tedy plně zaplacen ušetřenými mincemi.',
         accountingConclusion: 'Protože každý INSERT účtuje konstantní počet mincí a nikdy si nepůjčujeme z budoucnosti, INSERT běží v amortizovaném O(1).',
 
@@ -169,6 +169,11 @@ function navigateToPage(event, url) {
     setTimeout(() => { window.location.href = url; }, 350);
 }
 
+// Keep naming consistent with other theory pages
+function navigateTo(event, url) {
+    navigateToPage(event, url);
+}
+
 function toggleTheme() {
     const isDark = document.body.classList.contains('dark-mode');
     reloadWithTransition(() => localStorage.setItem('theme', isDark ? 'light' : 'dark'));
@@ -192,24 +197,23 @@ function updateLangToggleUI() {
     document.getElementById('langOptEN').classList.toggle('active', currentLang === 'en');
 }
 
-function showTab(tabId) {
-    document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    document.getElementById(`tab${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`).classList.add('active');
-    document.getElementById(tabId).classList.add('active');
+function showMethod(method) {
+    document.querySelectorAll('.method-tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.method-content').forEach(c => c.classList.remove('active'));
+    document.getElementById(`tab${method.charAt(0).toUpperCase() + method.slice(1)}`).classList.add('active');
+    document.getElementById(method).classList.add('active');
 }
 
 function applyLanguage() {
     const d = theoryDict[currentLang];
 
     document.title = d.pageTitle;
-    document.getElementById('pageTitle').textContent = d.pageTitle;
-    document.getElementById('pageNavHomeLabel').textContent = d.navHome;
-    document.getElementById('pageNavSimLabel').textContent = d.navSimulation;
-    document.getElementById('pageNavTheoryLabel').textContent = d.navTheory;
+    document.getElementById('theoryMainTitle').textContent = d.mainTitle;
+    document.getElementById('navHomeLabel').textContent = d.navHome;
+    document.getElementById('navSimLabel').textContent = d.navSimulation;
+    document.getElementById('navTheoryLabel').textContent = d.navTheory;
     document.getElementById('footerText').textContent = d.footer;
 
-    document.getElementById('mainTitle').textContent = d.mainTitle;
 
     document.getElementById('titleIntro').textContent = d.titleIntro;
     document.getElementById('titleInsert').textContent = d.titleInsert;
