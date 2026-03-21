@@ -1,0 +1,112 @@
+/* hash-table.css – styles specific to the Hash Table visualization */
+
+#hashTableWrap {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+#hashMeta {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    background: rgba(42, 122, 155, 0.06);
+    border: 1px solid rgba(42, 122, 155, 0.18);
+    border-radius: 12px;
+    padding: 12px 14px;
+}
+
+#hashMeta .meta-item {
+    font-size: 0.95rem;
+    color: #395a64;
+}
+
+#hashTableVisualization {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(140px, 1fr));
+    gap: 12px;
+}
+
+.hash-slot {
+    border: 2px solid #ddd;
+    background: #fafafa;
+    border-radius: 12px;
+    padding: 10px;
+    position: relative;
+    min-height: 86px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.hash-slot.slot-highlight {
+    border-color: #2a7a9b;
+    background: rgba(42, 122, 155, 0.08);
+    transform: translateY(-1px);
+}
+
+.hash-slot .slot-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.hash-slot .slot-index {
+    font-weight: 700;
+    color: #2a7a9b;
+}
+
+.hash-slot .slot-state {
+    font-size: 0.85rem;
+    color: #777;
+}
+
+.hash-slot .slot-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.hash-kv {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.9rem;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+.hash-coins {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    min-height: 18px;
+}
+
+.hash-coin {
+    width: 14px;
+    height: 14px;
+    background: linear-gradient(45deg, #ffcc00, #ffaa00);
+    border-radius: 50%;
+    border: 1px solid #e6b800;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 860px) {
+    #hashTableVisualization {
+        grid-template-columns: repeat(2, minmax(140px, 1fr));
+    }
+}
+
+@media (max-width: 520px) {
+    #hashTableVisualization {
+        grid-template-columns: 1fr;
+    }
+}
+

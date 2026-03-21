@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amortized Complexity — Hash Table</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="theory.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<div id="pageTransitionOverlay"></div>
+<div id="container">
+    <header>
+        <h1 id="pageTitle">Amortized Complexity — Hash Table</h1>
+        <nav id="pageNav">
+            <a href="index.html" id="pageNavHome" onclick="navigateToPage(event, 'index.html')">🏠 <span id="pageNavHomeLabel">Home</span></a>
+            <span class="page-nav-divider">|</span>
+            <a href="hash-table.html" id="pageNavSim" onclick="navigateToPage(event, 'hash-table.html')">⚙️ <span id="pageNavSimLabel">Simulation</span></a>
+            <span class="page-nav-divider">|</span>
+            <span id="pageNavTheoryActive">📖 <span id="pageNavTheoryLabel">Theory</span></span>
+        </nav>
+    </header>
+
+    <main>
+        <h2 id="mainTitle">Amortized Complexity — Hash Table</h2>
+
+        <section class="theory-section">
+            <h3 id="titleIntro">1. What is a Hash Table?</h3>
+            <p id="introP1"></p>
+            <p id="introP2"></p>
+            <div class="info-box" id="introBox"></div>
+        </section>
+
+        <section class="theory-section">
+            <h3 id="titleInsert">2. INSERT with Open Addressing</h3>
+            <p id="insertP1"></p>
+            <div class="cards">
+                <div class="card">
+                    <h4 id="cardBestTitle">Best Case — O(1)</h4>
+                    <p id="cardBestDesc"></p>
+                </div>
+                <div class="card">
+                    <h4 id="cardWorstTitle">Worst Case — O(n)</h4>
+                    <p id="cardWorstDesc"></p>
+                </div>
+            </div>
+        </section>
+
+        <section class="theory-section">
+            <h3 id="titleResize">3. Resizing and Rehashing</h3>
+            <p id="resizeP1"></p>
+            <p id="resizeP2"></p>
+            <div class="info-box" id="resizeBox"></div>
+        </section>
+
+        <section class="theory-section">
+            <h3 id="titleAmortized">4. Amortized Analysis</h3>
+            <p id="amortizedP1"></p>
+
+            <div class="tabs">
+                <button class="tab-button active" onclick="showTab('aggregate')" id="tabAggregate">Aggregate Method</button>
+                <button class="tab-button" onclick="showTab('accounting')" id="tabAccounting">Accounting Method</button>
+                <button class="tab-button" onclick="showTab('potential')" id="tabPotential">Potential Method</button>
+            </div>
+
+            <div id="aggregate" class="tab-content active">
+                <h4 id="aggregateTitle">Aggregate Method</h4>
+                <p id="aggregateP1"></p>
+                <div class="math" id="aggregateMath"></div>
+                <p id="aggregateP2"></p>
+                <div class="math" id="aggregateMath2"></div>
+                <p id="aggregateConclusion"></p>
+            </div>
+
+            <div id="accounting" class="tab-content">
+                <h4 id="accountingTitle">Accounting Method</h4>
+                <p id="accountingP1"></p>
+                <ul class="coin-steps">
+                    <li id="coinStep1"></li>
+                    <li id="coinStep2"></li>
+                    <li id="coinStep3"></li>
+                    <li id="coinStep4"></li>
+                </ul>
+                <div class="math" id="accountingMath"></div>
+                <p id="accountingConclusion"></p>
+            </div>
+
+            <div id="potential" class="tab-content">
+                <h4 id="potentialTitle">Potential Method</h4>
+                <p id="potentialP1"></p>
+                <div class="math" id="potentialMath"></div>
+                <p id="potentialP2"></p>
+                <div class="math" id="potentialMath2"></div>
+                <p id="potentialConclusion"></p>
+            </div>
+        </section>
+
+        <section class="theory-section">
+            <h3 id="titleSummary">5. Complexity Summary</h3>
+            <table class="summary-table">
+                <thead>
+                <tr>
+                    <th id="thOp">Operation</th>
+                    <th id="thCost">Cost</th>
+                    <th id="thNote">Note</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td id="opInsert">INSERT (amortized)</td>
+                    <td><strong>O(1)</strong></td>
+                    <td id="noteInsert"></td>
+                </tr>
+                <tr>
+                    <td id="opInsertWorst">INSERT (single worst)</td>
+                    <td><strong>O(n)</strong></td>
+                    <td id="noteInsertWorst"></td>
+                </tr>
+                <tr>
+                    <td id="opSpace">Space</td>
+                    <td><strong>O(n)</strong></td>
+                    <td id="noteSpace"></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <p class="legend" id="legendAmortized"></p>
+        </section>
+
+        <section class="cta">
+            <p id="ctaText"></p>
+            <button onclick="window.location.href='hash-table.html'" id="ctaButton">⚙️ Open Simulation</button>
+        </section>
+    </main>
+
+    <footer>
+        <p id="footerText"></p>
+        <div class="footer-controls">
+            <div class="toggle-pill" id="langToggle" onclick="toggleLanguage()" title="Změnit jazyk / Change language">
+                <div class="toggle-option" id="langOptCZ">
+                    <img src="sources/czech-republic.png" alt="CZ">
+                </div>
+                <div class="toggle-option" id="langOptEN">
+                    <img src="sources/united-kingdom.png" alt="EN">
+                </div>
+            </div>
+            <div class="toggle-pill" id="themeToggle" onclick="toggleTheme()" title="Přepnout téma / Switch theme">
+                <div class="toggle-option" id="themeOptLight"><span>☀️</span></div>
+                <div class="toggle-option" id="themeOptDark"><img src="sources/night-mode.png" alt="Dark"></div>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<script src="hash-table-theory.js"></script>
+</body>
+</html>
+

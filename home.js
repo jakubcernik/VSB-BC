@@ -21,8 +21,8 @@ const homeDict = {
         algoTitle2: 'Binary Counter',
         algoDesc2:  'Explore how a k-bit binary counter increments and learn why N increments cost only O(N) total — amortized O(1) each — using the coin-based accounting method.',
 
-        algoTitle3: 'Algorithm 3',
-        algoDesc3:  'This algorithm is currently being prepared. Check back later.',
+        algoTitle3: 'Hash Table',
+        algoDesc3:  'Explore how a key-value hash table resizes and learn why repeated INSERT operations run in amortized O(1) using the coin-based accounting method.',
     },
     cz: {
         pageTitle:   'Vizualizér algoritmů',
@@ -42,8 +42,8 @@ const homeDict = {
         algoTitle2: 'Binární čítač',
         algoDesc2:  'Prozkoumej, jak k-bitový binární čítač inkrementuje, a pochop proč N inkrementací stojí celkem O(N) — amortizovaně O(1) každá — pomocí mincové účetní metody.',
 
-        algoTitle3: 'Algoritmus 3',
-        algoDesc3:  'Tento algoritmus se právě připravuje. Brzy bude dostupný.',
+        algoTitle3: 'Hash tabulka',
+        algoDesc3:  'Prozkoumej, jak se key-value hash tabulka zvětšuje (resize/rehash), a pochop proč opakované operace INSERT běží v amortizovaném O(1) pomocí mincové účetní metody.',
     }
 };
 
