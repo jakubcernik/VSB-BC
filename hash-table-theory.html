@@ -10,128 +10,152 @@
 </head>
 <body>
 <div id="pageTransitionOverlay"></div>
-<div id="container">
+
+<div id="theoryContainer">
+
     <header>
-        <h1 id="pageTitle">Amortized Complexity — Hash Table</h1>
-        <nav id="pageNav">
-            <a href="index.html" id="pageNavHome" onclick="navigateToPage(event, 'index.html')">🏠 <span id="pageNavHomeLabel">Home</span></a>
-            <span class="page-nav-divider">|</span>
-            <a href="hash-table.html" id="pageNavSim" onclick="navigateToPage(event, 'hash-table.html')">⚙️ <span id="pageNavSimLabel">Simulation</span></a>
-            <span class="page-nav-divider">|</span>
-            <span id="pageNavTheoryActive">📖 <span id="pageNavTheoryLabel">Theory</span></span>
-        </nav>
+        <h1 id="theoryMainTitle">Amortized Complexity — Hash Table</h1>
     </header>
 
-    <main>
-        <h2 id="mainTitle">Amortized Complexity — Hash Table</h2>
+    <!-- Page navigation -->
+    <nav id="theoryNav">
+        <a href="index.html" id="navHome" onclick="navigateTo(event, 'index.html')">🏠 <span id="navHomeLabel">Home</span></a>
+        <span class="nav-divider">|</span>
+        <a href="hash-table.html" id="navSimulation" onclick="navigateTo(event, 'hash-table.html')">⚙️ <span id="navSimLabel">Simulation</span></a>
+        <span class="nav-divider">|</span>
+        <span id="navTheoryActive">📖 <span id="navTheoryLabel">Theory</span></span>
+    </nav>
 
-        <section class="theory-section">
-            <h3 id="titleIntro">1. What is a Hash Table?</h3>
-            <p id="introP1"></p>
-            <p id="introP2"></p>
-            <div class="info-box" id="introBox"></div>
+    <main id="theoryContent">
+
+        <!-- 1. Introduction -->
+        <section class="theory-section" id="sec-intro">
+            <h2 class="section-title" id="titleIntro">1. What is a Hash Table?</h2>
+            <div class="section-body">
+                <p id="introP1"></p>
+                <p id="introP2"></p>
+                <div class="info-box" id="introBox"></div>
+            </div>
         </section>
 
-        <section class="theory-section">
-            <h3 id="titleInsert">2. INSERT with Open Addressing</h3>
-            <p id="insertP1"></p>
-            <div class="cards">
-                <div class="card">
-                    <h4 id="cardBestTitle">Best Case — O(1)</h4>
-                    <p id="cardBestDesc"></p>
+        <!-- 2. INSERT -->
+        <section class="theory-section" id="sec-insert">
+            <h2 class="section-title" id="titleInsert">2. INSERT with Open Addressing</h2>
+            <div class="section-body">
+                <p id="insertP1"></p>
+                <div class="two-col">
+                    <div class="case-card best" id="cardBest">
+                        <div class="case-icon">✅</div>
+                        <h3 id="cardBestTitle">Best Case — O(1)</h3>
+                        <p id="cardBestDesc"></p>
+                    </div>
+                    <div class="case-card worst" id="cardWorst">
+                        <div class="case-icon">⚠️</div>
+                        <h3 id="cardWorstTitle">Worst Case — O(n)</h3>
+                        <p id="cardWorstDesc"></p>
+                    </div>
                 </div>
-                <div class="card">
-                    <h4 id="cardWorstTitle">Worst Case — O(n)</h4>
-                    <p id="cardWorstDesc"></p>
+            </div>
+        </section>
+
+        <!-- 3. Resize -->
+        <section class="theory-section" id="sec-resize">
+            <h2 class="section-title" id="titleResize">3. Resizing and Rehashing</h2>
+            <div class="section-body">
+                <p id="resizeP1"></p>
+                <p id="resizeP2"></p>
+                <div class="info-box" id="resizeBox"></div>
+            </div>
+        </section>
+
+        <!-- 4. Amortized -->
+        <section class="theory-section" id="sec-amortized">
+            <h2 class="section-title" id="titleAmortized">4. Amortized Analysis</h2>
+            <div class="section-body">
+                <p id="amortizedP1"></p>
+
+                <div class="method-tabs">
+                    <button class="method-tab active" onclick="showMethod('aggregate')" id="tabAggregate">Aggregate Method</button>
+                    <button class="method-tab" onclick="showMethod('accounting')" id="tabAccounting">Accounting Method</button>
+                    <button class="method-tab" onclick="showMethod('potential')" id="tabPotential">Potential Method</button>
+                </div>
+
+                <div id="aggregate" class="method-content active">
+                    <h3 id="aggregateTitle">Aggregate Method</h3>
+                    <p id="aggregateP1"></p>
+                    <div class="math" id="aggregateMath"></div>
+                    <p id="aggregateP2"></p>
+                    <div class="math" id="aggregateMath2"></div>
+                    <p id="aggregateConclusion"></p>
+                </div>
+
+                <div id="accounting" class="method-content">
+                    <h3 id="accountingTitle">Accounting Method</h3>
+                    <p id="accountingP1"></p>
+                    <ul class="coin-steps">
+                        <li id="coinStep1"></li>
+                        <li id="coinStep2"></li>
+                        <li id="coinStep3"></li>
+                        <li id="coinStep4"></li>
+                    </ul>
+                    <div class="math" id="accountingMath"></div>
+                    <p id="accountingConclusion"></p>
+                </div>
+
+                <div id="potential" class="method-content">
+                    <h3 id="potentialTitle">Potential Method</h3>
+                    <p id="potentialP1"></p>
+                    <div class="math" id="potentialMath"></div>
+                    <p id="potentialP2"></p>
+                    <div class="math" id="potentialMath2"></div>
+                    <p id="potentialConclusion"></p>
                 </div>
             </div>
         </section>
 
-        <section class="theory-section">
-            <h3 id="titleResize">3. Resizing and Rehashing</h3>
-            <p id="resizeP1"></p>
-            <p id="resizeP2"></p>
-            <div class="info-box" id="resizeBox"></div>
-        </section>
+        <!-- 5. Summary -->
+        <section class="theory-section" id="sec-summary">
+            <h2 class="section-title" id="titleSummary">5. Complexity Summary</h2>
+            <div class="section-body">
+                <table class="summary-table">
+                    <thead>
+                    <tr>
+                        <th id="thOp">Operation</th>
+                        <th id="thCost">Cost</th>
+                        <th id="thNote">Note</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td id="opInsert">INSERT (amortized)</td>
+                        <td><strong>O(1)</strong></td>
+                        <td id="noteInsert"></td>
+                    </tr>
+                    <tr>
+                        <td id="opInsertWorst">INSERT (single worst)</td>
+                        <td><strong>O(n)</strong></td>
+                        <td id="noteInsertWorst"></td>
+                    </tr>
+                    <tr>
+                        <td id="opSpace">Space</td>
+                        <td><strong>O(n)</strong></td>
+                        <td id="noteSpace"></td>
+                    </tr>
+                    </tbody>
+                </table>
 
-        <section class="theory-section">
-            <h3 id="titleAmortized">4. Amortized Analysis</h3>
-            <p id="amortizedP1"></p>
-
-            <div class="tabs">
-                <button class="tab-button active" onclick="showTab('aggregate')" id="tabAggregate">Aggregate Method</button>
-                <button class="tab-button" onclick="showTab('accounting')" id="tabAccounting">Accounting Method</button>
-                <button class="tab-button" onclick="showTab('potential')" id="tabPotential">Potential Method</button>
-            </div>
-
-            <div id="aggregate" class="tab-content active">
-                <h4 id="aggregateTitle">Aggregate Method</h4>
-                <p id="aggregateP1"></p>
-                <div class="math" id="aggregateMath"></div>
-                <p id="aggregateP2"></p>
-                <div class="math" id="aggregateMath2"></div>
-                <p id="aggregateConclusion"></p>
-            </div>
-
-            <div id="accounting" class="tab-content">
-                <h4 id="accountingTitle">Accounting Method</h4>
-                <p id="accountingP1"></p>
-                <ul class="coin-steps">
-                    <li id="coinStep1"></li>
-                    <li id="coinStep2"></li>
-                    <li id="coinStep3"></li>
-                    <li id="coinStep4"></li>
-                </ul>
-                <div class="math" id="accountingMath"></div>
-                <p id="accountingConclusion"></p>
-            </div>
-
-            <div id="potential" class="tab-content">
-                <h4 id="potentialTitle">Potential Method</h4>
-                <p id="potentialP1"></p>
-                <div class="math" id="potentialMath"></div>
-                <p id="potentialP2"></p>
-                <div class="math" id="potentialMath2"></div>
-                <p id="potentialConclusion"></p>
+                <p class="legend" id="legendAmortized"></p>
             </div>
         </section>
 
-        <section class="theory-section">
-            <h3 id="titleSummary">5. Complexity Summary</h3>
-            <table class="summary-table">
-                <thead>
-                <tr>
-                    <th id="thOp">Operation</th>
-                    <th id="thCost">Cost</th>
-                    <th id="thNote">Note</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td id="opInsert">INSERT (amortized)</td>
-                    <td><strong>O(1)</strong></td>
-                    <td id="noteInsert"></td>
-                </tr>
-                <tr>
-                    <td id="opInsertWorst">INSERT (single worst)</td>
-                    <td><strong>O(n)</strong></td>
-                    <td id="noteInsertWorst"></td>
-                </tr>
-                <tr>
-                    <td id="opSpace">Space</td>
-                    <td><strong>O(n)</strong></td>
-                    <td id="noteSpace"></td>
-                </tr>
-                </tbody>
-            </table>
-
-            <p class="legend" id="legendAmortized"></p>
+        <section class="theory-section" id="sec-cta">
+            <h2 class="section-title" id="ctaTitle">Next step</h2>
+            <div class="section-body">
+                <p id="ctaText"></p>
+                <button onclick="window.location.href='hash-table.html'" id="ctaButton">⚙️ Open Simulation</button>
+            </div>
         </section>
 
-        <section class="cta">
-            <p id="ctaText"></p>
-            <button onclick="window.location.href='hash-table.html'" id="ctaButton">⚙️ Open Simulation</button>
-        </section>
     </main>
 
     <footer>
@@ -151,6 +175,7 @@
             </div>
         </div>
     </footer>
+
 </div>
 
 <script src="hash-table-theory.js"></script>

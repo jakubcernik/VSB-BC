@@ -25,21 +25,28 @@
 
 #hashTableVisualization {
     display: grid;
-    grid-template-columns: repeat(4, minmax(140px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(4, minmax(120px, 1fr));
+    gap: 10px;
 }
 
 .hash-slot {
     border: 2px solid #ddd;
     background: #fafafa;
     border-radius: 12px;
-    padding: 10px;
+    padding: 8px;
     position: relative;
-    min-height: 86px;
+    min-height: 78px;
     display: flex;
     flex-direction: column;
     gap: 6px;
     transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+/* If the container is narrow, reduce columns earlier so we avoid horizontal scroll */
+@media (max-width: 920px) {
+    #hashTableVisualization {
+        grid-template-columns: repeat(4, minmax(110px, 1fr));
+    }
 }
 
 .hash-slot.slot-highlight {
@@ -100,7 +107,7 @@
 
 @media (max-width: 860px) {
     #hashTableVisualization {
-        grid-template-columns: repeat(2, minmax(140px, 1fr));
+        grid-template-columns: repeat(2, minmax(150px, 1fr));
     }
 }
 

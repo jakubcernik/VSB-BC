@@ -39,11 +39,11 @@
         <section id="manualMode" class="mode active">
             <h2 id="manualModeTitle">Manual Mode</h2>
             <div class="input-group">
-                <label for="keyInput" id="keyLabel" class="visually-hidden">Key</label>
-                <input type="number" id="keyInput" placeholder="e.g. 13" style="width: 180px;">
+                <label for="keyInput" id="keyLabel">Key (int):</label>
+                <input type="number" id="keyInput" placeholder="13" style="width: 140px;">
 
-                <label for="valueInput" id="valueLabel" class="visually-hidden">Value</label>
-                <input type="text" id="valueInput" placeholder="e.g. 42" style="width: 120px;">
+                <label for="valueInput" id="valueLabel">Value (string/number):</label>
+                <input type="text" id="valueInput" placeholder="42" style="width: 160px;">
 
                 <button onclick="addManual()" id="btnInsert">Insert</button>
                 <button onclick="resetHashTable()" id="btnReset">↺ Reset</button>
