@@ -12,7 +12,11 @@ body {
     margin: 0;
     display: flex;
     justify-content: center;
-    align-items: center;
+    /* Do NOT vertically center whole app – on shorter viewports it forces content
+       to fight with the fixed footer and can look like overlaps. */
+    align-items: flex-start;
+    padding: 18px 12px 96px; /* bottom padding = room for fixed footer */
+    overflow-x: hidden;
     opacity: 0;
     transition: opacity 0.4s ease;
 }
@@ -25,12 +29,73 @@ body.page-loaded {
     background: #ffffff;
     border-radius: 16px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    padding: 30px;
+    padding: 24px;
     width: 100%;
     max-width: 900px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+}
+
+/* ─── Responsive main layout (simulation pages) ───────────────────────────── */
+/*
+   Pages share structure:
+     #container > header + #navigation + #trackers + main#mainContent + #infoPanel + footer
+
+   IMPORTANT: avoid using sticky log panel with fixed height, because it can overlap
+   visualizations (e.g., hash-table slots) on smaller viewports.
+*/
+
+#mainContent {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* ─── Desktop: just give the card more room, keep single-column flow ───────── */
+@media (min-width: 1100px) {
+    #container {
+        max-width: 1040px;
+        padding: 28px;
+    }
+}
+
+@media (max-width: 700px) {
+    #container {
+        padding: 16px;
+        border-radius: 12px;
+    }
+
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    #navigation {
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    #navigation button {
+        padding: 9px 14px;
+        font-size: 0.95rem;
+    }
+
+    .input-group {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 420px) {
+    #trackers {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+
+    #trackers div {
+        text-align: center;
+    }
 }
 
 header h1 {
@@ -242,12 +307,17 @@ button:hover {
     color: #333;
     text-align: left;
     border-top: 1px solid #ddd;
-    position: sticky;
-    bottom: 0;
+
+    /* Non-sticky => never overlaps visualisations */
+    position: relative;
     width: 100%;
-    height: 400px;
+
+    /* Responsive height but still scrollable.
+       Keep it smaller on short screens to avoid double-scroll effects. */
+    max-height: clamp(180px, 32vh, 420px);
     overflow-y: auto;
-    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
 }
 
 .log-group {
