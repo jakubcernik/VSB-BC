@@ -281,6 +281,33 @@ function getRandomNumber(min, max)
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+// Compute how many coins would be in the bank after inserting `n` elements
+// starting from an empty dynamic array with initial capacity 1, using our model:
+//  - each insertion deposits 2 coins into bank
+//  - each resize from C -> 2C copies C elements and withdraws C coins from bank
+function bankAfterInserting(n)
+{
+    let b = 0;
+    let cap = 1;
+    let size = 0;
+
+    while (size < n)
+    {
+        if (size === cap)
+        {
+            // resize: copy `cap` elements
+            b -= cap;
+            cap *= 2;
+        }
+
+        // insertion: deposit 2
+        b += 2;
+        size += 1;
+    }
+
+    return b;
+}
+
 async function generateRandomArray()
 {
     const d = dict[currentLang];
@@ -328,7 +355,9 @@ function prepareBestCase()
     // Setup: Capacity 4, 3 items filled (Last spot free)
     capacity = 4;
     array = [10, 20, 30];
-    creditsPerSlot = [0, 0, 1, 0];
+    // Under the 3-coin + bank model, long-term saved coins live in the bank.
+    creditsPerSlot = [0, 0, 0, 0];
+    bank = bankAfterInserting(array.length);
     steps = 3;
 
     visualizeArray();
@@ -381,7 +410,8 @@ function prepareWorstCase()
     // Setup: Capacity 4, 4 items filled (FULL)
     capacity = 4;
     array = [10, 20, 30, 40];
-    creditsPerSlot = [1, 1, 1, 1]; 
+    creditsPerSlot = [0, 0, 0, 0];
+    bank = bankAfterInserting(array.length);
     steps = 4;
 
     visualizeArray();
