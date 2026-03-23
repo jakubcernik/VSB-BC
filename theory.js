@@ -51,19 +51,19 @@ const theoryDict = {
         aggregateConclusion: 'Total cost = N (insertions) + 2N (copies) = 3N = <strong>O(N)</strong>. Dividing by N gives an amortized cost of <strong>O(1) per operation</strong>.',
 
         accountingTitle: 'Accounting Method',
-        accountingP1:    'Each <code>push_back</code> is charged a fixed "amortized fee" of <strong>2 coins</strong>. The coins are spent as follows:',
-        coinStep1: '<strong>2 coins</strong> are allocated at the start of every <code>push_back</code>.',
+        accountingP1:    'We charge each <code>push_back</code> a fixed amortized fee of <strong>3 coins</strong>. This is easiest to understand using a central <em>bank</em> (a reserve):',
+        coinStep1: '<strong>3 coins</strong> are allocated at the start of every <code>push_back</code>.',
         coinStep2: '<strong>1 coin</strong> pays for the insertion itself (writing the new element).',
-        coinStep3: '<strong>1 coin</strong> is saved on the newly inserted element to pay for copying it once during a future resize.',
-        accountingMath: 'When a resize is triggered (array size = N), each of the N stored elements has 1 saved coin → N coins available → the N copies are fully paid.',
-        accountingConclusion: 'Since each operation is charged a constant number of coins (2) and we never borrow from future operations, the amortized cost is <strong>O(1) per push_back</strong>.',
+        coinStep3: '<strong>2 coins</strong> are deposited into the <strong>bank</strong> (saved for future resizes).',
+        accountingMath: 'When a resize happens (capacity doubles from C to 2C), we must copy C elements. Each copy costs 1 coin and is paid from the bank. Between two resizes there are at least C successful push_back operations, so at least 2C coins are deposited — more than enough to pay the C copies.',
+        accountingConclusion: 'Because every operation is charged a constant number of coins (3) and the bank never goes negative, <code>push_back</code> runs in amortized <strong>O(1)</strong>.',
 
         potentialTitle: 'Potential Method',
         potentialP1:    'Define a potential function Φ over the state of the data structure. Let <em>size</em> = number of elements, <em>capacity</em> = allocated slots:',
         potentialMath:  'Φ = 2 · size − capacity',
         potentialP2:    'The amortized cost â of an operation = actual cost c + ΔΦ.',
         potentialMath2: 'Normal push_back: â = 1 + (2·(s+1) − cap) − (2·s − cap) = 1 + 2 = 3 (upper bound)\nResize push_back (doubling): actual cost = N+1 (copy N + insert 1), ΔΦ = 2·(N+1) − 2N − (2N − N) = 2 − N\nâ = (N+1) + (2 − N) = 3',
-        potentialConclusion: 'With this standard potential choice, â is bounded by a constant (here ≤ 3), so amortized <code>push_back</code> is <strong>O(1)</strong>. (The accounting method above demonstrates a 2-coin constant for this doubling strategy.)',
+        potentialConclusion: 'With this standard potential choice, â is bounded by a constant (here ≤ 3), so amortized <code>push_back</code> is <strong>O(1)</strong>. This matches the 3-coin accounting/bank story used in the simulation.',
 
         // --- Growth factor ---
         growthP1: 'The growth factor α determines how aggressively memory is pre-allocated. All factors α > 1 yield O(1) amortized push_back, but they differ in the trade-off between time and memory:',
@@ -74,7 +74,7 @@ const theoryDict = {
         tdLow:      'Low (~33 %)',
         tdMedium:   'Medium (~100 %)',
         tdHigh:     'High (~200 %)',
-        growthP2: 'This simulation uses <strong>α = 2</strong> (doubling) for clarity. In the Accounting Method shown above, charging <strong>2 coins</strong> per insertion is sufficient to pay all future copies during resizes.',
+        growthP2: 'This simulation uses <strong>α = 2</strong> (doubling) for clarity. In the Accounting Method shown above, we charge <strong>3 coins</strong> per insertion and store savings in a bank to pay for future copies during resizes.',
 
         // --- Complexity summary ---
         opPushback:       'push_back (amortized)',
@@ -138,19 +138,19 @@ const theoryDict = {
         aggregateConclusion: 'Celková cena = N (vložení) + 2N (kopírování) = 3N = <strong>O(N)</strong>. Dělením N dostaneme amortizovanou cenu <strong>O(1) na operaci</strong>.',
 
         accountingTitle: 'Účetní metoda',
-        accountingP1:    'Každé <code>push_back</code> je účtováno pevným „amortizovaným poplatkem" <strong>2 mincí</strong>. Mince se použijí takto:',
-        coinStep1: '<strong>2 mince</strong> jsou přiděleny na začátku každého <code>push_back</code>.',
+        accountingP1:    'Každé <code>push_back</code> účtujeme pevným amortizovaným poplatkem <strong>3 mincí</strong>. Nejjednodušší je představit si centrální <em>banku</em> (rezervu):',
+        coinStep1: '<strong>3 mince</strong> jsou přiděleny na začátku každého <code>push_back</code>.',
         coinStep2: '<strong>1 mince</strong> zaplatí samotné vložení (zápis nového prvku).',
-        coinStep3: '<strong>1 mince</strong> se uloží na nově vložený prvek jako záloha na jeho jednorázové kopírování při budoucím resize.',
-        accountingMath: 'Když nastane resize (velikost pole = N), každý z N uložených prvků má 1 ušetřenou minci → N mincí k dispozici → N kopírování je zaplaceno.',
-        accountingConclusion: 'Protože každá operace účtuje konstantní počet mincí (2) a nikdy si nepůjčujeme od budoucích operací, amortizovaná cena je <strong>O(1) na push_back</strong>.',
+        coinStep3: '<strong>2 mince</strong> se uloží do <strong>banky</strong> jako rezerva na budoucí resize.',
+        accountingMath: 'Když nastane resize (kapacita se zdvojnásobí z C na 2C), musíme zkopírovat C prvků. Každá kopie stojí 1 minci a platí se z banky. Mezi dvěma resize proběhne alespoň C úspěšných vložení, takže se do banky uloží alespoň 2C mincí — to bohatě stačí na zaplacení C kopií.',
+        accountingConclusion: 'Protože každá operace účtuje konstantní počet mincí (3) a banka nikdy nejde do minusu, amortizovaná cena je <strong>O(1) na push_back</strong>.',
 
         potentialTitle: 'Potenciálová metoda',
         potentialP1:    'Definujeme potenciálovou funkci Φ nad stavem datové struktury. Nechť <em>size</em> = počet prvků, <em>capacity</em> = alokovaná místa:',
         potentialMath:  'Φ = 2 · size − capacity',
         potentialP2:    'Amortizovaná cena â operace = skutečná cena c + ΔΦ.',
         potentialMath2: 'Normální push_back: â = 1 + (2·(s+1) − cap) − (2·s − cap) = 1 + 2 = 3 (horní odhad)\nResize push_back (zdvojení): skutečná cena = N+1 (kopie N + vložení 1), ΔΦ = 2·(N+1) − 2N − (2N − N) = 2 − N\nâ = (N+1) + (2 − N) = 3',
-        potentialConclusion: 'S touto standardní volbou potenciálu je â omezeno konstantou (zde ≤ 3), takže amortizovaně vychází <code>push_back</code> jako <strong>O(1)</strong>. (Účetní metoda výše navíc ukazuje, že pro zdvojení stačí 2 mince.)',
+        potentialConclusion: 'S touto standardní volbou potenciálu je â omezeno konstantou (zde ≤ 3), takže amortizovaně vychází <code>push_back</code> jako <strong>O(1)</strong>. To odpovídá i 3-mincovému „bankovnímu“ příběhu použitému v simulaci.',
 
         // --- Faktor růstu ---
         growthP1: 'Faktor růstu α určuje, jak agresivně se předalokuje paměť. Všechny faktory α > 1 zajišťují O(1) amortizovaný push_back, ale liší se kompromisem mezi časem a pamětí:',
@@ -161,7 +161,7 @@ const theoryDict = {
         tdLow:      'Nízké (~33 %)',
         tdMedium:   'Střední (~100 %)',
         tdHigh:     'Vysoké (~200 %)',
-        growthP2: 'Tato simulace používá <strong>α = 2</strong> (zdvojení) pro přehlednost. V účetní metodě výše vychází čistě, že pro zdvojení stačí účtovat <strong>2 mince</strong> na vložení.',
+        growthP2: 'Tato simulace používá <strong>α = 2</strong> (zdvojení) pro přehlednost. V účetní metodě výše účtujeme <strong>3 mince</strong> na vložení a ukládáme úspory do banky, která pak platí kopírování při resize.',
 
         // --- Přehled složitostí ---
         opPushback:       'push_back (amortizovaně)',
