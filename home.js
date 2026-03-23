@@ -9,11 +9,7 @@ const homeDict = {
         subtitle:    'Pick an algorithm to explore its theory and interactive simulation.',
         footer:      '2026 by Jakub Cernik. Developed for educational purposes as a Bachelor Thesis.',
 
-        tagAvailable: 'Available',
-        tagSoon:      'Coming Soon',
-        chipLocked:   'Not yet available',
-        chipSim:      '⚙️ Simulation',
-        chipTheory:   '📖 Theory',
+        // (tags/chips removed from home cards)
 
         algoTitle1: 'Dynamic Array — vector<>',
         algoDesc1:  'Explore how a dynamic array grows automatically and learn why repeated push_back runs in amortized O(1) using the coin-based accounting method.',
@@ -30,11 +26,7 @@ const homeDict = {
         subtitle:    'Vyber si algoritmus a prozkoumej jeho teorii i interaktivní simulaci.',
         footer:      '2026 by Jakub Cernik. Vyvinuto pro vzdělávací účely jako bakalářská práce.',
 
-        tagAvailable: 'Dostupné',
-        tagSoon:      'Připravujeme',
-        chipLocked:   'Zatím nedostupné',
-        chipSim:      '⚙️ Simulace',
-        chipTheory:   '📖 Teorie',
+        // (tagy/chipy odstraněny z domovských karet)
 
         algoTitle1: 'Dynamické pole — vector<>',
         algoDesc1:  'Prozkoumej, jak se dynamické pole automaticky zvětšuje, a pochop proč opakovaný push_back běží v amortizovaném O(1) pomocí mincové účetní metody.',
@@ -100,23 +92,7 @@ function applyLanguage() {
     document.getElementById('homeSubtitle').textContent = d.subtitle;
     document.getElementById('footerText').textContent   = d.footer;
 
-    // Cards: this project currently shows all 3 as available.
-    // Keep null-guards so future card variants ("Coming soon") don't break the page.
-    const tagAv1 = document.getElementById('tagAvailable1');
-    const tagAv2 = document.getElementById('tagAvailable2');
-    const tagAv3 = document.getElementById('tagAvailable3');
-    if (tagAv1) tagAv1.textContent = d.tagAvailable;
-    if (tagAv2) tagAv2.textContent = d.tagAvailable;
-    if (tagAv3) tagAv3.textContent = d.tagAvailable;
-
-    const tagSoon3 = document.getElementById('tagSoon3');
-    const chipLocked3 = document.getElementById('chipLocked3');
-    if (tagSoon3) tagSoon3.textContent = d.tagSoon;
-    if (chipLocked3) chipLocked3.textContent = d.chipLocked;
-    document.getElementById('chip1Sim').textContent      = d.chipSim;
-    document.getElementById('chip1Theory').textContent   = d.chipTheory;
-    document.getElementById('chip2Sim').textContent      = d.chipSim;
-    document.getElementById('chip2Theory').textContent   = d.chipTheory;
+    // Cards: tags/chips were removed from the Home page UI.
 
     document.getElementById('algoTitle1').innerHTML = `${d.algoTitle1}`;
     document.getElementById('algoDesc1').textContent  = d.algoDesc1;
