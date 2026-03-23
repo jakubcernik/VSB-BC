@@ -4,14 +4,18 @@
  *   - open addressing with linear probing
  *   - resizing (capacity doubled) when load factor exceeds a threshold
  *
- * Accounting method (coin argument):
- *   Every INSERT is charged a constant amortized fee of 3 coins.
+ * Accounting method (coin argument) used in this demo:
+ *   We show amortized O(1) cost of INSERT with respect to RESIZE/REHASH.
+ *   Every INSERT is charged a fixed amortized fee of 2 coins:
  *     1 coin pays for the actual placement (the "write"),
- *     1 coin is saved on the stored element to pay for moving it during a future rehash,
- *     1 coin is a small reserve used to pay for probing steps (collisions).
+ *     1 coin is saved on the stored element to pay for moving it during a future rehash.
  *
- * During RESIZE/REHASH, each moved element spends its saved coin to pay for its move.
- * Therefore the total cost of rehash is paid by previously saved coins.
+ * During RESIZE/REHASH, each moved element spends its saved coin to pay for exactly one move.
+ *
+ * Important note (academic precision):
+ *   Linear probing may require checking many slots in the worst case. This demo logs probing
+ *   steps as visual work, but the coin argument here is meant to explain how the Θ(n) rehash
+ *   work is amortized over prior inserts (not to deterministically pay for all collision patterns).
  */
 
 // ─── State ────────────────────────────────────────────────────────────────────
@@ -260,7 +264,9 @@ async function insertKV(keyInt, value) {
 
         // Occupied by a different key => collision, continue probing
         if (table[i]) {
-            if (bank > 0) bank--; // spend 1 coin for probing
+            // Collision: we continue probing.
+            // (Note) We do NOT attempt to maintain a strict “coins pay every probe” invariant here.
+            // The saved coin model is used to explain amortized resize/rehash.
             createLogEntry(LOG_TYPES.WARNING, d.probeCollision(i));
             await new Promise(r => setTimeout(r, getDelay(200)));
 

@@ -100,10 +100,19 @@ function applyLanguage() {
     document.getElementById('homeSubtitle').textContent = d.subtitle;
     document.getElementById('footerText').textContent   = d.footer;
 
-    document.getElementById('tagAvailable1').textContent = d.tagAvailable;
-    document.getElementById('tagAvailable2').textContent = d.tagAvailable;
-    document.getElementById('tagSoon3').textContent      = d.tagSoon;
-    document.getElementById('chipLocked3').textContent   = d.chipLocked;
+    // Cards: this project currently shows all 3 as available.
+    // Keep null-guards so future card variants ("Coming soon") don't break the page.
+    const tagAv1 = document.getElementById('tagAvailable1');
+    const tagAv2 = document.getElementById('tagAvailable2');
+    const tagAv3 = document.getElementById('tagAvailable3');
+    if (tagAv1) tagAv1.textContent = d.tagAvailable;
+    if (tagAv2) tagAv2.textContent = d.tagAvailable;
+    if (tagAv3) tagAv3.textContent = d.tagAvailable;
+
+    const tagSoon3 = document.getElementById('tagSoon3');
+    const chipLocked3 = document.getElementById('chipLocked3');
+    if (tagSoon3) tagSoon3.textContent = d.tagSoon;
+    if (chipLocked3) chipLocked3.textContent = d.chipLocked;
     document.getElementById('chip1Sim').textContent      = d.chipSim;
     document.getElementById('chip1Theory').textContent   = d.chipTheory;
     document.getElementById('chip2Sim').textContent      = d.chipSim;

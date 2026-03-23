@@ -3,6 +3,12 @@ let capacity = 1;           // Aktuální kapacita pole
 let creditsPerSlot = [];    // Mince nad každým políčkem
 let steps = 0;
 
+// Accounting method used by this simulation:
+// Charge every push_back a fixed 2 coins:
+//   1 coin pays for the insertion itself,
+//   1 coin is saved on the newly inserted element (to pay for copying it once during a future resize).
+const INSERT_CHARGE = 2;
+
 // ── Pomocné funkce ────────────────────────────────────────────
 
 function updateCredits()
@@ -105,10 +111,7 @@ async function resizeArray()
     const oldCapacity = capacity;
     capacity *= 2;
 
-    for (let i = oldCapacity; i < capacity; i++)
-    {
-        creditsPerSlot[i] = 2;
-    }
+    // When resizing, we simply create new empty slots (no coins on empty slots).
 
     updateInfoPanelWithDetails(
         d.resizeTitle(oldCapacity, capacity),
@@ -131,28 +134,8 @@ async function resizeArray()
         }
         else
         {
-            let lenderIndex = -1;
-            for (let j = oldCapacity; j < capacity; j++)
-            {
-                if (creditsPerSlot[j] > 0)
-                {
-                    lenderIndex = j;
-                    break;
-                }
-            }
-
-            if (lenderIndex !== -1)
-            {
-                updateInfoPanel(d.borrowFromSlot(i, lenderIndex));
-                creditsPerSlot[lenderIndex]--;
-                updateCredits();
-                await animateCoinUpdate(lenderIndex, creditsPerSlot[lenderIndex]);
-                await new Promise(resolve => setTimeout(resolve, getDelay(400)));
-            }
-            else
-            {
-                updateInfoPanel(d.invariantBroken(i));
-            }
+            // For educational robustness: if a slot has no coin, we show invariant warning.
+            updateInfoPanel(d.invariantBroken(i));
         }
     }
 
@@ -182,11 +165,10 @@ async function addElement()
         updateInfoPanel(d.arrayFull);
         await resizeArray();
     }
-    else
-    {
-        creditsPerSlot[slotIndex] = 2;
-        updateCredits();
-    }
+
+    // Allocate 2 coins (amortized prepayment) for this push_back.
+    creditsPerSlot[slotIndex] = 2;
+    updateCredits();
 
     visualizeArray();
     await animateCoinUpdate(slotIndex, 2);
@@ -194,7 +176,7 @@ async function addElement()
     updateInfoPanelWithDetails(
         d.insertTitle(value, slotIndex),
         [
-            d.insertAllocCoins(2),
+            d.insertAllocCoins(INSERT_CHARGE),
             d.insertPaySelf(),
             d.insertPayCopy(),
         ].join('<br>')
