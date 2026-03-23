@@ -274,7 +274,7 @@ function resetCounter() {
     panel.innerHTML = '';
     const init = document.createElement('div');
     init.classList.add('log-entry', 'info');
-    init.innerHTML = `<div class="log-header"><span class="log-icon">👋</span><span>${d.steps} ${d.willAppear}</span></div>`;
+    init.innerHTML = `<div class="log-header"><span class="log-icon">${LOG_TYPES.INFO.icon}</span><span>${d.steps} ${d.willAppear}</span></div>`;
     panel.appendChild(init);
 }
 

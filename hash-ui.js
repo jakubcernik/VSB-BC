@@ -59,8 +59,8 @@ const dict = {
 
         btnPrepareBest:   'Prepare Best Case',
         btnPrepareWorst:  'Prepare Worst Case',
-        bestReady:        '✅ Best Case prepared — table has plenty of free space, next insert hits an empty slot.',
-        worstReady:       '⚠️ Worst Case prepared — table is near the load-factor limit and next insert will trigger resize.',
+        bestReady:        'Best Case prepared — table has plenty of free space, next insert hits an empty slot.',
+        worstReady:       'Worst Case prepared — table is near the load-factor limit and next insert will trigger resize.',
 
         // Meta
         metaSize:         'Size',
@@ -75,23 +75,23 @@ const dict = {
         groupLabel:       (k, step) => `Step ${step} — inserting <strong>${k}</strong>`,
         logStep:          (n) => `Step ${n}`,
 
-        hashStart:        (key, hash, cap, start) => `#️⃣ hash(<strong>${key}</strong>) = <span class="log-badge slot">${hash}</span>, start index = <span class="log-badge slot">${hash} mod ${cap} = ${start}</span>`,
+        hashStart:        (key, hash, cap, start) => `hash(<strong>${key}</strong>) = <span class="log-badge slot">${hash}</span>, start index = <span class="log-badge slot">${hash} mod ${cap} = ${start}</span>`,
 
-        insertCharge:     (c) => `💰 INSERT starts: received <span class="coin-text">${c} coins</span> (fixed amortized charge)`,
-        probeCheck:       (i) => `🔎 Probe slot <span class="log-badge slot">[${i}]</span>`,
-        probeNext:        (i) => `➡️ Next slot to try: <span class="log-badge slot">[${i}]</span>`,
-        probeCollision:   (i) => `💥 Collision at <span class="log-badge slot">[${i}]</span> — continue probing`,
-        updateFound:      (i) => `🛠️ Key already exists in <span class="log-badge slot">[${i}]</span> — performing <strong>UPDATE</strong> (standard hash table behavior)`,
-        updateBorrowCoin: (i) => `💳 Slot <span class="log-badge slot">[${i}]</span>: temporarily use the <span class="coin-text">saved coin</span> to pay for UPDATE`,
-        updateDone:       (i) => `✅ Updated value in <span class="log-badge slot">[${i}]</span> — spent <span class="coin-text">1 coin</span>`,
-        updateReturnCoin: (i) => `🏦 Returned <span class="coin-text">1 coin</span> back onto <span class="log-badge slot">[${i}]</span> (reserve stays for future rehash)`,
-        placeElement:     (i) => `✅ Placed element into <span class="log-badge slot">[${i}]</span> — spent <span class="coin-text">1 coin</span>`,
-        saveForRehash:    (i) => `🏦 Saved <span class="coin-text">1 coin</span> on <span class="log-badge slot">[${i}]</span> for future rehash`,
+        insertCharge:     (c) => `INSERT starts: received <span class="coin-text">${c} coins</span> (fixed amortized charge)`,
+        probeCheck:       (i) => `Probe slot <span class="log-badge slot">[${i}]</span>`,
+        probeNext:        (i) => `Next slot to try: <span class="log-badge slot">[${i}]</span>`,
+        probeCollision:   (i) => `Collision at <span class="log-badge slot">[${i}]</span> — continue probing`,
+        updateFound:      (i) => `Key already exists in <span class="log-badge slot">[${i}]</span> — performing <strong>UPDATE</strong> (standard hash table behavior)`,
+        updateBorrowCoin: (i) => `Slot <span class="log-badge slot">[${i}]</span>: temporarily use the <span class="coin-text">saved coin</span> to pay for UPDATE`,
+        updateDone:       (i) => `Updated value in <span class="log-badge slot">[${i}]</span> — spent <span class="coin-text">1 coin</span>`,
+        updateReturnCoin: (i) => `Returned <span class="coin-text">1 coin</span> back onto <span class="log-badge slot">[${i}]</span> (reserve stays for future rehash)`,
+        placeElement:     (i) => `Placed element into <span class="log-badge slot">[${i}]</span> — spent <span class="coin-text">1 coin</span>`,
+        saveForRehash:    (i) => `Saved <span class="coin-text">1 coin</span> on <span class="log-badge slot">[${i}]</span> for future rehash`,
 
-        resizeTitle:      (oldC, newC) => `📏 Resize needed — rehash <span class="log-badge capacity">${oldC} → ${newC}</span>`,
+        resizeTitle:      (oldC, newC) => `Resize needed — rehash <span class="log-badge capacity">${oldC} → ${newC}</span>`,
         resizeWhy:        () => `Each stored element has 1 saved coin. During rehash, each element spends its coin to pay for its move.`,
-        moveElement:      (from, to) => `📦 Move from <span class="log-badge slot">[${from}]</span> → <span class="log-badge slot">[${to}]</span> (spent <span class="coin-text">1 saved coin</span>)`,
-        resizeDone:       (n) => `✅ Rehash complete — moved <strong>${n}</strong> element${n !== 1 ? 's' : ''}`,
+        moveElement:      (from, to) => `Move from <span class="log-badge slot">[${from}]</span> → <span class="log-badge slot">[${to}]</span> (spent <span class="coin-text">1 saved coin</span>)`,
+        resizeDone:       (n) => `Rehash complete — moved <strong>${n}</strong> element${n !== 1 ? 's' : ''}`,
     },
 
     cz: {
@@ -140,8 +140,8 @@ const dict = {
 
         btnPrepareBest:   'Připravit Nejlepší případ',
         btnPrepareWorst:  'Připravit Nejhorší případ',
-        bestReady:        '✅ Nejlepší případ připraven — tabulka má dost volného místa, další insert trefí prázdný slot.',
-        worstReady:       '⚠️ Nejhorší případ připraven — tabulka je blízko limitu a další insert vyvolá resize.',
+        bestReady:        'Nejlepší případ připraven — tabulka má dost volného místa, další insert trefí prázdný slot.',
+        worstReady:       'Nejhorší případ připraven — tabulka je blízko limitu a další insert vyvolá resize.',
 
         // Meta
         metaSize:         'Velikost',
@@ -156,34 +156,35 @@ const dict = {
         groupLabel:       (k, step) => `Krok ${step} — vkládám <strong>${k}</strong>`,
         logStep:          (n) => `Krok ${n}`,
 
-        hashStart:        (key, hash, cap, start) => `#️⃣ hash(<strong>${key}</strong>) = <span class="log-badge slot">${hash}</span>, startovní index = <span class="log-badge slot">${hash} mod ${cap} = ${start}</span>`,
+        hashStart:        (key, hash, cap, start) => `hash(<strong>${key}</strong>) = <span class="log-badge slot">${hash}</span>, startovní index = <span class="log-badge slot">${hash} mod ${cap} = ${start}</span>`,
 
-        insertCharge:     (c) => `💰 INSERT začíná: přijaty <span class="coin-text">${c} mince</span> (pevný amortizovaný poplatek)`,
-        probeCheck:       (i) => `🔎 Kontroluji slot <span class="log-badge slot">[${i}]</span>`,
-        probeNext:        (i) => `➡️ Další slot: <span class="log-badge slot">[${i}]</span>`,
-        probeCollision:   (i) => `💥 Kolize ve <span class="log-badge slot">[${i}]</span> — pokračuji dál`,
-        updateFound:      (i) => `🛠️ Klíč už existuje ve <span class="log-badge slot">[${i}]</span> — provádím <strong>UPDATE</strong> (standardní chování hash tabulky)`,
-        updateBorrowCoin: (i) => `💳 Slot <span class="log-badge slot">[${i}]</span>: dočasně používám <span class="coin-text">ušetřenou minci</span> na zaplacení UPDATE`,
-        updateDone:       (i) => `✅ Hodnota aktualizována ve <span class="log-badge slot">[${i}]</span> — utracena <span class="coin-text">1 mince</span>`,
-        updateReturnCoin: (i) => `🏦 Vracím <span class="coin-text">1 minci</span> zpět na <span class="log-badge slot">[${i}]</span> (rezerva zůstává pro budoucí rehash)`,
-        placeElement:     (i) => `✅ Uloženo do <span class="log-badge slot">[${i}]</span> — utracena <span class="coin-text">1 mince</span>`,
-        saveForRehash:    (i) => `🏦 Uložena <span class="coin-text">1 mince</span> na <span class="log-badge slot">[${i}]</span> pro budoucí rehash`,
+        insertCharge:     (c) => `INSERT začíná: přijaty <span class="coin-text">${c} mince</span> (pevný amortizovaný poplatek)`,
+        probeCheck:       (i) => `Kontroluji slot <span class="log-badge slot">[${i}]</span>`,
+        probeNext:        (i) => `Další slot: <span class="log-badge slot">[${i}]</span>`,
+        probeCollision:   (i) => `Kolize ve <span class="log-badge slot">[${i}]</span> — pokračuji dál`,
+        updateFound:      (i) => `Klíč už existuje ve <span class="log-badge slot">[${i}]</span> — provádím <strong>UPDATE</strong> (standardní chování hash tabulky)`,
+        updateBorrowCoin: (i) => `Slot <span class="log-badge slot">[${i}]</span>: dočasně používám <span class="coin-text">ušetřenou minci</span> na zaplacení UPDATE`,
+        updateDone:       (i) => `Hodnota aktualizována ve <span class="log-badge slot">[${i}]</span> — utracena <span class="coin-text">1 mince</span>`,
+        updateReturnCoin: (i) => `Vracím <span class="coin-text">1 minci</span> zpět na <span class="log-badge slot">[${i}]</span> (rezerva zůstává pro budoucí rehash)`,
+        placeElement:     (i) => `Uloženo do <span class="log-badge slot">[${i}]</span> — utracena <span class="coin-text">1 mince</span>`,
+        saveForRehash:    (i) => `Uložena <span class="coin-text">1 mince</span> na <span class="log-badge slot">[${i}]</span> pro budoucí rehash`,
 
-        resizeTitle:      (oldC, newC) => `📏 Potřeba resize — rehash <span class="log-badge capacity">${oldC} → ${newC}</span>`,
+        resizeTitle:      (oldC, newC) => `Potřeba resize — rehash <span class="log-badge capacity">${oldC} → ${newC}</span>`,
         resizeWhy:        () => `Každý uložený prvek má 1 ušetřenou minci. Při rehashi ji utratí za svůj přesun.`,
-        moveElement:      (from, to) => `📦 Přesun <span class="log-badge slot">[${from}]</span> → <span class="log-badge slot">[${to}]</span> (utracena <span class="coin-text">1 ušetřená mince</span>)`,
-        resizeDone:       (n) => `✅ Rehash hotový — přesunuto <strong>${n}</strong> ${n === 1 ? 'prvek' : (n >= 2 && n <= 4 ? 'prvky' : 'prvků')}`,
+        moveElement:      (from, to) => `Přesun <span class="log-badge slot">[${from}]</span> → <span class="log-badge slot">[${to}]</span> (utracena <span class="coin-text">1 ušetřená mince</span>)`,
+        resizeDone:       (n) => `Rehash hotový — přesunuto <strong>${n}</strong> ${n === 1 ? 'prvek' : (n >= 2 && n <= 4 ? 'prvky' : 'prvků')}`,
     }
 };
 
 // ─── Log helpers ──────────────────────────────────────────────────────────────
 const LOG_TYPES = {
-    INSERT:  { class: 'insert',  icon: '➕' },
-    RESIZE:  { class: 'resize',  icon: '📏' },
-    PROBE:   { class: 'copy',    icon: '🔎' },
-    COPY:    { class: 'copy',    icon: '📋' },
-    INFO:    { class: 'info',    icon: 'ℹ️' },
-    WARNING: { class: 'warning', icon: '⚠️' },
+    // Minimal, unified icon set across the whole web
+    INSERT:  { class: 'insert',  icon: '＋' },
+    RESIZE:  { class: 'resize',  icon: '↔' },
+    PROBE:   { class: 'copy',    icon: '⧉' },
+    COPY:    { class: 'copy',    icon: '⧉' },
+    INFO:    { class: 'info',    icon: 'i' },
+    WARNING: { class: 'warning', icon: '!' },
     SUCCESS: { class: 'insert',  icon: '✓'  },
 };
 

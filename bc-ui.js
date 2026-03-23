@@ -47,8 +47,8 @@ const dict = {
             costing O(k) = O(log N) for a k-bit counter.
             <br><br>Amortized complexity still: <strong class="badge">O(1)</strong>`,
 
-        bestReady:  (val) => `✅ Best Case prepared — counter is ${val} (LSB = 0). Next increment flips only 1 bit.`,
-        worstReady: (k)   => `⚠️ Worst Case prepared — counter is ${(1 << k) - 1} (all ${k} bits = 1). Next increment flips all bits.`,
+        bestReady:  (val) => `Best Case prepared — counter is ${val} (LSB = 0). Next increment flips only 1 bit.`,
+        worstReady: (k)   => `Worst Case prepared — counter is ${(1 << k) - 1} (all ${k} bits = 1). Next increment flips all bits.`,
 
         // Log messages
         incrTitle:      (from, to) => `Increment <span class="log-badge slot">${from}</span> → <span class="log-badge slot">${to}</span>`,
@@ -57,11 +57,11 @@ const dict = {
         earned:         'received',
         spent:          'spent',
         saved:          'saved on bits',
-        allocCoins:     ()         => `💰 INCREMENT starts: received <span class="coin-text">2 coins</span> (fixed amortized charge — always exactly 2, no matter how many bits flip)`,
-        spendSelf:      (pos)      => `💳 Bit <span class="log-badge slot">[${pos}]</span>: spent <span class="coin-text">1 coin</span> from the 2 received → flipped 0→1`,
-        saveCoin:       (pos)      => `🏦 Bit <span class="log-badge slot">[${pos}]</span>: saved <span class="coin-text">1 coin</span> on this bit (reserve for future 1→0 flip)`,
-        spendSaved:     (pos)      => `💳 Bit <span class="log-badge slot">[${pos}]</span>: spent <span class="coin-text">1 saved coin</span> (was saved here earlier) → flipped 1→0. No new coins needed!`,
-        incrDone:       (flips)    => `✅ Done — <strong>${flips}</strong> bit${flips !== 1 ? 's' : ''} flipped`,
+        allocCoins:     ()         => `INCREMENT starts: received <span class="coin-text">2 coins</span> (fixed amortized charge — always exactly 2, no matter how many bits flip)`,
+        spendSelf:      (pos)      => `Bit <span class="log-badge slot">[${pos}]</span>: spent <span class="coin-text">1 coin</span> from the 2 received → flipped 0→1`,
+        saveCoin:       (pos)      => `Bit <span class="log-badge slot">[${pos}]</span>: saved <span class="coin-text">1 coin</span> on this bit (reserve for future 1→0 flip)`,
+        spendSaved:     (pos)      => `Bit <span class="log-badge slot">[${pos}]</span>: spent <span class="coin-text">1 saved coin</span> (was saved here earlier) → flipped 1→0. No new coins needed!`,
+        incrDone:       (flips)    => `Done — <strong>${flips}</strong> bit${flips !== 1 ? 's' : ''} flipped`,
         groupLabel:     (from, to, step) => `Step ${step} — increment ${from} → ${to}`,
         logStep:        (n)        => `Step ${n}`,
         randomGenerating: (n)      => `Generating <strong>${n}</strong> increments…`,
@@ -101,8 +101,8 @@ const dict = {
             cena je O(k) = O(log N) pro k-bitový čítač.
             <br><br>Amortizovaná složitost zůstává: <strong class="badge">O(1)</strong>`,
 
-        bestReady:  (val) => `✅ Nejlepší případ připraven — čítač je ${val} (LSB = 0). Inkrementování přepne jen 1 bit.`,
-        worstReady: (k)   => `⚠️ Nejhorší případ připraven — čítač je ${(1 << k) - 1} (všechny ${k} bity = 1). Inkrementování přepne všechny bity.`,
+        bestReady:  (val) => `Nejlepší případ připraven — čítač je ${val} (LSB = 0). Inkrementování přepne jen 1 bit.`,
+        worstReady: (k)   => `Nejhorší případ připraven — čítač je ${(1 << k) - 1} (všechny ${k} bity = 1). Inkrementování přepne všechny bity.`,
 
         // Log zprávy
         incrTitle:      (from, to) => `Inkrementace <span class="log-badge slot">${from}</span> → <span class="log-badge slot">${to}</span>`,
@@ -111,11 +111,11 @@ const dict = {
         earned:         'přijato celkem',
         spent:          'utraceno',
         saved:          'uloženo na bitech',
-        allocCoins:     ()         => `💰 INCREMENT začíná: přijaty <span class="coin-text">2 mince</span> (pevný amortizovaný poplatek — vždy přesně 2, bez ohledu na počet přepnutých bitů)`,
-        spendSelf:      (pos)      => `💳 Bit <span class="log-badge slot">[${pos}]</span>: utracena <span class="coin-text">1 mince</span> z přijatých 2 → přepnut 0→1`,
-        saveCoin:       (pos)      => `🏦 Bit <span class="log-badge slot">[${pos}]</span>: ušetřena <span class="coin-text">1 mince</span> na tomto bitu (rezerva na budoucí přepnutí 1→0)`,
-        spendSaved:     (pos)      => `💳 Bit <span class="log-badge slot">[${pos}]</span>: utracena <span class="coin-text">1 ušetřená mince</span> (byla zde uložena dříve) → přepnut 1→0. Žádné nové mince nejsou potřeba!`,
-        incrDone:       (flips)    => `✅ Hotovo — přepnuto <strong>${flips}</strong> ${flips === 1 ? 'bit' : (flips >= 2 && flips <= 4 ? 'bity' : 'bitů')}`,
+        allocCoins:     ()         => `INCREMENT začíná: přijaty <span class="coin-text">2 mince</span> (pevný amortizovaný poplatek — vždy přesně 2, bez ohledu na počet přepnutých bitů)`,
+        spendSelf:      (pos)      => `Bit <span class="log-badge slot">[${pos}]</span>: utracena <span class="coin-text">1 mince</span> z přijatých 2 → přepnut 0→1`,
+        saveCoin:       (pos)      => `Bit <span class="log-badge slot">[${pos}]</span>: ušetřena <span class="coin-text">1 mince</span> na tomto bitu (rezerva na budoucí přepnutí 1→0)`,
+        spendSaved:     (pos)      => `Bit <span class="log-badge slot">[${pos}]</span>: utracena <span class="coin-text">1 ušetřená mince</span> (byla zde uložena dříve) → přepnut 1→0. Žádné nové mince nejsou potřeba!`,
+        incrDone:       (flips)    => `Hotovo — přepnuto <strong>${flips}</strong> ${flips === 1 ? 'bit' : (flips >= 2 && flips <= 4 ? 'bity' : 'bitů')}`,
         groupLabel:     (from, to, step) => `Krok ${step} — inkrementace ${from} → ${to}`,
         logStep:        (n)        => `Krok ${n}`,
         randomGenerating: (n)      => `Generuji <strong>${n}</strong> inkrementací…`,
@@ -125,12 +125,13 @@ const dict = {
 
 // ─── Log helpers ──────────────────────────────────────────────────────────────
 const LOG_TYPES = {
-    INSERT:  { class: 'insert',  icon: '➕' },
-    RESIZE:  { class: 'resize',  icon: '📏' },
-    COPY:    { class: 'copy',    icon: '📋' },
-    BORROW:  { class: 'borrow',  icon: '💸' },
-    WARNING: { class: 'warning', icon: '⚠️' },
-    INFO:    { class: 'info',    icon: 'ℹ️' },
+    // Minimal, unified icon set across the whole web
+    INSERT:  { class: 'insert',  icon: '＋' },
+    RESIZE:  { class: 'resize',  icon: '↔' },
+    COPY:    { class: 'copy',    icon: '⧉' },
+    BORROW:  { class: 'borrow',  icon: '⇄' },
+    WARNING: { class: 'warning', icon: '!' },
+    INFO:    { class: 'info',    icon: 'i' },
     SUCCESS: { class: 'insert',  icon: '✓'  },
 };
 
@@ -274,7 +275,7 @@ function applyLanguage() {
     panel.innerHTML = '';
     const init = document.createElement('div');
     init.classList.add('log-entry', 'info');
-    init.innerHTML = `<div class="log-header"><span class="log-icon">👋</span><span>${d.steps} ${d.willAppear}</span></div>`;
+    init.innerHTML = `<div class="log-header"><span class="log-icon">${LOG_TYPES.INFO.icon}</span><span>${d.steps} ${d.willAppear}</span></div>`;
     panel.appendChild(init);
 
     updateLangToggleUI();

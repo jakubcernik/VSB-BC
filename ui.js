@@ -27,7 +27,7 @@ const dict = {
                    Complexity: <strong class="badge">O(1)</strong>`,
             btn: 'Prepare Best Case',
             insert: 'Insert into Best Case',
-            ready: '✅ Best Case prepared! Array has capacity [4] but only 3 elements. Adding a number will be instant.',
+            ready: 'Best Case prepared! Array has capacity [4] but only 3 elements. Adding a number will be instant.',
         },
         worstCase: {
             title: 'Worst Case',
@@ -36,7 +36,7 @@ const dict = {
                    Complexity: <strong class="badge">O(N)</strong>`,
             btn: 'Prepare Worst Case',
             insert: 'Insert into Worst Case',
-            ready: '⚠️ Worst Case prepared! Array is full [4/4]. Adding a number will trigger a resize.',
+            ready: 'Worst Case prepared! Array is full [4/4]. Adding a number will trigger a resize.',
         },
 
         best: 'Best Case',
@@ -59,16 +59,16 @@ const dict = {
 
         // --- Insertion ---
         insertTitle:        (val, idx) => `Inserting <strong>${val}</strong> into slot <span class="log-badge slot">[${idx}]</span>`,
-        insertAllocCoins:   (n)        => `💰 Allocated <span class="coin-text">${n} coin${n !== 1 ? 's' : ''}</span> (amortized prepayment)`,
-        insertPaySelf:      ()         => `💳 Spent <span class="coin-text">1 coin</span> for insertion`,
-        insertPayCopy:      ()         => `🏦 Saved <span class="coin-text">1 coin</span> for future copy`,
+        insertAllocCoins:   (n)        => `Allocated <span class="coin-text">${n} coin${n !== 1 ? 's' : ''}</span> (amortized prepayment)`,
+        insertPaySelf:      ()         => `Spent <span class="coin-text">1 coin</span> for insertion`,
+        insertPayCopy:      ()         => `Saved <span class="coin-text">1 coin</span> for future copy`,
 
         // --- Resize ---
         resizeTitle:        (old, nw)  => `Array full — resizing <span class="log-badge capacity">${old} → ${nw}</span>`,
         resizeWhy:          ()         => `Each element had 1 saved coin. These coins now pay for copying!`,
         resizeCopySlot:     (i)        => `Slot <span class="log-badge slot">[${i}]</span>: spent <span class="log-badge coin">1 coin</span> to copy`,
-        resizeDoneSlots:    (n)        => `✅ All <strong>${n} elements</strong> copied! Spent: <span class="log-badge coin">${n} coins</span>`,
-        resizeNewSlots:     (old, nw)  => `📦 Created <span class="log-badge capacity">${nw - old} new slots</span> [${old}–${nw - 1}]`,
+        resizeDoneSlots:    (n)        => `All <strong>${n} elements</strong> copied! Spent: <span class="log-badge coin">${n} coins</span>`,
+        resizeNewSlots:     (old, nw)  => `Created <span class="log-badge capacity">${nw - old} new slots</span> [${old}–${nw - 1}]`,
 
         // --- Random ---
         randomGenerating:   (n, mn, mx)=> `Generating <strong>${n}</strong> random numbers in range [${mn}, ${mx}]`,
@@ -82,7 +82,7 @@ const dict = {
 
         // --- Borrow / Invariant ---
         borrowFromSlot:     (i, lender) => `Slot <span class="log-badge slot">[${i}]</span> has <span class="log-badge coin">0 coins</span> — borrowing from <span class="log-badge slot">[${lender}]</span>`,
-        invariantBroken:    (i)         => `⚠️ Slot <span class="log-badge slot">[${i}]</span> — invariant broken, no coins!`,
+        invariantBroken:    (i)         => `Slot <span class="log-badge slot">[${i}]</span> — invariant broken, no coins!`,
 
         // --- Best / Worst finish ---
         bestCaseDone:       'Best Case — only one coin spent for push.',
@@ -104,7 +104,7 @@ const dict = {
                    Složitost: <strong class="badge">O(1)</strong>`,
             btn: 'Připravit Nejlepší případ',
             insert: 'Vložit do Nejlepšího případu',
-            ready: '✅ Nejlepší případ připraven! Pole má kapacitu [4], ale jen 3 prvky. Vložení bude okamžité.',
+            ready: 'Nejlepší případ připraven! Pole má kapacitu [4], ale jen 3 prvky. Vložení bude okamžité.',
         },
         worstCase: {
             title: 'Nejhorší případ',
@@ -113,7 +113,7 @@ const dict = {
                    Složitost: <strong class="badge">O(N)</strong>`,
             btn: 'Připravit Nejhorší případ',
             insert: 'Vložit do Nejhoršího případu',
-            ready: '⚠️ Nejhorší případ připraven! Pole je plné [4/4]. Vložení spustí resize.',
+            ready: 'Nejhorší případ připraven! Pole je plné [4/4]. Vložení spustí resize.',
         },
 
         best: 'Nejlepší případ',
@@ -136,30 +136,30 @@ const dict = {
 
         // --- Vložení ---
         insertTitle:        (val, idx) => `Vkládám <strong>${val}</strong> na pozici <span class="log-badge slot">[${idx}]</span>`,
-        insertAllocCoins:   (n)        => `💰 Přiděleno <span class="coin-text">${n} ${n === 1 ? 'mince' : (n >= 2 && n <= 4 ? 'mince' : 'mincí')}</span> (amortizovaná záloha)`,
-        insertPaySelf:      ()         => `💳 Utracena <span class="coin-text">1 mince</span> za samotné vložení`,
-        insertPayCopy:      ()         => `🏦 Ušetřena <span class="coin-text">1 mince</span> na budoucí kopírování`,
+        insertAllocCoins:   (n)        => `Přiděleno <span class="coin-text">${n} ${n === 1 ? 'mince' : (n >= 2 && n <= 4 ? 'mince' : 'mincí')}</span> (amortizovaná záloha)`,
+        insertPaySelf:      ()         => `Utracena <span class="coin-text">1 mince</span> za samotné vložení`,
+        insertPayCopy:      ()         => `Ušetřena <span class="coin-text">1 mince</span> na budoucí kopírování`,
 
         // --- Resize ---
         resizeTitle:        (old, nw)  => `Pole plné — zvětšuji <span class="log-badge capacity">${old} → ${nw}</span>`,
         resizeWhy:          ()         => `Každý prvek měl 1 ušetřenou minci. Ty teď platí za kopírování!`,
         resizeCopySlot:     (i)        => `Pozice <span class="log-badge slot">[${i}]</span>: utracena <span class="log-badge coin">1 mince</span> za kopírování`,
-        resizeDoneSlots:    (n)        => `✅ Všech <strong>${n} prvků</strong> zkopírováno! Utraceno: <span class="log-badge coin">${n} mincí</span>`,
-        resizeNewSlots:     (old, nw)  => `📦 Vytvořeno <span class="log-badge capacity">${nw - old} nových políček</span> [${old}–${nw - 1}]`,
+        resizeDoneSlots:    (n)        => `Všech <strong>${n} prvků</strong> zkopírováno! Utraceno: <span class="log-badge coin">${n} mincí</span>`,
+        resizeNewSlots:     (old, nw)  => `Vytvořeno <span class="log-badge capacity">${nw - old} nových políček</span> [${old}–${nw - 1}]`,
 
         // --- Náhodné ---
         randomGenerating:   (n, mn, mx)=> `Generuji <strong>${n}</strong> náhodných čísel v rozsahu [${mn}, ${mx}]`,
         randomDone:         (n)        => `Hotovo — vloženo <strong>${n}</strong> hodnot`,
 
         // --- Chyby ---
-        arrayFull:          '🔴 Pole je plné. Potřeba zvětšení!',
+        arrayFull:          'Pole je plné. Potřeba zvětšení!',
         noCoinsLeft:        'Nedostatek mincí na pozici',
         groupLabel:         (val, step) => `Krok ${step} — vkládám <strong>${val}</strong>`,
         logStep:            (n)         => `Krok ${n}`,
 
         // --- Půjčování / Invariant ---
         borrowFromSlot:     (i, lender) => `Pozice <span class="log-badge slot">[${i}]</span> má <span class="log-badge coin">0 mincí</span> — půjčujeme z <span class="log-badge slot">[${lender}]</span>`,
-        invariantBroken:    (i)         => `⚠️ Pozice <span class="log-badge slot">[${i}]</span> — invariant porušen, žádné mince!`,
+        invariantBroken:    (i)         => `Pozice <span class="log-badge slot">[${i}]</span> — invariant porušen, žádné mince!`,
 
         // --- Dokončení Best / Worst ---
         bestCaseDone:       'Nejlepší případ — utracena pouze jedna mince za vložení.',
@@ -243,13 +243,14 @@ function setMode(mode)
 
 // Log types with icons
 const LOG_TYPES = {
-    INSERT: { class: 'insert', icon: '➕' },
-    RESIZE: { class: 'resize', icon: '📏' },
-    COPY: { class: 'copy', icon: '📋' },
-    BORROW: { class: 'borrow', icon: '💸' },
-    WARNING: { class: 'warning', icon: '⚠️' },
-    INFO: { class: 'info', icon: 'ℹ️' },
-    SUCCESS: { class: 'insert', icon: '✓' }
+    // Minimal, unified icon set across the whole web
+    INSERT:  { class: 'insert',  icon: '＋' },
+    RESIZE:  { class: 'resize',  icon: '↔' },
+    COPY:    { class: 'copy',    icon: '⧉' },
+    BORROW:  { class: 'borrow',  icon: '⇄' },
+    WARNING: { class: 'warning', icon: '!' },
+    INFO:    { class: 'info',    icon: 'i' },
+    SUCCESS: { class: 'insert',  icon: '✓' }
 };
 
 // Aktuálně otevřená skupina kroků
@@ -328,7 +329,7 @@ function updateInfoPanel(message)
         type = LOG_TYPES.SUCCESS;
     } else if (message.includes('půjčujeme') || message.includes('borrow')) {
         type = LOG_TYPES.BORROW;
-    } else if (message.includes('⚠️') || message.includes('invariant')) {
+    } else if (message.includes('invariant') || message.includes('Invariant') || message.includes('porušen')) {
         type = LOG_TYPES.WARNING;
     } else if (message.includes('utracena') || message.includes('spent')) {
         type = LOG_TYPES.COPY;
@@ -403,7 +404,7 @@ function applyLanguage()
     initialEntry.classList.add('log-entry', 'info');
     initialEntry.innerHTML = `
         <div class="log-header">
-            <span class="log-icon">👋</span>
+            <span class="log-icon">${LOG_TYPES.INFO.icon}</span>
             <span>${d.steps} ${d.willAppear}</span>
         </div>
     `;

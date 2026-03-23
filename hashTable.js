@@ -145,7 +145,7 @@ function clearInfoPanel() {
     initialEntry.classList.add('log-entry', 'info');
     initialEntry.innerHTML = `
         <div class="log-header">
-            <span class="log-icon">👋</span>
+            <span class="log-icon">${LOG_TYPES.INFO.icon}</span>
             <span>${d.steps} ${d.willAppear}</span>
         </div>
     `;
