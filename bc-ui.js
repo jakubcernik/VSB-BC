@@ -38,6 +38,12 @@ const dict = {
         value:            'Value',
         invalidInput:     'Please enter a valid positive integer.',
 
+        // --- Validation (shared) ---
+        validationEmpty: 'Please fill out the field.',
+        validationNotInteger: 'Please enter an integer.',
+        validationOutOfRange: (min, max) => `Please enter a value in range ${min}–${max}.`,
+        validationMinGreaterThanMax: 'Minimum must not be greater than maximum.',
+
         bestCaseDesc: `The <strong>Best Case</strong> occurs when the least-significant bit is <strong class="highlight-green">0</strong>.
             Only that single bit is flipped from 0→1 and one coin is spent.
             <br><br>Complexity: <strong class="badge">O(1)</strong>`,
@@ -91,6 +97,12 @@ const dict = {
         footer:           '2026 by Jakub Cernik. Vyvinuto pro vzdělávací účely jako bakalářská práce.',
         value:            'Hodnota',
         invalidInput:     'Zadejte platné kladné celé číslo.',
+
+        // --- Validace (sdílené) ---
+        validationEmpty: 'Vyplňte pole.',
+        validationNotInteger: 'Zadejte celé číslo.',
+        validationOutOfRange: (min, max) => `Zadejte hodnotu v rozsahu ${min}–${max}.`,
+        validationMinGreaterThanMax: 'Minimum nesmí být větší než maximum.',
 
         bestCaseDesc: `<strong>Nejlepší případ</strong> nastává, když je nejnižší bit <strong class="highlight-green">0</strong>.
             Pouze tento jeden bit se přepne z 0→1 a utratí se jedna mince.

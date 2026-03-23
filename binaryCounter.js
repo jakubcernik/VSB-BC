@@ -282,8 +282,16 @@ function resetCounter() {
 async function generateRandom() {
     if (isAnimating) return;
     const d = dict[currentLang];
-    const count = parseInt(document.getElementById('randomCount').value);
-    if (isNaN(count) || count < 1) { updateInfoPanel(d.invalidInput); return; }
+    const countRes = InputValidation.readInt('randomCount', { required: true, min: 1, max: 200 });
+    if (!countRes.ok) {
+        InputValidation.reportValidationError(countRes.reason, {
+            dict: d,
+            details: countRes.details,
+            report: (msg) => updateInfoPanel(msg),
+        });
+        return;
+    }
+    const count = countRes.value;
 
     resetCounter();
     createLogEntry(LOG_TYPES.INFO, d.randomGenerating(count));

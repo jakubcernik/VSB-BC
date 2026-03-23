@@ -146,14 +146,19 @@ async function resizeArray()
 async function addElement()
 {
     const input = document.getElementById("manualInput");
-    const value = parseInt(input.value);
     const d = dict[currentLang];
 
-    if (isNaN(value))
-    {
-        updateInfoPanel(d.pleaseEnterValidNumber);
+    const valueRes = InputValidation.readInt('manualInput', { required: true });
+    if (!valueRes.ok) {
+        InputValidation.reportValidationError(valueRes.reason, {
+            dict: d,
+            details: valueRes.details,
+            report: (msg) => updateInfoPanel(msg),
+        });
         return;
     }
+
+    const value = valueRes.value;
 
     steps++;
     const slotIndex = array.length;
@@ -202,15 +207,30 @@ function getRandomNumber(min, max)
 async function generateRandomArray()
 {
     const d = dict[currentLang];
-    const count = parseInt(document.getElementById("randomCount").value);
-    const min   = parseInt(document.getElementById("randomMin").value);
-    const max   = parseInt(document.getElementById("randomMax").value);
 
-    if (isNaN(count) || isNaN(min) || isNaN(max) || count <= 0 || min > max)
-    {
-        updateInfoPanel(d.invalidInput);
+    const countRes = InputValidation.readInt('randomCount', { required: true, min: 1 });
+    if (!countRes.ok) {
+        InputValidation.reportValidationError(countRes.reason, {
+            dict: d,
+            details: countRes.details,
+            report: (msg) => updateInfoPanel(msg),
+        });
         return;
     }
+
+    const rangeRes = InputValidation.readIntMinMax('randomMin', 'randomMax', { required: true });
+    if (!rangeRes.ok) {
+        InputValidation.reportValidationError(rangeRes.reason, {
+            dict: d,
+            details: rangeRes.details,
+            report: (msg) => updateInfoPanel(msg),
+        });
+        return;
+    }
+
+    const count = countRes.value;
+    const min = rangeRes.min;
+    const max = rangeRes.max;
 
     updateInfoPanel(d.randomGenerating(count, min, max));
 
@@ -251,13 +271,19 @@ function prepareBestCase()
 async function finishBestCase()
 {
     const input = document.getElementById("bestInput");
-    const value = parseInt(input.value);
     const d = dict[currentLang];
 
-    if (isNaN(value)) {
-        updateInfoPanel(d.pleaseEnterValidNumber);
+    const valueRes = InputValidation.readInt('bestInput', { required: true });
+    if (!valueRes.ok) {
+        InputValidation.reportValidationError(valueRes.reason, {
+            dict: d,
+            details: valueRes.details,
+            report: (msg) => updateInfoPanel(msg),
+        });
         return;
     }
+
+    const value = valueRes.value;
 
     // Reuse logic
     document.getElementById("manualInput").value = value;
@@ -298,13 +324,19 @@ function prepareWorstCase()
 async function finishWorstCase()
 {
     const input = document.getElementById("worstInput");
-    const value = parseInt(input.value);
     const d = dict[currentLang];
 
-    if (isNaN(value)) {
-        updateInfoPanel(d.pleaseEnterValidNumber);
+    const valueRes = InputValidation.readInt('worstInput', { required: true });
+    if (!valueRes.ok) {
+        InputValidation.reportValidationError(valueRes.reason, {
+            dict: d,
+            details: valueRes.details,
+            report: (msg) => updateInfoPanel(msg),
+        });
         return;
     }
+
+    const value = valueRes.value;
 
     // Reuse logic
     document.getElementById("manualInput").value = value;

@@ -306,26 +306,58 @@ async function insertKV(keyInt, value) {
 
 // ─── Modes ────────────────────────────────────────────────────────────────────
 async function addManual() {
-    const keyRaw = (document.getElementById('keyInput')?.value || '').trim();
-    const value = (document.getElementById('valueInput')?.value || '').trim();
-    const keyInt = Number(keyRaw);
-    if (keyRaw === '' || !Number.isFinite(keyInt) || !Number.isInteger(keyInt) || value === '') {
-        alert(dict[currentLang].invalidInput);
+    const d = dict[currentLang];
+
+    const keyRes = InputValidation.readInt('keyInput', { required: true });
+    if (!keyRes.ok) {
+        InputValidation.reportValidationError(keyRes.reason, {
+            dict: d,
+            details: keyRes.details,
+            report: (msg) => updateInfoPanel(msg),
+        });
         return;
     }
-    await insertKV(keyInt, value);
+
+    const valueRes = InputValidation.readString('valueInput', { required: true });
+    if (!valueRes.ok) {
+        InputValidation.reportValidationError(valueRes.reason, {
+            dict: d,
+            details: valueRes.details,
+            report: (msg) => updateInfoPanel(msg),
+        });
+        return;
+    }
+
+    await insertKV(keyRes.value, valueRes.value);
 }
 
 async function generateRandom() {
     if (isAnimating) return;
 
-    const count = parseInt(document.getElementById('randomCount')?.value || '0', 10);
-    const keyMin = parseInt(document.getElementById('randomKeyMin')?.value || '0', 10);
-    const keyMax = parseInt(document.getElementById('randomKeyMax')?.value || '99', 10);
-    if (!Number.isFinite(count) || count <= 0 || !Number.isFinite(keyMin) || !Number.isFinite(keyMax) || keyMin > keyMax) {
-        alert(dict[currentLang].invalidInput);
+    const d = dict[currentLang];
+    const countRes = InputValidation.readInt('randomCount', { required: true, min: 1 });
+    if (!countRes.ok) {
+        InputValidation.reportValidationError(countRes.reason, {
+            dict: d,
+            details: countRes.details,
+            report: (msg) => updateInfoPanel(msg),
+        });
         return;
     }
+
+    const rangeRes = InputValidation.readIntMinMax('randomKeyMin', 'randomKeyMax', { required: true });
+    if (!rangeRes.ok) {
+        InputValidation.reportValidationError(rangeRes.reason, {
+            dict: d,
+            details: rangeRes.details,
+            report: (msg) => updateInfoPanel(msg),
+        });
+        return;
+    }
+
+    const count = countRes.value;
+    const keyMin = rangeRes.min;
+    const keyMax = rangeRes.max;
 
     for (let i = 0; i < count; i++) {
         const k = randKeyInt(keyMin, keyMax);

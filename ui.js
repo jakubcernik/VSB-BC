@@ -57,6 +57,12 @@ const dict = {
         pleaseEnterValidNumber: 'Please enter a valid number.',
         invalidInput: 'Invalid input. Please check the values and try again.',
 
+        // --- Validation (shared) ---
+        validationEmpty: 'Please fill out the field.',
+        validationNotInteger: 'Please enter an integer.',
+        validationOutOfRange: (min, max) => `Please enter a value in range ${min}–${max}.`,
+        validationMinGreaterThanMax: 'Minimum must not be greater than maximum.',
+
         // --- Insertion ---
         insertTitle:        (val, idx) => `Inserting <strong>${val}</strong> into slot <span class="log-badge slot">[${idx}]</span>`,
         insertAllocCoins:   (n)        => `Allocated <span class="coin-text">${n} coin${n !== 1 ? 's' : ''}</span> (amortized prepayment)`,
@@ -133,6 +139,12 @@ const dict = {
         footer: '2026 by Jakub Cernik. Vyvinuto pro vzdělávací účely jako bakalářská práce.',
         pleaseEnterValidNumber: 'Zadejte platné číslo.',
         invalidInput: 'Neplatný vstup. Zkontrolujte hodnoty a zkuste to znovu.',
+
+        // --- Validace (sdílené) ---
+        validationEmpty: 'Vyplňte pole.',
+        validationNotInteger: 'Zadejte celé číslo.',
+        validationOutOfRange: (min, max) => `Zadejte hodnotu v rozsahu ${min}–${max}.`,
+        validationMinGreaterThanMax: 'Minimum nesmí být větší než maximum.',
 
         // --- Vložení ---
         insertTitle:        (val, idx) => `Vkládám <strong>${val}</strong> na pozici <span class="log-badge slot">[${idx}]</span>`,

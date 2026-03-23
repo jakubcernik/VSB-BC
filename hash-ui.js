@@ -71,6 +71,12 @@ const dict = {
         // Errors
         invalidInput:     'Please enter an integer key and a value.',
 
+        // --- Validation (shared) ---
+        validationEmpty: 'Please fill out the field.',
+        validationNotInteger: 'Please enter an integer.',
+        validationOutOfRange: (min, max) => `Please enter a value in range ${min}–${max}.`,
+        validationMinGreaterThanMax: 'Minimum must not be greater than maximum.',
+
         // Log
         groupLabel:       (k, step) => `Step ${step} — inserting <strong>${k}</strong>`,
         logStep:          (n) => `Step ${n}`,
@@ -151,6 +157,12 @@ const dict = {
 
         // Errors
         invalidInput:     'Zadejte celočíselný klíč a hodnotu.',
+
+        // --- Validace (sdílené) ---
+        validationEmpty: 'Vyplňte pole.',
+        validationNotInteger: 'Zadejte celé číslo.',
+        validationOutOfRange: (min, max) => `Zadejte hodnotu v rozsahu ${min}–${max}.`,
+        validationMinGreaterThanMax: 'Minimum nesmí být větší než maximum.',
 
         // Log
         groupLabel:       (k, step) => `Krok ${step} — vkládám <strong>${k}</strong>`,
