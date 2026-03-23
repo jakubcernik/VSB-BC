@@ -28,16 +28,16 @@ const theoryDict = {
         // --- push_back ---
         pushbackP1: 'The <code>push_back</code> operation appends a value to the end of the array. Its cost depends entirely on whether there is free capacity:',
         cardBestTitle:  'Best Case — O(1)',
-        cardBestDesc:   'Free slot available. The new element is written directly into <code>array[size]</code> and size is incremented. No allocation or copying occurs.',
+        cardBestDesc:   'Free slot available. The new element is written directly into array[size] and size is incremented. No allocation or copying occurs.',
         cardWorstTitle: 'Worst Case — O(N)',
-        cardWorstDesc:  'Array is full. A new larger block is allocated, all N existing elements are copied, the old block is freed, and finally the new element is inserted.',
+        cardWorstDesc:  'Array is full. A new larger block is allocated, all N existing elements are copied and finally the new element is inserted.',
 
         // --- Naive ---
         naiveP1: 'A naive approach would look at a single <code>push_back</code> call and note that it can cost O(N) due to copying. Multiplying by N insertions gives a bound of <strong>O(N²)</strong> for N operations — but this is a massive overestimate.',
         naiveP2: 'The key insight is that <strong>expensive resizes are rare</strong>. After doubling from capacity C to 2C, the next resize cannot happen for another C insertions. Amortized analysis captures this by spreading the cost of a resize over the operations that preceded it.',
 
         // --- Amortized ---
-        amortizedP1: 'Amortized analysis gives a guaranteed average cost per operation over a <em>sequence</em> of operations, even if individual operations occasionally spike. Three classical methods are used:',
+        amortizedP1: 'Amortized analysis gives a guaranteed average cost per operation over a sequence of operations, even if individual operations occasionally spike. Three classical methods are used:',
 
         tabAggregate:  'Aggregate Method',
         tabAccounting: 'Accounting Method',
@@ -121,16 +121,16 @@ const theoryDict = {
         // --- push_back ---
         pushbackP1: 'Operace <code>push_back</code> přidá hodnotu na konec pole. Její cena závisí výhradně na tom, zda je dostupná volná kapacita:',
         cardBestTitle:  'Nejlepší případ — O(1)',
-        cardBestDesc:   'Je volné místo. Nový prvek se zapíše přímo na pozici <code>array[size]</code> a velikost se zvýší o 1. Žádná alokace ani kopírování neproběhne.',
+        cardBestDesc:   'Je volné místo. Nový prvek se zapíše přímo na pozici array[size]. Žádná alokace ani kopírování neproběhne.',
         cardWorstTitle: 'Nejhorší případ — O(N)',
-        cardWorstDesc:  'Pole je plné. Alokuje se nový větší blok, všech N stávajících prvků se zkopíruje, starý blok se uvolní a teprve poté se vloží nový prvek.',
+        cardWorstDesc:  'Pole je plné. Alokuje se nový větší blok, všech N stávajících prvků se zkopíruje a teprve poté se vloží nový prvek.',
 
         // --- Naivní ---
         naiveP1: 'Naivní přístup by se podíval na jedno volání <code>push_back</code> a zaznamenal, že může stát O(N) kvůli kopírování. Vynásobením N vloženími by vznikl odhad <strong>O(N²)</strong> pro N operací — to je ale obrovský nadodhad.',
         naiveP2: 'Klíčové pozorování je, že <strong>nákladné resize operace jsou vzácné</strong>. Po zdvojení kapacity z C na 2C nemůže dojít k dalšímu resize dříve než po C dalších vloženích. Amortizovaná analýza toto zachycuje rozložením ceny resize na operace, které mu předcházely.',
 
         // --- Amortizovaná ---
-        amortizedP1: 'Amortizovaná analýza zaručuje průměrnou cenu operace v <em>posloupnosti</em> operací, i když jednotlivé operace občas skokově zdraží. Používají se tři klasické metody:',
+        amortizedP1: 'Amortizovaná analýza zaručuje průměrnou cenu operace v posloupnosti operací, i když jednotlivé operace občas skokově zdraží. Používají se tři klasické metody:',
 
         tabAggregate:  'Agregační metoda',
         tabAccounting: 'Účetní metoda',

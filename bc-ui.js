@@ -264,7 +264,7 @@ function applyLanguage() {
     document.getElementById('worstCaseDesc').innerHTML    = d.worstCaseDesc;
     document.getElementById('btnRunWorst').textContent    = d.worst;
 
-    document.getElementById('creditCounter').textContent = `${d.coins}: 0`;
+    document.getElementById('creditCounter').textContent = `${d.coins} 0`;
     document.getElementById('stepCounter').textContent   = `${d.steps}: 0`;
     const bankLabelEl = document.getElementById('bankLabel');
     if (bankLabelEl) bankLabelEl.textContent = d.bankLabel;
