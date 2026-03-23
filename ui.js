@@ -72,8 +72,8 @@ const dict = {
         // --- Resize ---
         resizeTitle:        (old, nw)  => `Array full — resizing <span class="log-badge capacity">${old} → ${nw}</span>`,
         resizeWhy:          ()         => `Each element had 1 saved coin. These coins now pay for copying!`,
-        resizeCopySlot:     (i)        => `Slot <span class="log-badge slot">[${i}]</span>: spent <span class="log-badge coin">1 coin</span> to copy`,
-        resizeDoneSlots:    (n)        => `All <strong>${n} elements</strong> copied! Spent: <span class="log-badge coin">${n} coins</span>`,
+        resizeCopySlot:     (i)        => `Slot <span class="log-badge slot">[${i}]</span>: spent <span class="coin-text">1 coin</span> to copy`,
+        resizeDoneSlots:    (n)        => `All <strong>${n} elements</strong> copied! Spent: <span class="coin-text">${n} coins</span>`,
         resizeNewSlots:     (old, nw)  => `Created <span class="log-badge capacity">${nw - old} new slots</span> [${old}–${nw - 1}]`,
 
         // --- Random ---
@@ -155,8 +155,8 @@ const dict = {
         // --- Resize ---
         resizeTitle:        (old, nw)  => `Pole plné — zvětšuji <span class="log-badge capacity">${old} → ${nw}</span>`,
         resizeWhy:          ()         => `Každý prvek měl 1 ušetřenou minci. Ty teď platí za kopírování!`,
-        resizeCopySlot:     (i)        => `Pozice <span class="log-badge slot">[${i}]</span>: utracena <span class="log-badge coin">1 mince</span> za kopírování`,
-        resizeDoneSlots:    (n)        => `Všech <strong>${n} prvků</strong> zkopírováno! Utraceno: <span class="log-badge coin">${n} mincí</span>`,
+        resizeCopySlot:     (i)        => `Pozice <span class="log-badge slot">[${i}]</span>: utracena <span class="coin-text">1 mince</span> za kopírování`,
+        resizeDoneSlots:    (n)        => `Všech <strong>${n} prvků</strong> zkopírováno! Utraceno: <span class="coin-text">${n} mincí</span>`,
         resizeNewSlots:     (old, nw)  => `Vytvořeno <span class="log-badge capacity">${nw - old} nových políček</span> [${old}–${nw - 1}]`,
 
         // --- Náhodné ---
