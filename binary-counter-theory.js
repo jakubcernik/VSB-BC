@@ -85,15 +85,13 @@ const theoryDict = {
         tdContribK: '≤ N/2^i',
         tableP2: 'Summing the geometric series: N + N/2 + N/4 + … < 2N. Average per increment: 2N / N = <strong>2 = O(1)</strong>.',
 
-        // Complexity summary
+        // Complexity summary (unified: best / amortized / single worst)
         opIncrement:      'INCREMENT (amortized)',
+        opIncrementBest:  'INCREMENT (best)',
         opIncrementWorst: 'INCREMENT (single worst)',
-        opNIncrements:    'N increments total',
-        opSpace:          'Space',
         noteIncrement:      'Amortized over N operations',
+        noteIncrementBest:  'LSB is 0 → 1 bit flip',
         noteIncrementWorst: 'When all k bits are 1 — extremely rare',
-        noteNIncrements:    'Exactly 2N bit flips in total',
-        noteSpace:          'k-bit register: O(k)',
         legendAmortized: '* Amortized O(1) — the average cost per INCREMENT over any N operations is O(1), even though individual calls can cost O(k).',
 
         // CTA
@@ -182,15 +180,13 @@ const theoryDict = {
         tdContribK: '≤ N/2^i',
         tableP2: 'Součet geometrické řady: N + N/2 + N/4 + … < 2N. Průměr na inkrementaci: 2N / N = <strong>2 = O(1)</strong>.',
 
-        // Přehled složitostí
+        // Přehled složitostí (sjednoceno: nejlepší / amortizovaně / nejhorší 1×)
         opIncrement:      'INCREMENT (amortizovaně)',
-        opIncrementWorst: 'INCREMENT (nejhorší případ)',
-        opNIncrements:    'N inkrementací celkem',
-        opSpace:          'Paměť',
+        opIncrementBest:  'INCREMENT (nejlepší)',
+        opIncrementWorst: 'INCREMENT (nejhorší 1×)',
         noteIncrement:      'Amortizovaně přes N operací',
+        noteIncrementBest:  'LSB je 0 → 1 přepnutí',
         noteIncrementWorst: 'Když jsou všechny k bitů 1 — extrémně vzácné',
-        noteNIncrements:    'Celkem přesně 2N přepnutí bitů',
-        noteSpace:          'k-bitový registr: O(k)',
         legendAmortized: '* Amortizované O(1) — průměrná cena INCREMENT přes libovolných N operací je O(1), i když jednotlivá volání mohou stát O(k).',
 
         // CTA
@@ -329,14 +325,12 @@ function applyLanguage() {
     document.getElementById('tableP2').innerHTML      = d.tableP2;
 
     // Summary
-    document.getElementById('opIncrement').textContent      = d.opIncrement;
-    document.getElementById('opIncrementWorst').textContent = d.opIncrementWorst;
-    document.getElementById('opNIncrements').textContent    = d.opNIncrements;
-    document.getElementById('opSpace').textContent          = d.opSpace;
-    document.getElementById('noteIncrement').textContent      = d.noteIncrement;
+    document.getElementById('opIncrement').textContent       = d.opIncrement;
+    document.getElementById('opIncrementBest').textContent   = d.opIncrementBest;
+    document.getElementById('opIncrementWorst').textContent  = d.opIncrementWorst;
+    document.getElementById('noteIncrement').textContent     = d.noteIncrement;
+    document.getElementById('noteIncrementBest').textContent = d.noteIncrementBest;
     document.getElementById('noteIncrementWorst').textContent = d.noteIncrementWorst;
-    document.getElementById('noteNIncrements').textContent    = d.noteNIncrements;
-    document.getElementById('noteSpace').textContent          = d.noteSpace;
     document.getElementById('legendAmortized').innerHTML      = d.legendAmortized;
 
     // CTA

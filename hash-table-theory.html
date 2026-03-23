@@ -117,32 +117,23 @@
         <section class="theory-section" id="sec-summary">
             <h2 class="section-title" id="titleSummary">5. Complexity Summary</h2>
             <div class="section-body">
-                <table class="summary-table">
-                    <thead>
-                    <tr>
-                        <th id="thOp">Operation</th>
-                        <th id="thCost">Cost</th>
-                        <th id="thNote">Note</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td id="opInsert">INSERT (amortized)</td>
-                        <td><strong>O(1)</strong></td>
-                        <td id="noteInsert"></td>
-                    </tr>
-                    <tr>
-                        <td id="opInsertWorst">INSERT (single worst)</td>
-                        <td><strong>O(n)</strong></td>
-                        <td id="noteInsertWorst"></td>
-                    </tr>
-                    <tr>
-                        <td id="opSpace">Space</td>
-                        <td><strong>O(n)</strong></td>
-                        <td id="noteSpace"></td>
-                    </tr>
-                    </tbody>
-                </table>
+                <div class="complexity-grid">
+                    <div class="complexity-card">
+                        <div class="complexity-op" id="opInsert">INSERT (amortized)</div>
+                        <div class="complexity-val amortized-val">O(1)*</div>
+                        <div class="complexity-note" id="noteInsert"></div>
+                    </div>
+                    <div class="complexity-card">
+                        <div class="complexity-op" id="opInsertBest">INSERT (best)</div>
+                        <div class="complexity-val best-val">O(1)</div>
+                        <div class="complexity-note" id="noteInsertBest"></div>
+                    </div>
+                    <div class="complexity-card">
+                        <div class="complexity-op" id="opInsertWorst">INSERT (single worst)</div>
+                        <div class="complexity-val worst-val">O(n)</div>
+                        <div class="complexity-note" id="noteInsertWorst"></div>
+                    </div>
+                </div>
 
                 <p class="legend" id="legendAmortized"></p>
             </div>

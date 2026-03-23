@@ -171,34 +171,19 @@
             <div class="section-body">
                 <div class="complexity-grid">
                     <div class="complexity-card">
-                        <div class="complexity-op" id="opAccess">Random access</div>
-                        <div class="complexity-val best-val">O(1)</div>
-                        <div class="complexity-note" id="noteAccess"></div>
-                    </div>
-                    <div class="complexity-card">
                         <div class="complexity-op" id="opPushback">push_back</div>
                         <div class="complexity-val amortized-val">O(1)*</div>
                         <div class="complexity-note" id="notePushback"></div>
                     </div>
                     <div class="complexity-card">
-                        <div class="complexity-op" id="opPushbackWorst">push_back (worst)</div>
+                        <div class="complexity-op" id="opPushbackBest">push_back (best)</div>
+                        <div class="complexity-val best-val">O(1)</div>
+                        <div class="complexity-note" id="notePushbackBest"></div>
+                    </div>
+                    <div class="complexity-card">
+                        <div class="complexity-op" id="opPushbackWorst">push_back (single worst)</div>
                         <div class="complexity-val worst-val">O(N)</div>
                         <div class="complexity-note" id="notePushbackWorst"></div>
-                    </div>
-                    <div class="complexity-card">
-                        <div class="complexity-op" id="opInsertMiddle">Insert (middle)</div>
-                        <div class="complexity-val worst-val">O(N)</div>
-                        <div class="complexity-note" id="noteInsertMiddle"></div>
-                    </div>
-                    <div class="complexity-card">
-                        <div class="complexity-op" id="opErase">Erase (middle)</div>
-                        <div class="complexity-val worst-val">O(N)</div>
-                        <div class="complexity-note" id="noteErase"></div>
-                    </div>
-                    <div class="complexity-card">
-                        <div class="complexity-op" id="opSearch">Search</div>
-                        <div class="complexity-val worst-val">O(N)</div>
-                        <div class="complexity-note" id="noteSearch"></div>
                     </div>
                 </div>
                 <p class="legend" id="legendAmortized"></p>

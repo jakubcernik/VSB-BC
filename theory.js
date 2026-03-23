@@ -77,18 +77,12 @@ const theoryDict = {
         growthP2: 'This simulation uses <strong>α = 2</strong> (doubling) for clarity. In the Accounting Method shown above, charging <strong>2 coins</strong> per insertion is sufficient to pay all future copies during resizes.',
 
         // --- Complexity summary ---
-        opAccess:       'Random access (index)',
-        opPushback:     'push_back (amortized)',
-        opPushbackWorst:'push_back (single worst)',
-        opInsertMiddle: 'Insert at position i',
-        opErase:        'Erase at position i',
-        opSearch:       'Search (unsorted)',
-        noteAccess:       'Direct pointer arithmetic',
+        opPushback:       'push_back (amortized)',
+        opPushbackBest:   'push_back (best)',
+        opPushbackWorst:  'push_back (single worst)',
         notePushback:     'Amortized over N operations',
+        notePushbackBest: 'Free capacity available',
         notePushbackWorst:'Resize: copy all N elements',
-        noteInsertMiddle: 'Shift N − i elements right',
-        noteErase:        'Shift N − i elements left',
-        noteSearch:       'Linear scan',
         legendAmortized: '* Amortized O(1) — the average cost per operation over any sequence of N push_back calls is O(1), even though individual calls can cost O(N).',
 
         // --- CTA ---
@@ -170,18 +164,12 @@ const theoryDict = {
         growthP2: 'Tato simulace používá <strong>α = 2</strong> (zdvojení) pro přehlednost. V účetní metodě výše vychází čistě, že pro zdvojení stačí účtovat <strong>2 mince</strong> na vložení.',
 
         // --- Přehled složitostí ---
-        opAccess:       'Náhodný přístup (index)',
-        opPushback:     'push_back (amortizovaně)',
-        opPushbackWorst:'push_back (nejhorší případ)',
-        opInsertMiddle: 'Vložení na pozici i',
-        opErase:        'Odstranění na pozici i',
-        opSearch:       'Hledání (neseřazené)',
-        noteAccess:       'Přímá aritmetika ukazatelů',
+        opPushback:       'push_back (amortizovaně)',
+        opPushbackBest:   'push_back (nejlepší)',
+        opPushbackWorst:  'push_back (nejhorší 1×)',
         notePushback:     'Amortizovaně přes N operací',
+        notePushbackBest: 'Je volná kapacita',
         notePushbackWorst:'Resize: zkopírování všech N prvků',
-        noteInsertMiddle: 'Posun N − i prvků doprava',
-        noteErase:        'Posun N − i prvků doleva',
-        noteSearch:       'Lineární průchod',
         legendAmortized: '* Amortizované O(1) — průměrná cena operace přes libovolnou posloupnost N volání push_back je O(1), i když jednotlivá volání mohou stát O(N).',
 
         // --- CTA ---
@@ -324,19 +312,13 @@ function applyLanguage() {
     document.getElementById('tdHigh').textContent   = d.tdHigh;
     document.getElementById('growthP2').innerHTML   = d.growthP2;
 
-    // Complexity grid
-    document.getElementById('opAccess').textContent        = d.opAccess;
-    document.getElementById('opPushback').textContent      = d.opPushback;
-    document.getElementById('opPushbackWorst').textContent = d.opPushbackWorst;
-    document.getElementById('opInsertMiddle').textContent  = d.opInsertMiddle;
-    document.getElementById('opErase').textContent         = d.opErase;
-    document.getElementById('opSearch').textContent        = d.opSearch;
-    document.getElementById('noteAccess').textContent        = d.noteAccess;
+    // Complexity grid (unified across algorithms: best / amortized / single worst)
+    document.getElementById('opPushback').textContent        = d.opPushback;
+    document.getElementById('opPushbackBest').textContent    = d.opPushbackBest;
+    document.getElementById('opPushbackWorst').textContent   = d.opPushbackWorst;
     document.getElementById('notePushback').textContent      = d.notePushback;
+    document.getElementById('notePushbackBest').textContent  = d.notePushbackBest;
     document.getElementById('notePushbackWorst').textContent = d.notePushbackWorst;
-    document.getElementById('noteInsertMiddle').textContent  = d.noteInsertMiddle;
-    document.getElementById('noteErase').textContent         = d.noteErase;
-    document.getElementById('noteSearch').textContent        = d.noteSearch;
     document.getElementById('legendAmortized').innerHTML     = d.legendAmortized;
 
     // CTA

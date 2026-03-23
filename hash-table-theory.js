@@ -61,17 +61,14 @@ const theoryDict = {
         potentialMath2:  'â = actual + ΔΦ = O(1)',
         potentialConclusion: 'Potential method confirms the same result: amortized cost per INSERT is constant.',
 
-        thOp: 'Operation',
-        thCost: 'Cost',
-        thNote: 'Note',
-
+        // Complexity summary (unified: best / amortized / single worst)
         opInsert: 'INSERT (amortized)',
+        opInsertBest: 'INSERT (best)',
         opInsertWorst: 'INSERT (single worst)',
-        opSpace: 'Space',
 
         noteInsert: 'Over any sequence of inserts with resizing by doubling and a constant load-factor threshold.',
+        noteInsertBest: 'Hashed slot is empty.',
         noteInsertWorst: 'Rare: when many collisions happen and/or a resize is triggered.',
-        noteSpace: 'Array of slots of size Θ(n).',
 
         legendAmortized: '* Amortized O(1) means the average cost per INSERT over any N operations is bounded by a constant, even though a single INSERT can sometimes cost Θ(n).',
 
@@ -137,17 +134,14 @@ const theoryDict = {
         potentialMath2:  'â = skutečná cena + ΔΦ = O(1)',
         potentialConclusion: 'Potenciálová metoda potvrzuje stejný výsledek: amortizovaná cena INSERT je konstantní.',
 
-        thOp: 'Operace',
-        thCost: 'Cena',
-        thNote: 'Poznámka',
-
+        // Přehled složitostí (sjednoceno: nejlepší / amortizovaně / nejhorší 1×)
         opInsert: 'INSERT (amortizovaně)',
+        opInsertBest: 'INSERT (nejlepší)',
         opInsertWorst: 'INSERT (nejhorší 1×)',
-        opSpace: 'Paměť',
 
         noteInsert: 'Pro libovolnou sekvenci vložení při zdvojnásobování kapacity a konstantním limitu zaplnění.',
+        noteInsertBest: 'Slot určený hashem je prázdný.',
         noteInsertWorst: 'Vzácně: když vznikne mnoho kolizí a/nebo se vyvolá resize.',
-        noteSpace: 'Pole slotů velikosti Θ(n).',
 
         legendAmortized: '* Amortizované O(1) znamená, že průměrná cena na INSERT přes libovolných N operací je omezená konstantou, i když jednotlivý INSERT může občas stát Θ(n).',
 
@@ -264,17 +258,14 @@ function applyLanguage() {
     document.getElementById('potentialMath2').textContent = d.potentialMath2;
     document.getElementById('potentialConclusion').innerHTML = d.potentialConclusion;
 
-    document.getElementById('thOp').textContent = d.thOp;
-    document.getElementById('thCost').textContent = d.thCost;
-    document.getElementById('thNote').textContent = d.thNote;
 
-    document.getElementById('opInsert').textContent = d.opInsert;
+    document.getElementById('opInsert').textContent      = d.opInsert;
+    document.getElementById('opInsertBest').textContent  = d.opInsertBest;
     document.getElementById('opInsertWorst').textContent = d.opInsertWorst;
-    document.getElementById('opSpace').textContent = d.opSpace;
 
-    document.getElementById('noteInsert').textContent = d.noteInsert;
+    document.getElementById('noteInsert').textContent     = d.noteInsert;
+    document.getElementById('noteInsertBest').textContent = d.noteInsertBest;
     document.getElementById('noteInsertWorst').textContent = d.noteInsertWorst;
-    document.getElementById('noteSpace').textContent = d.noteSpace;
 
     document.getElementById('legendAmortized').textContent = d.legendAmortized;
 
