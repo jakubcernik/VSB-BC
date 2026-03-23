@@ -308,6 +308,34 @@ function bankAfterInserting(n)
     return b;
 }
 
+// ── Best/Worst case variants ───────────────────────────────────────────────
+
+let bestVariantIndex = 0;
+let worstVariantIndex = 0;
+
+const BEST_VARIANTS = [
+    // Various free-capacity situations (still O(1) for the next insertion)
+    { capacity: 4,  size: 1 },  // many free slots
+    { capacity: 8,  size: 4 },  // ~50% full
+    { capacity: 8,  size: 6 },  // ~75% full
+    { capacity: 16, size: 14 }, // almost full, but still 2 free slots
+    { capacity: 10, size: 9 },  // exactly 1 free slot
+];
+
+const WORST_VARIANTS = [
+    { capacity: 2,  size: 2 },
+    { capacity: 4,  size: 4 },
+    { capacity: 8,  size: 8 },
+    { capacity: 6,  size: 6 },
+    { capacity: 10, size: 10 },
+];
+
+function makeArrayOfSize(n)
+{
+    // deterministic simple values for clarity
+    return Array.from({ length: n }, (_, i) => (i + 1) * 10);
+}
+
 async function generateRandomArray()
 {
     const d = dict[currentLang];
@@ -347,31 +375,39 @@ async function generateRandomArray()
     updateInfoPanel(d.randomDone(count));
 }
 
-function prepareBestCase()
+function prepareBestCase(next = false)
 {
     resetValues();
     const d = dict[currentLang];
 
-    // Setup: Capacity 4, 3 items filled (Last spot free)
-    capacity = 4;
-    array = [10, 20, 30];
+    if (next) bestVariantIndex = (bestVariantIndex + 1) % BEST_VARIANTS.length;
+    const variant = BEST_VARIANTS[bestVariantIndex];
+
+    // Setup: one free slot => O(1) insertion (no resize)
+    capacity = variant.capacity;
+    array = makeArrayOfSize(variant.size);
     // Under the 3-coin + bank model, long-term saved coins live in the bank.
-    creditsPerSlot = [0, 0, 0, 0];
+    creditsPerSlot = new Array(capacity).fill(0);
     bank = bankAfterInserting(array.length);
-    steps = 3;
+    steps = array.length;
 
     visualizeArray();
     updateCredits();
 
     // Toggle UI
     document.getElementById('btnRunBest').style.display = 'none';
+    document.getElementById('btnNextBest').style.display = 'inline-block';
     document.getElementById('bestCaseInputGroup').style.display = 'flex';
     document.getElementById('bestInput').focus();
     
     // Override log
     const infoPanel = document.getElementById("infoPanel");
     infoPanel.innerHTML = "";
-    createLogEntry(LOG_TYPES.SUCCESS, d.bestCase.ready);
+    if (d.bestCase && typeof d.bestCase.readyVariant === 'function') {
+        createLogEntry(LOG_TYPES.SUCCESS, d.bestCase.readyVariant(capacity, array.length));
+    } else {
+        createLogEntry(LOG_TYPES.SUCCESS, d.bestCase.ready);
+    }
 }
 
 async function finishBestCase()
@@ -402,30 +438,39 @@ async function finishBestCase()
     createLogEntry(LOG_TYPES.SUCCESS, d.bestCaseDone);
 }
 
-function prepareWorstCase()
+function prepareWorstCase(next = false)
 {
     resetValues();
     const d = dict[currentLang];
 
-    // Setup: Capacity 4, 4 items filled (FULL)
-    capacity = 4;
-    array = [10, 20, 30, 40];
-    creditsPerSlot = [0, 0, 0, 0];
+    if (next) worstVariantIndex = (worstVariantIndex + 1) % WORST_VARIANTS.length;
+    const variant = WORST_VARIANTS[worstVariantIndex];
+
+    // Setup: full array => next insertion triggers resize, costing O(N) where
+    // N is the current number of stored elements copied during the resize.
+    capacity = variant.capacity;
+    array = makeArrayOfSize(variant.size);
+    creditsPerSlot = new Array(capacity).fill(0);
     bank = bankAfterInserting(array.length);
-    steps = 4;
+    steps = array.length;
 
     visualizeArray();
     updateCredits();
 
     // Toggle UI
     document.getElementById('btnRunWorst').style.display = 'none';
+    document.getElementById('btnNextWorst').style.display = 'inline-block';
     document.getElementById('worstCaseInputGroup').style.display = 'flex';
     document.getElementById('worstInput').focus();
 
     // Override log
     const infoPanel = document.getElementById("infoPanel");
     infoPanel.innerHTML = "";
-    createLogEntry(LOG_TYPES.WARNING, d.worstCase.ready);
+    if (d.worstCase && typeof d.worstCase.readyVariant === 'function') {
+        createLogEntry(LOG_TYPES.WARNING, d.worstCase.readyVariant(capacity));
+    } else {
+        createLogEntry(LOG_TYPES.WARNING, d.worstCase.ready);
+    }
 }
 
 async function finishWorstCase()

@@ -26,23 +26,26 @@ const dict = {
                    Inserting a new element is instant because no resizing or copying is needed.<br><br>
                    Complexity: <strong class="badge">O(1)</strong>`,
             btn: 'Prepare Best Case',
+            btnAlt: 'Other Best Case',
             insert: 'Insert into Best Case',
             ready: 'Best Case prepared! Array has capacity [4] but only 3 elements. Adding a number will be instant.',
+            readyVariant: (cap, size) => `Best Case prepared! Capacity is [${cap}] and currently used slots are [${size}/${cap}]. Adding a number will be instant.`,
         },
         worstCase: {
             title: 'Worst Case',
             desc: `The <strong>Worst Case</strong> scenario occurs when the array is <strong class="highlight-red">completely full</strong>.<br>
                    Inserting a new element forces a <strong>resize</strong>—allocating a larger array, copying all elements, and then inserting.<br><br>
-                   Complexity: <strong class="badge">O(N)</strong>`,
+                   Complexity: <strong class="badge">O(N)</strong>, where <strong>N</strong> is the current number of stored elements that must be copied during the resize`,
             btn: 'Prepare Worst Case',
+            btnAlt: 'Other Worst Case',
             insert: 'Insert into Worst Case',
             ready: 'Worst Case prepared! Array is full [4/4]. Adding a number will trigger a resize.',
+            readyVariant: (cap) => `Worst Case prepared! Array is full [${cap}/${cap}]. Adding a number will trigger a resize and copy ${cap} elements.`,
         },
 
         best: 'Best Case',
         worst: 'Worst Case',
         addNumber: 'Add Number',
-        enterNumber: 'Enter a number',
         generateRandom: 'Generate Random Array',
         randomCountLabel: 'Count:',
         randomMinLabel: 'Min:',
@@ -71,7 +74,7 @@ const dict = {
 
         // --- Resize ---
         resizeTitle:        (old, nw)  => `Array full — resizing <span class="log-badge capacity">${old} → ${nw}</span>`,
-        resizeWhy:          ()         => `Each element had 1 saved coin. These coins now pay for copying!`,
+        resizeWhy:          ()         => `For each existing element we need to pay 1 coin for copying`,
         resizeCopySlot:     (i)        => `Slot <span class="log-badge slot">[${i}]</span>: spent <span class="coin-text">1 coin</span> to copy`,
         resizeDoneSlots:    (n)        => `All <strong>${n} elements</strong> copied! Spent: <span class="coin-text">${n} coins</span>`,
         resizeNewSlots:     (old, nw)  => `Created <span class="log-badge capacity">${nw - old} new slots</span> [${old}–${nw - 1}]`,
@@ -109,17 +112,21 @@ const dict = {
                    Vložení nového prvku je okamžité, protože není potřeba zvětšovat pole ani kopírovat prvky.<br><br>
                    Složitost: <strong class="badge">O(1)</strong>`,
             btn: 'Připravit Nejlepší případ',
+            btnAlt: 'Jiný nejlepší případ',
             insert: 'Vložit do Nejlepšího případu',
             ready: 'Nejlepší případ připraven! Pole má kapacitu [4], ale jen 3 prvky. Vložení bude okamžité.',
+            readyVariant: (cap, size) => `Nejlepší případ připraven! Kapacita je [${cap}] a aktuálně je obsazeno [${size}/${cap}]. Vložení bude okamžité.`,
         },
         worstCase: {
             title: 'Nejhorší případ',
             desc: `<strong>Nejhorší případ</strong> nastává, když je pole <strong class="highlight-red">zcela zaplněné</strong>.<br>
                    Vložení nového prvku vynutí <strong>zvětšení (resize)</strong> — alokaci většího pole, zkopírování všech prvků a teprve poté vložení.<br><br>
-                   Složitost: <strong class="badge">O(N)</strong>`,
+                   Složitost: <strong class="badge">O(N)</strong>, kde <strong>N</strong> je aktuální počet uložených prvků, které se při resize musí zkopírovat`,
             btn: 'Připravit Nejhorší případ',
+            btnAlt: 'Jiný nejhorší případ',
             insert: 'Vložit do Nejhoršího případu',
             ready: 'Nejhorší případ připraven! Pole je plné [4/4]. Vložení spustí resize.',
+            readyVariant: (cap) => `Nejhorší případ připraven! Pole je plné [${cap}/${cap}]. Vložení spustí resize a zkopíruje ${cap} prvků.`,
         },
 
         best: 'Nejlepší případ',
@@ -154,7 +161,7 @@ const dict = {
 
         // --- Resize ---
         resizeTitle:        (old, nw)  => `Pole plné — zvětšuji <span class="log-badge capacity">${old} → ${nw}</span>`,
-        resizeWhy:          ()         => `Každý prvek měl 1 ušetřenou minci. Ty teď platí za kopírování!`,
+        resizeWhy:          ()         => `Za každý již existující prvek musíme zaplatit 1 minci za kopírování`,
         resizeCopySlot:     (i)        => `Pozice <span class="log-badge slot">[${i}]</span>: utracena <span class="coin-text">1 mince</span> za kopírování`,
         resizeDoneSlots:    (n)        => `Všech <strong>${n} prvků</strong> zkopírováno! Utraceno: <span class="coin-text">${n} mincí</span>`,
         resizeNewSlots:     (old, nw)  => `Vytvořeno <span class="log-badge capacity">${nw - old} nových políček</span> [${old}–${nw - 1}]`,
@@ -376,6 +383,8 @@ function applyLanguage()
         document.getElementById('bestCaseTitle').textContent = d.bestCase.title;
         document.getElementById('bestCaseDesc').innerHTML = d.bestCase.desc;
         document.getElementById('btnRunBest').textContent = d.bestCase.btn;
+        const nextBest = document.getElementById('btnNextBest');
+        if (nextBest && d.bestCase.btnAlt) nextBest.textContent = d.bestCase.btnAlt;
         document.getElementById('bestInput').placeholder = d.enterNumber;
         document.querySelector('#bestCaseInputGroup button').textContent = d.bestCase.insert;
     }
@@ -384,6 +393,8 @@ function applyLanguage()
         document.getElementById('worstCaseTitle').textContent = d.worstCase.title;
         document.getElementById('worstCaseDesc').innerHTML = d.worstCase.desc;
         document.getElementById('btnRunWorst').textContent = d.worstCase.btn;
+        const nextWorst = document.getElementById('btnNextWorst');
+        if (nextWorst && d.worstCase.btnAlt) nextWorst.textContent = d.worstCase.btnAlt;
         document.getElementById('worstInput').placeholder = d.enterNumber;
         document.querySelector('#worstCaseInputGroup button').textContent = d.worstCase.insert;
     }

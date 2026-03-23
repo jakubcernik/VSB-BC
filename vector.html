@@ -71,6 +71,7 @@
                 </p>
                 <div class="control-panel">
                     <button onclick="prepareBestCase()" id="btnRunBest">Prepare Best Case</button>
+                    <button onclick="prepareBestCase(true)" id="btnNextBest" style="display:none; margin-left: 8px;"></button>
                     <div id="bestCaseInputGroup" class="input-group" style="display:none; margin-top: 15px;">
                         <input type="number" id="bestInput" placeholder="Enter number">
                         <button onclick="finishBestCase()">Insert</button>
@@ -91,6 +92,7 @@
                 </p>
                 <div class="control-panel">
                     <button onclick="prepareWorstCase()" id="btnRunWorst">Prepare Worst Case</button>
+                    <button onclick="prepareWorstCase(true)" id="btnNextWorst" style="display:none; margin-left: 8px;"></button>
                     <div id="worstCaseInputGroup" class="input-group" style="display:none; margin-top: 15px;">
                         <input type="number" id="worstInput" placeholder="Enter number">
                         <button onclick="finishWorstCase()">Insert</button>
