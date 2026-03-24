@@ -207,7 +207,9 @@ function showMethod(method) {
     document.querySelectorAll('.method-tab').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.method-content').forEach(c => c.classList.remove('active'));
     document.getElementById(`tab${method.charAt(0).toUpperCase() + method.slice(1)}`).classList.add('active');
-    document.getElementById(method).classList.add('active');
+    const id = `method-${method}`;
+    const el = document.getElementById(id) || document.getElementById(method);
+    if (el) el.classList.add('active');
 }
 
 function applyLanguage() {

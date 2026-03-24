@@ -86,34 +86,46 @@
                     <button class="method-tab" onclick="showMethod('potential')" id="tabPotential">Potential Method</button>
                 </div>
 
-                <div id="aggregate" class="method-content active">
+                <div class="method-content active" id="method-aggregate">
                     <h3 id="aggregateTitle">Aggregate Method</h3>
                     <p id="aggregateP1"></p>
-                    <div class="math" id="aggregateMath"></div>
+                    <div class="math-block" id="aggregateMath"></div>
                     <p id="aggregateP2"></p>
-                    <div class="math" id="aggregateMath2"></div>
+                    <div class="math-block" id="aggregateMath2"></div>
                     <p id="aggregateConclusion"></p>
                 </div>
 
-                <div id="accounting" class="method-content">
+                <div class="method-content" id="method-accounting">
                     <h3 id="accountingTitle">Accounting Method</h3>
                     <p id="accountingP1"></p>
-                    <ul class="coin-steps">
-                        <li id="coinStep1"></li>
-                        <li id="coinStep2"></li>
-                        <li id="coinStep3"></li>
-                        <li id="coinStep4"></li>
-                    </ul>
-                    <div class="math" id="accountingMath"></div>
+                    <div class="coin-demo">
+                        <div class="coin-step">
+                            <div class="demo-coins">🪙🪙</div>
+                            <p id="coinStep1"></p>
+                        </div>
+                        <div class="coin-step">
+                            <div class="demo-coins">💳</div>
+                            <p id="coinStep2"></p>
+                        </div>
+                        <div class="coin-step">
+                            <div class="demo-coins">🏦</div>
+                            <p id="coinStep3"></p>
+                        </div>
+                        <div class="coin-step">
+                            <div class="demo-coins">⧉</div>
+                            <p id="coinStep4"></p>
+                        </div>
+                    </div>
+                    <div class="math-block" id="accountingMath"></div>
                     <p id="accountingConclusion"></p>
                 </div>
 
-                <div id="potential" class="method-content">
+                <div class="method-content" id="method-potential">
                     <h3 id="potentialTitle">Potential Method</h3>
                     <p id="potentialP1"></p>
-                    <div class="math" id="potentialMath"></div>
+                    <div class="math-block" id="potentialMath"></div>
                     <p id="potentialP2"></p>
-                    <div class="math" id="potentialMath2"></div>
+                    <div class="math-block" id="potentialMath2"></div>
                     <p id="potentialConclusion"></p>
                 </div>
             </div>
@@ -145,11 +157,11 @@
             </div>
         </section>
 
-        <section class="theory-section" id="sec-cta">
-            <h2 class="section-title" id="ctaTitle">Next step</h2>
-            <div class="section-body">
+        <!-- 6. Go to simulation -->
+        <section class="theory-section cta-section" id="sec-cta">
+            <div class="cta-box">
                 <p id="ctaText"></p>
-                <button onclick="window.location.href='hash-table.html'" id="ctaButton">⚙️ Open Simulation</button>
+                <a href="hash-table.html" onclick="navigateTo(event, 'hash-table.html')" class="cta-button" id="ctaButton">⚙️ Open Simulation</a>
             </div>
         </section>
 
