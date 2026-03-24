@@ -96,7 +96,10 @@ const dict = {
 
         resizeTitle:      (oldC, newC) => `Resize needed — rehash <span class="log-badge capacity">${oldC} → ${newC}</span>`,
         resizeWhy:        () => `Each stored element has 1 saved coin. During rehash, each element spends its coin to pay for its move.`,
+        rehashStats:      (oldC, newC, size, oldLoad, newLoad) => `Rehash stats: size = <span class="log-badge slot">${size}</span>, load factor <span class="log-badge slot">${oldLoad}</span> → <span class="log-badge slot">${newLoad}</span> (capacity <span class="log-badge capacity">${oldC} → ${newC}</span>)`,
         moveElement:      (from, to) => `Move from <span class="log-badge slot">[${from}]</span> → <span class="log-badge slot">[${to}]</span> (spent <span class="coin-text">1 saved coin</span>)`,
+        moveElementDetails:(key, oldStart, newStart, probes) => `key <span class="log-badge slot">${key}</span>: start <span class="log-badge slot">${oldStart}</span> → <span class="log-badge slot">${newStart}</span>, probes during re-insert: <span class="log-badge slot">${probes}</span>`,
+        rehashSummary:    (moved, totalProbes, maxProbes) => `Rehash summary: moved <strong>${moved}</strong> element${moved !== 1 ? 's' : ''}, total probes <span class="log-badge slot">${totalProbes}</span>, max probes for one element <span class="log-badge slot">${maxProbes}</span>`,
         resizeDone:       (n) => `Rehash complete — moved <strong>${n}</strong> element${n !== 1 ? 's' : ''}`,
     },
 
@@ -183,7 +186,10 @@ const dict = {
 
         resizeTitle:      (oldC, newC) => `Potřeba resize — rehash <span class="log-badge capacity">${oldC} → ${newC}</span>`,
         resizeWhy:        () => `Každý uložený prvek má 1 ušetřenou minci. Při rehashi ji utratí za svůj přesun.`,
+        rehashStats:      (oldC, newC, size, oldLoad, newLoad) => `Statistiky rehashe: velikost = <span class="log-badge slot">${size}</span>, zaplnění <span class="log-badge slot">${oldLoad}</span> → <span class="log-badge slot">${newLoad}</span> (kapacita <span class="log-badge capacity">${oldC} → ${newC}</span>)`,
         moveElement:      (from, to) => `Přesun <span class="log-badge slot">[${from}]</span> → <span class="log-badge slot">[${to}]</span> (utracena <span class="coin-text">1 ušetřená mince</span>)`,
+        moveElementDetails:(key, oldStart, newStart, probes) => `klíč <span class="log-badge slot">${key}</span>: start <span class="log-badge slot">${oldStart}</span> → <span class="log-badge slot">${newStart}</span>, probing při vložení: <span class="log-badge slot">${probes}</span>`,
+        rehashSummary:    (moved, totalProbes, maxProbes) => `Souhrn rehashe: přesunuto <strong>${moved}</strong> ${moved === 1 ? 'prvek' : (moved >= 2 && moved <= 4 ? 'prvky' : 'prvků')}, probing celkem <span class="log-badge slot">${totalProbes}</span>, maximum u jednoho prvku <span class="log-badge slot">${maxProbes}</span>`,
         resizeDone:       (n) => `Rehash hotový — přesunuto <strong>${n}</strong> ${n === 1 ? 'prvek' : (n >= 2 && n <= 4 ? 'prvky' : 'prvků')}`,
     }
 };

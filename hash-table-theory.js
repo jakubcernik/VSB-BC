@@ -29,8 +29,13 @@ const theoryDict = {
         cardWorstDesc:  'Many consecutive slots are occupied (or a resize is triggered). We may probe Θ(n) slots and/or rehash Θ(n) elements.',
 
         resizeP1: 'When the table becomes too full (α > threshold), we allocate a new array of double capacity and re-insert all existing elements into the new table. This is called <strong>rehashing</strong>.',
-        resizeP2: 'A rehash is expensive: moving n elements takes Θ(n) time. However, it happens only after many inserts, so the average (amortized) cost per insert is constant.',
-        resizeBox: 'In a typical doubling strategy, after resizing from capacity m to 2m, the next resize cannot happen for about m further inserts.',
+        resizeP2: 'In open addressing, rehashing is not a simple “copy the array”. The target index is computed as <code>h(key) mod capacity</code>. When the capacity changes, the modulo changes — so many keys get a different start slot. Therefore we must take each stored element and <strong>INSERT it again</strong> into the new array (including probing on collisions).',
+        resizeBox: 'Why is rehash Θ(n)? We must scan the old table and move each of the n stored elements at least once. With a constant load-factor threshold (e.g. 0.75), the expected number of probes per moved element stays small, so the total rehash work grows proportionally to n.',
+
+        hashFuncTitle: 'Hash function used in this simulation',
+        hashFuncP1: 'To keep the simulation easy to follow, keys are integers and the hash is intentionally simple: <code>hashKey(k) = (k >>> 0)</code> (conversion to an unsigned 32-bit integer).',
+        hashFuncP2: 'The start slot is then computed as <code>startIndex = hashKey(k) mod capacity</code>. If the start slot is occupied by a different key, we use <strong>linear probing</strong>: check the next slot, then the next, wrapping around.',
+        hashFuncBox: 'Note: real hash tables use much stronger hashing (bit mixing) especially for non-integer keys (strings, objects). Here the goal is to clearly show the role of <code>mod capacity</code>, collisions and probing, and why a resize requires a rehash.',
 
         amortizedP1: 'All three classical amortized-analysis methods show that repeated INSERT with occasional resize runs in amortized O(1).',
 
@@ -102,8 +107,13 @@ const theoryDict = {
         cardWorstDesc:  'Mnoho navazujících slotů je obsazených (nebo se vyvolá resize). Můžeme projít Θ(n) slotů a/nebo přesunout Θ(n) prvků při rehashi.',
 
         resizeP1: 'Když je tabulka příliš plná (α > limit), alokujeme nové pole s dvojnásobnou kapacitou a znovu vložíme všechny existující prvky do nové tabulky. Tomu se říká <strong>rehash</strong>.',
-        resizeP2: 'Rehash je drahý: přesun n prvků stojí Θ(n). Děje se ale až po mnoha levných vkládáních, takže průměrná (amortizovaná) cena na INSERT je konstantní.',
-        resizeBox: 'U strategie zdvojnásobování platí: po resize z kapacity m na 2m nemůže další resize nastat dříve než přibližně po dalších m vloženích.',
+        resizeP2: 'U otevřeného adresování není rehash jen „zkopírování pole“. Index se počítá jako <code>h(klíč) mod kapacita</code>. Když se kapacita změní, změní se i modulo — a mnoho klíčů tak dostane jiný startovní slot. Proto se musí každý uložený prvek <strong>znovu vložit</strong> do nové tabulky (včetně probingu při kolizích).',
+        resizeBox: 'Proč je rehash Θ(n)? Musíme projít starou tabulku a každý z n uložených prvků minimálně jednou přesunout. Při konstantním limitu zaplnění (např. 0.75) je očekávaný počet probe kroků na jeden přesun malý, takže celková práce rehashe roste úměrně k n.',
+
+        hashFuncTitle: 'Hashovací funkce použitá v této simulaci',
+        hashFuncP1: 'Aby byla simulace dobře „počitatelná v hlavě“, klíče jsou celočíselné a hash je záměrně jednoduchý: <code>hashKey(k) = (k >>> 0)</code> (převod na nezáporné 32bit číslo).',
+        hashFuncP2: 'Startovní index se počítá jako <code>startIndex = hashKey(k) mod kapacita</code>. Pokud je startovní slot obsazen jiným klíčem, používá se <strong>lineární probing</strong>: kontrolujeme další slot, pak další, dokola.',
+        hashFuncBox: 'Poznámka: reálné hash tabulky používají pro „zamíchání“ bitů výrazně silnější hash (zejména pro stringy/objekty). Zde je cílem jasně ukázat roli <code>mod kapacita</code>, kolize a probing, a proč resize nutně znamená rehash.',
 
         amortizedP1: 'Všechny tři klasické metody amortizované analýzy ukazují, že opakované INSERT s občasným resize běží v amortizovaném O(1).',
 
@@ -228,6 +238,16 @@ function applyLanguage() {
     document.getElementById('resizeP1').innerHTML = d.resizeP1;
     document.getElementById('resizeP2').innerHTML = d.resizeP2;
     document.getElementById('resizeBox').innerHTML = d.resizeBox;
+
+    // Hash function subsection (part of the resize/rehash section)
+    const hTitle = document.getElementById('hashFuncTitle');
+    if (hTitle) hTitle.textContent = d.hashFuncTitle;
+    const hP1 = document.getElementById('hashFuncP1');
+    if (hP1) hP1.innerHTML = d.hashFuncP1;
+    const hP2 = document.getElementById('hashFuncP2');
+    if (hP2) hP2.innerHTML = d.hashFuncP2;
+    const hBox = document.getElementById('hashFuncBox');
+    if (hBox) hBox.innerHTML = d.hashFuncBox;
 
     document.getElementById('amortizedP1').innerHTML = d.amortizedP1;
 

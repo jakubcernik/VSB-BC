@@ -166,7 +166,19 @@ function findSlotForKey(keyInt, cap = capacity, arr = table) {
 
 async function resizeAndRehash(newCapacity) {
     const d = dict[currentLang];
-    createLogEntry(LOG_TYPES.RESIZE, d.resizeTitle(capacity, newCapacity), d.resizeWhy());
+    const oldCapForMsg = capacity;
+    const oldSizeForMsg = size;
+    const oldLoadForMsg = oldCapForMsg === 0 ? 0 : (oldSizeForMsg / oldCapForMsg);
+    const newLoadForMsg = newCapacity === 0 ? 0 : (oldSizeForMsg / newCapacity);
+
+    createLogEntry(
+        LOG_TYPES.RESIZE,
+        d.resizeTitle(oldCapForMsg, newCapacity),
+        [
+            d.resizeWhy(),
+            d.rehashStats(oldCapForMsg, newCapacity, oldSizeForMsg, oldLoadForMsg.toFixed(2), newLoadForMsg.toFixed(2))
+        ]
+    );
 
     const oldCap = capacity;
     const oldTable = table;
@@ -178,6 +190,8 @@ async function resizeAndRehash(newCapacity) {
 
     // Reinsert old entries. Each entry spends its saved coin to pay for the move.
     let moved = 0;
+    let totalProbes = 0;
+    let maxProbes = 0;
     for (let from = 0; from < oldCap; from++) {
         const entry = oldTable[from];
         if (!entry) continue;
@@ -185,17 +199,36 @@ async function resizeAndRehash(newCapacity) {
         // spend the saved coin
         if (oldCoins[from] > 0) oldCoins[from] -= 1;
 
-        const to = findSlotForKey(entry.key, capacity, table);
+        // When capacity changes, start slot changes too: hash(key) mod capacity.
+        // During re-insert we may need to probe forward due to collisions.
+        const oldStart = (hashKey(entry.key) % oldCap);
+        const newStart = (hashKey(entry.key) % capacity);
+
+        let probes = 0;
+        let to = -1;
+        for (let offset = 0; offset < capacity; offset++) {
+            probes++;
+            const i = (newStart + offset) % capacity;
+            if (!table[i]) { to = i; break; }
+        }
+        if (to === -1) {
+            // Should not happen (we resize before full), but keep it safe.
+            to = findSlotForKey(entry.key, capacity, table);
+        }
+
+        totalProbes += probes;
+        if (probes > maxProbes) maxProbes = probes;
+
         table[to] = entry;
         coinsOnSlot[to] = 1; // coin re-saved on new slot (invariant continues)
 
         moved++;
         renderTable(to);
-        createLogEntry(LOG_TYPES.COPY, d.moveElement(from, to));
+        createLogEntry(LOG_TYPES.COPY, d.moveElement(from, to), d.moveElementDetails(entry.key, oldStart, newStart, probes));
         await new Promise(r => setTimeout(r, getDelay(350)));
     }
 
-    createLogEntry(LOG_TYPES.SUCCESS, d.resizeDone(moved));
+    createLogEntry(LOG_TYPES.SUCCESS, d.resizeDone(moved), d.rehashSummary(moved, totalProbes, maxProbes));
     renderTable();
 }
 
