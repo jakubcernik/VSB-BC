@@ -250,13 +250,15 @@ function renderBank(count) {
     }
 }
 
-async function spendCoinFromBank() {
+async function spendCoinFromBank(mode = 'fade') {
     const bankDiv = document.getElementById('bankCoins');
     if (!bankDiv) return;
     const last = bankDiv.lastChild;
     if (!last) return;
-    last.classList.add('removing');
-    await sleep(getDelay(300));
+    if (mode === 'fade') {
+        last.classList.add('removing');
+        await sleep(getDelay(300));
+    }
     last.remove();
     if (bankDiv.childElementCount === 0) {
         const bankEl = document.getElementById('operationBank');
@@ -265,9 +267,41 @@ async function spendCoinFromBank() {
 }
 
 async function moveCoinFromBankToBit(bitIndex) {
-    // Vizuálně odebereme minci z banku a přidáme ji na bit
-    await spendCoinFromBank();
-    await animateCoins(bitIndex, 1);
+    const bankDiv = document.getElementById('bankCoins');
+    const targetDiv = document.getElementById(`bit-coins-${bitIndex}`);
+    if (!bankDiv || !targetDiv) return;
+
+    const sourceCoin = bankDiv.lastChild;
+    if (!sourceCoin) return;
+
+    const from = sourceCoin.getBoundingClientRect();
+    const to = targetDiv.getBoundingClientRect();
+    const duration = getDelay(360);
+
+    const flying = sourceCoin.cloneNode(true);
+    flying.classList.add('flying');
+    flying.style.left = `${from.left}px`;
+    flying.style.top = `${from.top}px`;
+    flying.style.transitionDuration = `${duration}ms`;
+    document.body.appendChild(flying);
+
+    // Mince fyzicky opustí bank hned, aby bylo vidět, odkud letí.
+    await spendCoinFromBank('instant');
+
+    const dx = (to.left + (to.width / 2) - (from.left + from.width / 2));
+    const dy = (to.top + (to.height / 2) - (from.top + from.height / 2));
+    requestAnimationFrame(() => {
+        flying.style.transform = `translate(${dx}px, ${dy}px) scale(1)`;
+        flying.style.opacity = '0.95';
+    });
+
+    await sleep(duration);
+    flying.remove();
+
+    // Cílová mince se objeví přesně po doletu.
+    const landedCoin = document.createElement('div');
+    landedCoin.classList.add('bit-coin');
+    targetDiv.appendChild(landedCoin);
 }
 
 // ─── Core: increment ──────────────────────────────────────────────────────────
@@ -328,11 +362,13 @@ async function increment() {
         const frame = document.getElementById(`bit-frame-${pos}`);
         if (frame) frame.classList.add('active-bit');
 
-        // Utratíme 1 minci z banku za samotný flip (zmizí z banku)
+        // Utracení mince i flip proběhnou zároveň (lépe čitelné časování).
         bank -= 1;
         createLogEntry(LOG_TYPES.COPY, d.spendSelf(pos));
-        await spendCoinFromBank();
-        await animateBitFlip(pos, 1);
+        await Promise.all([
+            spendCoinFromBank('fade'),
+            animateBitFlip(pos, 1),
+        ]);
 
         // Přesuneme 1 minci z banku na bit (rezerva pro budoucí flip 1→0)
         bank -= 1;

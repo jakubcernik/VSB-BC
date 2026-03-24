@@ -176,6 +176,16 @@
     animation: coinFade 0.25s ease forwards;
 }
 
+.bit-coin.flying {
+    position: fixed;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 1;
+    transform: translate(0, 0) scale(1.06);
+    transition-property: transform, opacity;
+    transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
 @keyframes coinPop {
     0%   { transform: scale(0); opacity: 0; }
     70%  { transform: scale(1.3); }
