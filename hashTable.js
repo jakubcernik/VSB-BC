@@ -29,6 +29,56 @@ let table = []; // { key, value } | null
 let coinsOnSlot = []; // saved coin per occupied slot (0/1)
 let stepsLocal = 0; // internal step count, mirrored to global `steps` from hash-ui.js
 let isAnimating = false;
+let preparedCaseMode = null;
+let preparedScenario = null;
+let bestVariantIndex = 0;
+let worstVariantIndex = 0;
+
+function getBestVariants() {
+    return [
+        { entries: [], insert: { key: 5, value: 50 } },
+        { entries: [{ key: 0, value: 10 }, { key: 2, value: 20 }], insert: { key: 5, value: 55 } },
+        { entries: [{ key: 1, value: 11 }, { key: 4, value: 44 }, { key: 7, value: 77 }, { key: 3, value: 33 }], insert: { key: 6, value: 66 } },
+    ];
+}
+
+function getWorstVariants() {
+    return [
+        {
+            kindKey: 'worstKindProbe',
+            entries: [{ key: 0, value: 10 }, { key: 8, value: 20 }, { key: 16, value: 30 }, { key: 24, value: 40 }, { key: 32, value: 50 }],
+            insert: { key: 40, value: 60 },
+        },
+        {
+            kindKey: 'worstKindResize',
+            entries: [{ key: 0, value: 10 }, { key: 8, value: 20 }, { key: 16, value: 30 }, { key: 24, value: 40 }, { key: 32, value: 50 }, { key: 40, value: 60 }],
+            insert: { key: 48, value: 70 },
+        },
+        {
+            kindKey: 'worstKindUpdate',
+            entries: [{ key: 0, value: 10 }, { key: 8, value: 20 }, { key: 16, value: 30 }, { key: 24, value: 40 }, { key: 32, value: 50 }],
+            insert: { key: 32, value: 999 },
+        },
+    ];
+}
+
+function applyPreparedEntries(entries) {
+    for (const e of entries) {
+        const idx = findSlotForKey(e.key);
+        if (idx < 0) continue;
+        table[idx] = { key: e.key, value: e.value };
+        coinsOnSlot[idx] = 1;
+        size++;
+    }
+}
+
+function updateCaseButtons() {
+    const bestInsertBtn = document.getElementById('btnBestInsertPrepared');
+    const worstInsertBtn = document.getElementById('btnWorstInsertPrepared');
+    if (!bestInsertBtn || !worstInsertBtn) return;
+    bestInsertBtn.disabled = preparedCaseMode !== 'best';
+    worstInsertBtn.disabled = preparedCaseMode !== 'worst';
+}
 
 // ─── Helpers (hashing, random) ────────────────────────────────────────────────
 function hashKey(keyInt) {
@@ -218,11 +268,17 @@ async function insertKV(keyInt, value) {
     beginLogGroup(String(keyInt));
     createLogEntry(LOG_TYPES.INSERT, d.insertCharge(INSERT_CHARGE));
 
+    let resized = false;
+    let probeCount = 0;
+    let collisionCount = 0;
+    let wasUpdate = false;
+
     // Resize check BEFORE insertion (classic approach)
     const projectedLoad = (size + 1) / capacity;
     createLogEntry(LOG_TYPES.INFO, d.resizeCheck(projectedLoad.toFixed(2), LOAD_THRESHOLD.toFixed(2)));
     if (projectedLoad > LOAD_THRESHOLD) {
         createLogEntry(LOG_TYPES.WARNING, d.resizeNeededNow(projectedLoad.toFixed(2), LOAD_THRESHOLD.toFixed(2)));
+        resized = true;
         await resizeAndRehash(capacity * 2);
     } else {
         createLogEntry(LOG_TYPES.INFO, d.resizeNotNeeded(projectedLoad.toFixed(2), LOAD_THRESHOLD.toFixed(2)));
@@ -239,12 +295,14 @@ async function insertKV(keyInt, value) {
 
     for (let offset = 0; offset < capacity; offset++) {
         const i = (h + offset) % capacity;
+        probeCount++;
         renderTable(i);
         createLogEntry(LOG_TYPES.PROBE, d.probeCheck(i));
         await new Promise(r => setTimeout(r, getDelay(250)));
 
         // If the key already exists, a standard hash table performs UPDATE.
         if (table[i] && table[i].key === keyInt) {
+            wasUpdate = true;
             // (Coin model) UPDATE costs 1 step. We pay it using the coin saved on this element.
             createLogEntry(LOG_TYPES.INFO, d.updateFound(i));
             createLogEntry(LOG_TYPES.INFO, d.updateCostExplain(i));
@@ -279,6 +337,7 @@ async function insertKV(keyInt, value) {
 
         // Occupied by a different key => collision, continue probing
         if (table[i]) {
+            collisionCount++;
             // Collision: we continue probing.
             // (Note) We do NOT attempt to maintain a strict “coins pay every probe” invariant here.
             // The saved coin model is used to explain amortized resize/rehash.
@@ -321,6 +380,14 @@ async function insertKV(keyInt, value) {
     endLogGroup();
     renderTable();
     isAnimating = false;
+
+    return {
+        resized,
+        probes: probeCount,
+        collisions: collisionCount,
+        wasUpdate,
+        placedAt,
+    };
 }
 
 // ─── Modes ────────────────────────────────────────────────────────────────────
@@ -386,27 +453,68 @@ async function generateRandom() {
     }
 }
 
-function prepareBestCase() {
+function prepareBestCase(nextVariant = false) {
+    const variants = getBestVariants();
+    bestVariantIndex = nextVariant
+        ? (bestVariantIndex + 1) % variants.length
+        : 0;
+    const scenario = variants[bestVariantIndex];
+
     resetHashTable();
-    // keep table mostly empty, easy insertion
-    updateInfoPanel(dict[currentLang].bestReady);
+    applyPreparedEntries(scenario.entries);
+    preparedCaseMode = 'best';
+    preparedScenario = scenario;
     renderTable();
+
+    const d = dict[currentLang];
+    updateInfoPanel(d.bestReadyVariant(bestVariantIndex + 1, variants.length, scenario.insert.key, scenario.insert.value));
+    updateCaseButtons();
 }
 
-async function prepareWorstCase() {
+function prepareWorstCase(nextVariant = false) {
+    const variants = getWorstVariants();
+    worstVariantIndex = nextVariant
+        ? (worstVariantIndex + 1) % variants.length
+        : 0;
+    const scenario = variants[worstVariantIndex];
+
     resetHashTable();
-    // Fill to threshold - 1 so the next insert triggers resize.
-    const target = Math.max(0, Math.floor(capacity * LOAD_THRESHOLD) - 1);
-    for (let i = 0; i < target; i++) {
-        // Choose keys that share the same start slot: k % capacity = 0 (guaranteed collisions)
-        const k = i * capacity;
-        const idx = findSlotForKey(k);
-        table[idx] = { key: k, value: i };
-        coinsOnSlot[idx] = 1;
-        size++;
-    }
-    updateInfoPanel(dict[currentLang].worstReady);
+    applyPreparedEntries(scenario.entries);
+    preparedCaseMode = 'worst';
+    preparedScenario = scenario;
     renderTable();
+
+    const d = dict[currentLang];
+    const kindLabel = d[scenario.kindKey] || scenario.kindKey;
+    updateInfoPanel(d.worstReadyVariant(worstVariantIndex + 1, variants.length, scenario.insert.key, scenario.insert.value, kindLabel));
+    updateCaseButtons();
+}
+
+async function runPreparedCaseInsert(mode) {
+    if (isAnimating) return;
+    const d = dict[currentLang];
+
+    if (preparedCaseMode !== mode || !preparedScenario) {
+        updateInfoPanel(mode === 'best' ? d.prepareFirstBest : d.prepareFirstWorst);
+        return;
+    }
+
+    const stats = await insertKV(preparedScenario.insert.key, preparedScenario.insert.value);
+    if (!stats) return;
+
+    if (mode === 'best') {
+        createLogEntry(LOG_TYPES.INFO, d.bestInsertExplain(stats.probes, stats.collisions, stats.resized));
+    } else {
+        const kindLabel = d[preparedScenario.kindKey] || preparedScenario.kindKey;
+        createLogEntry(
+            LOG_TYPES.INFO,
+            d.worstInsertExplain(kindLabel, stats.probes, stats.collisions, stats.resized, stats.wasUpdate)
+        );
+    }
+
+    preparedCaseMode = null;
+    preparedScenario = null;
+    updateCaseButtons();
 }
 
 // ─── Reset / Init ─────────────────────────────────────────────────────────────
@@ -418,9 +526,12 @@ function resetHashTable() {
     steps = 0;
     stepsLocal = 0;
     isAnimating = false;
+    preparedCaseMode = null;
+    preparedScenario = null;
 
     clearInfoPanel();
     renderTable();
+    updateCaseButtons();
 }
 
 window.addEventListener('load', () => {

@@ -59,8 +59,21 @@ const dict = {
 
         btnPrepareBest:   'Prepare Best Case',
         btnPrepareWorst:  'Prepare Worst Case',
+        btnNextVariant:   'Next Variant',
+        btnInsertPrepared: 'Insert Prepared Element',
+        stepPrepareLabel: '1) Prepare variant',
+        stepRunLabel:     '2) Insert prepared element',
         bestReady:        'Best Case prepared — table has plenty of free space, next insert hits an empty slot.',
         worstReady:       'Worst Case prepared — table is near the load-factor limit and next insert will trigger resize.',
+        bestReadyVariant: (v, total, key, value) => `Best Case variant ${v}/${total} prepared — next insert uses key=${key}, value=${value}.`,
+        worstReadyVariant: (v, total, key, value, kind) => `Worst Case variant ${v}/${total} prepared (${kind}) — next insert uses key=${key}, value=${value}.`,
+        prepareFirstBest:  'First prepare a Best Case variant, then run the insert action.',
+        prepareFirstWorst: 'First prepare a Worst Case variant, then run the insert action.',
+        worstKindProbe:    'long probing',
+        worstKindResize:   'resize + rehash',
+        worstKindUpdate:   'update existing key',
+        bestInsertExplain: (probes, collisions, resized) => `Best Case explanation: first hashed slot was free, so insert finished immediately. Cost: O(1) (probes=${probes}, collisions=${collisions}, resize=${resized ? 'yes' : 'no'}).`,
+        worstInsertExplain: (kind, probes, collisions, resized, wasUpdate) => `Worst Case explanation (${kind}): operation needed more work due to collisions${resized ? ', plus resize/rehash' : ''}${wasUpdate ? ', and ended as UPDATE of existing key' : ''}. Observed: probes=${probes}, collisions=${collisions}.`,
 
         // Meta
         metaSize:         'Size',
@@ -156,8 +169,21 @@ const dict = {
 
         btnPrepareBest:   'Připravit Nejlepší případ',
         btnPrepareWorst:  'Připravit Nejhorší případ',
+        btnNextVariant:   'Další varianta',
+        btnInsertPrepared: 'Vložit připravený prvek',
+        stepPrepareLabel: '1) Připravit variantu',
+        stepRunLabel:     '2) Vložit připravený prvek',
         bestReady:        'Nejlepší případ připraven — tabulka má dost volného místa, další insert trefí prázdný slot.',
         worstReady:       'Nejhorší případ připraven — tabulka je blízko limitu a další insert vyvolá resize.',
+        bestReadyVariant: (v, total, key, value) => `Připravena varianta Best Case ${v}/${total} — další vložení použije klíč=${key}, hodnota=${value}.`,
+        worstReadyVariant: (v, total, key, value, kind) => `Připravena varianta Worst Case ${v}/${total} (${kind}) — další vložení použije klíč=${key}, hodnota=${value}.`,
+        prepareFirstBest:  'Nejprve připravte variantu Best Case a potom spusťte vložení.',
+        prepareFirstWorst: 'Nejprve připravte variantu Worst Case a potom spusťte vložení.',
+        worstKindProbe:    'dlouhý probing',
+        worstKindResize:   'resize + rehash',
+        worstKindUpdate:   'update existujícího klíče',
+        bestInsertExplain: (probes, collisions, resized) => `Vysvětlení Best Case: první hashovaný slot byl volný, takže vložení skončilo hned. Cena: O(1) (probes=${probes}, kolize=${collisions}, resize=${resized ? 'ano' : 'ne'}).`,
+        worstInsertExplain: (kind, probes, collisions, resized, wasUpdate) => `Vysvětlení Worst Case (${kind}): operace měla vyšší cenu kvůli kolizím${resized ? ', navíc proběhl resize/rehash' : ''}${wasUpdate ? ', a skončila jako UPDATE existujícího klíče' : ''}. Naměřeno: probes=${probes}, kolize=${collisions}.`,
 
         // Meta
         metaSize:         'Velikost',
@@ -319,6 +345,7 @@ function setMode(mode) {
     document.querySelectorAll('.mode').forEach(s => s.classList.remove('active'));
     document.getElementById(`${mode}Tab`).classList.add('active');
     document.getElementById(`${mode}Mode`).classList.add('active');
+    if (typeof updateCaseButtons === 'function') updateCaseButtons();
 }
 
 // ─── Apply language ────────────────────────────────────────────────────────────
@@ -356,10 +383,18 @@ function applyLanguage() {
     document.getElementById('bestCaseTitle').textContent = d.bestCaseTitle;
     document.getElementById('bestCaseDesc').innerHTML    = d.bestCaseDesc;
     document.getElementById('btnPrepareBest').textContent = d.btnPrepareBest;
+    document.getElementById('btnBestNextVariant').textContent = d.btnNextVariant;
+    document.getElementById('btnBestInsertPrepared').textContent = d.btnInsertPrepared;
+    document.getElementById('bestStepPrepareLabel').textContent = d.stepPrepareLabel;
+    document.getElementById('bestStepRunLabel').textContent = d.stepRunLabel;
 
     document.getElementById('worstCaseTitle').textContent = d.worstCaseTitle;
     document.getElementById('worstCaseDesc').innerHTML    = d.worstCaseDesc;
     document.getElementById('btnPrepareWorst').textContent = d.btnPrepareWorst;
+    document.getElementById('btnWorstNextVariant').textContent = d.btnNextVariant;
+    document.getElementById('btnWorstInsertPrepared').textContent = d.btnInsertPrepared;
+    document.getElementById('worstStepPrepareLabel').textContent = d.stepPrepareLabel;
+    document.getElementById('worstStepRunLabel').textContent = d.stepRunLabel;
 
     const helpIcon = document.getElementById('metaThresholdHelp');
     const helpText = document.getElementById('metaThresholdHelpText');
@@ -378,6 +413,7 @@ function applyLanguage() {
     updateStepCounter();
     updateCoinCounter();
     updateMeta();
+    if (typeof updateCaseButtons === 'function') updateCaseButtons();
 }
 
 // ─── Page init ────────────────────────────────────────────────────────────────

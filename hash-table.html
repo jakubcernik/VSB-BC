@@ -69,16 +69,28 @@
         <section id="bestMode" class="mode">
             <h2 id="bestCaseTitle">Best Case</h2>
             <p id="bestCaseDesc"></p>
-            <div class="button-group">
-                <button onclick="prepareBestCase()" id="btnPrepareBest">Prepare Best Case</button>
+            <div class="button-group case-controls">
+                <div class="case-step-label" id="bestStepPrepareLabel">1) Prepare variant</div>
+                <div class="case-actions-row">
+                    <button onclick="prepareBestCase()" id="btnPrepareBest">Prepare Best Case</button>
+                    <button onclick="prepareBestCase(true)" id="btnBestNextVariant">Next Variant</button>
+                </div>
+                <div class="case-step-label" id="bestStepRunLabel">2) Insert prepared element</div>
+                <button onclick="runPreparedCaseInsert('best')" id="btnBestInsertPrepared">Insert prepared element</button>
             </div>
         </section>
 
         <section id="worstMode" class="mode">
             <h2 id="worstCaseTitle">Worst Case</h2>
             <p id="worstCaseDesc"></p>
-            <div class="button-group">
-                <button onclick="prepareWorstCase()" id="btnPrepareWorst">Prepare Worst Case</button>
+            <div class="button-group case-controls">
+                <div class="case-step-label" id="worstStepPrepareLabel">1) Prepare variant</div>
+                <div class="case-actions-row">
+                    <button onclick="prepareWorstCase()" id="btnPrepareWorst">Prepare Worst Case</button>
+                    <button onclick="prepareWorstCase(true)" id="btnWorstNextVariant">Next Variant</button>
+                </div>
+                <div class="case-step-label" id="worstStepRunLabel">2) Insert prepared element</div>
+                <button onclick="runPreparedCaseInsert('worst')" id="btnWorstInsertPrepared">Insert prepared element</button>
             </div>
         </section>
 
