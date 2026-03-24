@@ -25,8 +25,11 @@ const dict = {
         btnIncrement:     '+ Increment',
         btnReset:         '↺ Reset',
         randomModeTitle:  'Random Mode',
-        randomCountLabel: 'Count:',
-        randomCountPH:    'Count',
+        randomModeDesc:   'Generate one random counter state with configurable carry depth and run one INCREMENT.',
+        randomMinTrailingLabel: 'Min trailing 1s:',
+        randomMaxTrailingLabel: 'Max trailing 1s:',
+        randomMinTrailingPH: '0',
+        randomMaxTrailingPH: '3',
         btnGenRandom:     'Generate',
         bestCaseTitle:    'Best Case',
         worstCaseTitle:   'Worst Case',
@@ -88,8 +91,9 @@ const dict = {
         incrDone:       (flips)    => `Done — <strong>${flips}</strong> bit${flips !== 1 ? 's' : ''} flipped`,
         groupLabel:     (from, to, step) => `Step ${step} — increment ${from} → ${to}`,
         logStep:        (n)        => `Step ${n}`,
-        randomGenerating: (n)      => `Generating <strong>${n}</strong> increments…`,
-        randomDone:     (n)        => `Done — performed <strong>${n}</strong> increments`,
+        randomGenerating: (minT, maxT) => `Generating one random sample (trailing 1-bits range <strong>${minT}–${maxT}</strong>)…`,
+        randomPrepared: (t)  => `Generated state with <strong>${t}</strong> trailing 1-bit${t === 1 ? '' : 's'}. Running one INCREMENT.`,
+        randomDone:     ()        => 'Done — performed one INCREMENT on the random sample',
     },
     cz: {
         pageTitle:        'Amortizovaná složitost — Binární čítač',
@@ -103,8 +107,11 @@ const dict = {
         btnIncrement:     '+ Inkrementovat',
         btnReset:         '↺ Reset',
         randomModeTitle:  'Náhodný režim',
-        randomCountLabel: 'Počet:',
-        randomCountPH:    'Počet',
+        randomModeDesc:   'Vygeneruje jeden náhodný stav čítače podle zvolené hloubky přenosu a provede na něm jeden krok INCREMENT.',
+        randomMinTrailingLabel: 'Min koncových 1:',
+        randomMaxTrailingLabel: 'Max koncových 1:',
+        randomMinTrailingPH: '0',
+        randomMaxTrailingPH: '3',
         btnGenRandom:     'Generovat',
         bestCaseTitle:    'Nejlepší případ',
         worstCaseTitle:   'Nejhorší případ',
@@ -166,8 +173,9 @@ const dict = {
         incrDone:       (flips)    => `Hotovo — přepnuto <strong>${flips}</strong> ${flips === 1 ? 'bit' : (flips >= 2 && flips <= 4 ? 'bity' : 'bitů')}`,
         groupLabel:     (from, to, step) => `Krok ${step} — inkrementace ${from} → ${to}`,
         logStep:        (n)        => `Krok ${n}`,
-        randomGenerating: (n)      => `Generuji <strong>${n}</strong> inkrementací…`,
-        randomDone:     (n)        => `Hotovo — provedeno <strong>${n}</strong> inkrementací`,
+        randomGenerating: (minT, maxT) => `Generuji jeden náhodný vzorek (rozsah koncových jedniček <strong>${minT}–${maxT}</strong>)…`,
+        randomPrepared: (t)  => `Vygenerován stav s <strong>${t}</strong> koncovými jedničkami. Spouštím jeden krok INCREMENT.`,
+        randomDone:     ()        => 'Hotovo — proveden jeden krok INCREMENT na náhodném vzorku',
     }
 };
 
@@ -302,8 +310,11 @@ function applyLanguage() {
     document.getElementById('btnReset').textContent      = d.btnReset;
 
     document.getElementById('randomModeTitle').textContent = d.randomModeTitle;
-    document.getElementById('randomCountLabel').textContent = d.randomCountLabel;
-    document.getElementById('randomCount').placeholder = d.randomCountPH;
+    document.getElementById('randomModeDesc').textContent = d.randomModeDesc;
+    document.getElementById('randomMinTrailingLabel').textContent = d.randomMinTrailingLabel;
+    document.getElementById('randomMaxTrailingLabel').textContent = d.randomMaxTrailingLabel;
+    document.getElementById('randomMinTrailing').placeholder = d.randomMinTrailingPH;
+    document.getElementById('randomMaxTrailing').placeholder = d.randomMaxTrailingPH;
     document.getElementById('btnGenRandom').textContent = d.btnGenRandom;
 
     document.getElementById('bestCaseTitle').textContent  = d.bestCaseTitle;

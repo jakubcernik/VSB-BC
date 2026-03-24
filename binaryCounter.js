@@ -101,6 +101,34 @@ function setBitLengthFromUI() {
     updateCaseButtons();
 }
 
+function randomIntInclusive(min, max) {
+    return min + Math.floor(Math.random() * (max - min + 1));
+}
+
+function applyRandomStateByTrailingOnes(minTrailing, maxTrailing) {
+    const t = randomIntInclusive(minTrailing, maxTrailing);
+
+    bits = new Array(numBits).fill(0);
+    coinsOnBit = new Array(numBits).fill(0);
+
+    for (let i = 0; i < numBits; i++) {
+        let bit = 0;
+        if (i < t) bit = 1;
+        else if (i > t) bit = Math.random() < 0.5 ? 0 : 1;
+
+        bits[i] = bit;
+        coinsOnBit[i] = bit;
+    }
+
+    bank = 0;
+    totalCoinsEarned = (steps * 2) + savedCoinsTotal();
+    renderBank(0);
+    updateCoinCounter();
+    renderBits();
+
+    return t;
+}
+
 // ─── Coin total helpers ───────────────────────────────────────────────────────
 function savedCoinsTotal() {
     return coinsOnBit.reduce((s, c) => s + c, 0);
@@ -356,27 +384,53 @@ function resetCounter() {
 async function generateRandom() {
     if (isAnimating) return;
     const d = dict[currentLang];
-    const countRes = InputValidation.readInt('randomCount', { required: true, min: 1, max: 200 });
-    if (!countRes.ok) {
-        InputValidation.reportValidationError(countRes.reason, {
+    const maxTrailingAllowed = Math.max(0, numBits - 1);
+    const minTrailingRes = InputValidation.readInt('randomMinTrailing', {
+        required: true,
+        min: 0,
+        max: maxTrailingAllowed,
+    });
+    if (!minTrailingRes.ok) {
+        InputValidation.reportValidationError(minTrailingRes.reason, {
             dict: d,
-            details: countRes.details,
+            details: minTrailingRes.details,
             report: (msg) => updateInfoPanel(msg),
         });
         return;
     }
-    const count = countRes.value;
 
-    resetCounter();
-    createLogEntry(LOG_TYPES.INFO, d.randomGenerating(count));
-
-    for (let i = 0; i < count; i++) {
-        await increment();
-        await sleep(getDelay(100));
-        if (bitsToDecimal() >= maxCounterValue()) break;
+    const maxTrailingRes = InputValidation.readInt('randomMaxTrailing', {
+        required: true,
+        min: 0,
+        max: maxTrailingAllowed,
+    });
+    if (!maxTrailingRes.ok) {
+        InputValidation.reportValidationError(maxTrailingRes.reason, {
+            dict: d,
+            details: maxTrailingRes.details,
+            report: (msg) => updateInfoPanel(msg),
+        });
+        return;
     }
 
-    createLogEntry(LOG_TYPES.SUCCESS, d.randomDone(count));
+    const minTrailing = minTrailingRes.value;
+    const maxTrailing = maxTrailingRes.value;
+    if (minTrailing > maxTrailing) {
+        InputValidation.reportValidationError('MIN_GT_MAX', {
+            dict: d,
+            report: (msg) => updateInfoPanel(msg),
+        });
+        return;
+    }
+
+    resetCounter();
+    createLogEntry(LOG_TYPES.INFO, d.randomGenerating(minTrailing, maxTrailing));
+
+    const t = applyRandomStateByTrailingOnes(minTrailing, maxTrailing);
+    createLogEntry(LOG_TYPES.INFO, d.randomPrepared(t));
+    await increment();
+
+    createLogEntry(LOG_TYPES.SUCCESS, d.randomDone());
 }
 
 // ─── Best Case ────────────────────────────────────────────────────────────────
