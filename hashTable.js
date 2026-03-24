@@ -242,6 +242,7 @@ async function insertKV(keyInt, value) {
         if (table[i] && table[i].key === keyInt) {
             // (Coin model) UPDATE costs 1 step. We pay it using the coin saved on this element.
             createLogEntry(LOG_TYPES.INFO, d.updateFound(i));
+            createLogEntry(LOG_TYPES.INFO, d.updateCostExplain(i));
             await new Promise(r => setTimeout(r, getDelay(180)));
 
             if (coinsOnSlot[i] > 0) {
