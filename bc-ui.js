@@ -52,8 +52,8 @@ const dict = {
             <br><br>Complexity: <strong class="badge">O(1)</strong>`,
 
         worstCaseDesc: `The <strong>Worst Case</strong> occurs when all bits are <strong class="highlight-red">1</strong>
-            (counter value = 2<sup>k</sup>−1). Every bit must be flipped (carry propagates through all positions),
-            costing O(k) = O(log N) for a k-bit counter.
+            (counter value = 2<sup>k</sup>−1). Then all k bits are flipped, because carry propagates from the least-significant bit through all positions.
+            The time for this single increment is O(k), equivalently O(log N).
             Use <em>Next Variant</em> to compare different carry depths and the full worst case.
             <br><br>Amortized complexity still: <strong class="badge">O(1)</strong>`,
 
@@ -120,8 +120,8 @@ const dict = {
             <br><br>Složitost: <strong class="badge">O(1)</strong>`,
 
         worstCaseDesc: `<strong>Nejhorší případ</strong> nastává, když jsou všechny bity <strong class="highlight-red">1</strong>
-            (hodnota čítače = 2<sup>k</sup>−1). Musí se přepnout každý bit (přenos se šíří všemi pozicemi),
-            cena je O(k) = O(log N) pro k-bitový čítač.
+            (hodnota čítače = 2<sup>k</sup>−1). V takovém kroku se přepne všech k bitů, protože přenos projde od nejnižšího bitu přes všechny pozice.
+            Časová složitost této jedné operace je O(k), ekvivalentně O(log N).
             Tlačítkem <em>Další varianta</em> porovnáte různé hloubky přenosu i plný worst case.
             <br><br>Amortizovaná složitost zůstává: <strong class="badge">O(1)</strong>`,
 
