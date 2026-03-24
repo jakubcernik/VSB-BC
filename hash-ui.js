@@ -67,6 +67,8 @@ const dict = {
         metaCapacity:     'Capacity',
         metaLoad:         'Load factor',
         metaThreshold:    'Resize threshold',
+        slotStateEmpty:   'empty',
+        slotStateOccupied:'occupied',
 
         // Errors
         invalidInput:     'Please enter an integer key and a value.',
@@ -154,6 +156,8 @@ const dict = {
         metaCapacity:     'Kapacita',
         metaLoad:         'Zaplnění',
         metaThreshold:    'Limit rehash',
+        slotStateEmpty:   'prázdný',
+        slotStateOccupied:'obsazený',
 
         // Errors
         invalidInput:     'Zadejte celočíselný klíč a hodnotu.',

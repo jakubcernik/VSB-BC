@@ -87,6 +87,7 @@ function renderTable(highlightIndex = null) {
     const grid = document.getElementById('hashTableVisualization');
     if (!grid) return;
     grid.innerHTML = '';
+    const d = dict[currentLang];
 
     for (let i = 0; i < capacity; i++) {
         const slot = document.createElement('div');
@@ -102,7 +103,7 @@ function renderTable(highlightIndex = null) {
 
         const state = document.createElement('div');
         state.classList.add('slot-state');
-        state.textContent = table[i] ? 'occupied' : 'empty';
+        state.textContent = table[i] ? d.slotStateOccupied : d.slotStateEmpty;
 
         header.appendChild(idx);
         header.appendChild(state);
