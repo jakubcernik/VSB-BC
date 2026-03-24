@@ -13,6 +13,33 @@
     margin: 24px 0 8px;
 }
 
+#bitLengthControls {
+    margin-top: 4px;
+    margin-bottom: 12px;
+}
+
+#bitLengthSelect {
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: #fff;
+}
+
+#bitLengthHint {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+#btnRunBestAlt,
+#btnRunWorstAlt {
+    background: #6f8b9a;
+}
+
+#btnRunBestAlt:hover,
+#btnRunWorstAlt:hover {
+    background: #5f7c8c;
+}
+
 /* ── Row of bits ── */
 #bitsRow {
     display: flex;
@@ -207,6 +234,16 @@ body.dark-mode #decimalDisplay {
 
 body.dark-mode .bit-label {
     color: #888;
+}
+
+body.dark-mode #bitLengthSelect {
+    background: #2f2f2f;
+    border-color: #555;
+    color: #ddd;
+}
+
+body.dark-mode #bitLengthHint {
+    color: #9fa6ad;
 }
 
 /* ── Reset button variant ── */

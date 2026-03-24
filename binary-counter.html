@@ -36,6 +36,18 @@
         <div id="stepCounter">Steps: 0</div>
     </div>
 
+    <div class="input-group" id="bitLengthControls">
+        <label for="bitLengthSelect" id="bitLengthLabel">Bit length:</label>
+        <select id="bitLengthSelect" onchange="setBitLengthFromUI()">
+            <option value="4">4</option>
+            <option value="6">6</option>
+            <option value="8" selected>8</option>
+            <option value="10">10</option>
+            <option value="12">12</option>
+        </select>
+        <span id="bitLengthHint"></span>
+    </div>
+
     <main id="mainContent">
 
         <!-- Manual Mode -->
@@ -63,6 +75,7 @@
                 <p id="bestCaseDesc"></p>
                 <div class="control-panel">
                     <button onclick="prepareBestCase()" id="btnRunBest">Prepare Best Case</button>
+                    <button onclick="prepareBestCase(true)" id="btnRunBestAlt">Next Variant</button>
                 </div>
             </div>
         </section>
@@ -74,6 +87,7 @@
                 <p id="worstCaseDesc"></p>
                 <div class="control-panel">
                     <button onclick="prepareWorstCase()" id="btnRunWorst">Prepare Worst Case</button>
+                    <button onclick="prepareWorstCase(true)" id="btnRunWorstAlt">Next Variant</button>
                 </div>
             </div>
         </section>

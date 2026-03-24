@@ -30,6 +30,8 @@ const dict = {
         btnGenRandom:     'Generate',
         bestCaseTitle:    'Best Case',
         worstCaseTitle:   'Worst Case',
+        bitLengthLabel:   'Bit length:',
+        bitLengthHint:    'Default 8 bits is for clarity; you can change it.',
         coins:            'Coins',
         steps:            'Steps',
         bankLabel:        'Operation charge (2 coins)',
@@ -46,15 +48,21 @@ const dict = {
 
         bestCaseDesc: `The <strong>Best Case</strong> occurs when the least-significant bit is <strong class="highlight-green">0</strong>.
             Only that single bit is flipped from 0→1 and one coin is spent.
+            Use <em>Next Variant</em> to see different values with the same best-case behavior.
             <br><br>Complexity: <strong class="badge">O(1)</strong>`,
 
         worstCaseDesc: `The <strong>Worst Case</strong> occurs when all bits are <strong class="highlight-red">1</strong>
             (counter value = 2<sup>k</sup>−1). Every bit must be flipped (carry propagates through all positions),
             costing O(k) = O(log N) for a k-bit counter.
+            Use <em>Next Variant</em> to compare different carry depths and the full worst case.
             <br><br>Amortized complexity still: <strong class="badge">O(1)</strong>`,
 
-        bestReady:  (val) => `Best Case prepared — counter is ${val} (LSB = 0). Next increment flips only 1 bit.`,
-        worstReady: (k)   => `Worst Case prepared — counter is ${(1 << k) - 1} (all ${k} bits = 1). Next increment flips all bits.`,
+        btnNextVariant:   'Next Variant',
+
+        bestReady:  (val, variant, total) => `Best Case variant ${variant}/${total} prepared — counter is ${val} (LSB = 0). Next increment flips only 1 bit.`,
+        worstReady: (k, variant, total, isFullWorst = false) => isFullWorst
+            ? `Worst Case variant ${variant}/${total} prepared — counter is 2^${k}−1 (all ${k} bits = 1). Next increment flips all bits.`
+            : `Carry-depth variant ${variant}/${total} prepared — counter ends with ${k} trailing 1-bits. Next increment flips ${k + 1} bits.`,
 
         // Log messages
         incrTitle:      (from, to) => `Increment <span class="log-badge slot">${from}</span> → <span class="log-badge slot">${to}</span>`,
@@ -90,6 +98,8 @@ const dict = {
         btnGenRandom:     'Generovat',
         bestCaseTitle:    'Nejlepší případ',
         worstCaseTitle:   'Nejhorší případ',
+        bitLengthLabel:   'Délka čítače:',
+        bitLengthHint:    'Výchozích 8 bitů je pro názornost; délku lze změnit.',
         coins:            'Mince',
         steps:            'Kroky',
         bankLabel:        'Poplatek za operaci (2 mince)',
@@ -106,15 +116,21 @@ const dict = {
 
         bestCaseDesc: `<strong>Nejlepší případ</strong> nastává, když je nejnižší bit <strong class="highlight-green">0</strong>.
             Pouze tento jeden bit se přepne z 0→1 a utratí se jedna mince.
+            Tlačítkem <em>Další varianta</em> zobrazíte jiné hodnoty se stejným best-case chováním.
             <br><br>Složitost: <strong class="badge">O(1)</strong>`,
 
         worstCaseDesc: `<strong>Nejhorší případ</strong> nastává, když jsou všechny bity <strong class="highlight-red">1</strong>
             (hodnota čítače = 2<sup>k</sup>−1). Musí se přepnout každý bit (přenos se šíří všemi pozicemi),
             cena je O(k) = O(log N) pro k-bitový čítač.
+            Tlačítkem <em>Další varianta</em> porovnáte různé hloubky přenosu i plný worst case.
             <br><br>Amortizovaná složitost zůstává: <strong class="badge">O(1)</strong>`,
 
-        bestReady:  (val) => `Nejlepší případ připraven — čítač je ${val} (LSB = 0). Inkrementování přepne jen 1 bit.`,
-        worstReady: (k)   => `Nejhorší případ připraven — čítač je ${(1 << k) - 1} (všechny ${k} bity = 1). Inkrementování přepne všechny bity.`,
+        btnNextVariant:   'Další varianta',
+
+        bestReady:  (val, variant, total) => `Připravena varianta nejlepšího případu ${variant}/${total} — čítač je ${val} (LSB = 0). Inkrementování přepne jen 1 bit.`,
+        worstReady: (k, variant, total, isFullWorst = false) => isFullWorst
+            ? `Připravena nejhorší varianta ${variant}/${total} — čítač je 2^${k}−1 (všechny ${k} bity = 1). Inkrementování přepne všechny bity.`
+            : `Připravena varianta hloubky přenosu ${variant}/${total} — čítač končí ${k} jedničkami. Inkrementování přepne ${k + 1} bitů.`,
 
         // Log zprávy
         incrTitle:      (from, to) => `Inkrementace <span class="log-badge slot">${from}</span> → <span class="log-badge slot">${to}</span>`,
@@ -244,6 +260,7 @@ function setMode(mode) {
     document.querySelectorAll('.mode').forEach(s => s.classList.remove('active'));
     document.getElementById(`${mode}Tab`).classList.add('active');
     document.getElementById(`${mode}Mode`).classList.add('active');
+    if (typeof updateCaseButtons === 'function') updateCaseButtons();
 }
 
 // ─── Apply language ────────────────────────────────────────────────────────────
@@ -272,10 +289,15 @@ function applyLanguage() {
     document.getElementById('bestCaseTitle').textContent  = d.bestCaseTitle;
     document.getElementById('bestCaseDesc').innerHTML     = d.bestCaseDesc;
     document.getElementById('btnRunBest').textContent     = d.best;
+    document.getElementById('btnRunBestAlt').textContent  = d.btnNextVariant;
 
     document.getElementById('worstCaseTitle').textContent = d.worstCaseTitle;
     document.getElementById('worstCaseDesc').innerHTML    = d.worstCaseDesc;
     document.getElementById('btnRunWorst').textContent    = d.worst;
+    document.getElementById('btnRunWorstAlt').textContent = d.btnNextVariant;
+
+    document.getElementById('bitLengthLabel').textContent = d.bitLengthLabel;
+    document.getElementById('bitLengthHint').textContent  = d.bitLengthHint;
 
     document.getElementById('creditCounter').textContent = `${d.coins} 0`;
     document.getElementById('stepCounter').textContent   = `${d.steps}: 0`;
@@ -289,6 +311,9 @@ function applyLanguage() {
     init.classList.add('log-entry', 'info');
     init.innerHTML = `<div class="log-header"><span class="log-icon">${LOG_TYPES.INFO.icon}</span><span>${d.steps} ${d.willAppear}</span></div>`;
     panel.appendChild(init);
+
+    if (typeof refreshBitLengthUI === 'function') refreshBitLengthUI();
+    if (typeof updateCaseButtons === 'function') updateCaseButtons();
 
     updateLangToggleUI();
 }
