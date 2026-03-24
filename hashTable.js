@@ -219,8 +219,13 @@ async function insertKV(keyInt, value) {
     createLogEntry(LOG_TYPES.INSERT, d.insertCharge(INSERT_CHARGE));
 
     // Resize check BEFORE insertion (classic approach)
-    if ((size + 1) / capacity > LOAD_THRESHOLD) {
+    const projectedLoad = (size + 1) / capacity;
+    createLogEntry(LOG_TYPES.INFO, d.resizeCheck(projectedLoad.toFixed(2), LOAD_THRESHOLD.toFixed(2)));
+    if (projectedLoad > LOAD_THRESHOLD) {
+        createLogEntry(LOG_TYPES.WARNING, d.resizeNeededNow(projectedLoad.toFixed(2), LOAD_THRESHOLD.toFixed(2)));
         await resizeAndRehash(capacity * 2);
+    } else {
+        createLogEntry(LOG_TYPES.INFO, d.resizeNotNeeded(projectedLoad.toFixed(2), LOAD_THRESHOLD.toFixed(2)));
     }
 
     // operation bank
@@ -277,7 +282,7 @@ async function insertKV(keyInt, value) {
             // Collision: we continue probing.
             // (Note) We do NOT attempt to maintain a strict “coins pay every probe” invariant here.
             // The saved coin model is used to explain amortized resize/rehash.
-            createLogEntry(LOG_TYPES.WARNING, d.probeCollision(i));
+            createLogEntry(LOG_TYPES.WARNING, d.probeCollision(i, table[i].key));
             await new Promise(r => setTimeout(r, getDelay(200)));
 
             const next = (i + 1) % capacity;
@@ -286,6 +291,8 @@ async function insertKV(keyInt, value) {
             await new Promise(r => setTimeout(r, getDelay(180)));
             continue;
         }
+
+        createLogEntry(LOG_TYPES.INFO, d.emptySlotFound(i));
 
         // write
         table[i] = { key: keyInt, value };
@@ -307,6 +314,8 @@ async function insertKV(keyInt, value) {
     if (placedAt === -1) {
         // should be impossible with resizing, but safe guard
         createLogEntry(LOG_TYPES.WARNING, 'Table is full even after resize.');
+    } else {
+        createLogEntry(LOG_TYPES.INFO, d.insertSummary(size, capacity, currentLoadFactor().toFixed(2)));
     }
 
     endLogGroup();
