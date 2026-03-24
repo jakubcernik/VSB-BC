@@ -23,6 +23,7 @@ const theoryDict = {
         introBox: '💡 Important parameter: the <em>load factor</em> α = size / capacity. To keep operations fast, the table is resized (capacity doubled) once α exceeds a chosen threshold (e.g. 0.75).',
 
         insertP1: 'The operation <code>INSERT(key, value)</code> computes an index and may need to probe several slots due to collisions. This makes the <em>single-operation worst case</em> linear, but expensive situations are rare if we resize in time.',
+        insertP2: 'If probing finds an existing key, the table performs <strong>UPDATE</strong>: it replaces only the value and does <strong>not</strong> increase <code>size</code>. The write itself is O(1); extra cost can come from probing before the key is found.',
         cardBestTitle:  'Best Case — O(1)',
         cardBestDesc:   'The hashed slot is empty. We write the pair into the slot and finish immediately.',
         cardWorstTitle: 'Worst Case — O(n)',
@@ -101,6 +102,7 @@ const theoryDict = {
         introBox: '💡 Důležitý parametr: <em>load factor</em> α = velikost / kapacita. Aby operace zůstaly rychlé, tabulka se zvětší (kapacita se zdvojnásobí), když α překročí zvolený limit (např. 0.75).',
 
         insertP1: 'Operace <code>INSERT(klíč, hodnota)</code> spočítá index a kvůli kolizím může procházet několik slotů. Proto může mít <em>nejhorší případ jedné operace</em> lineární cenu, ale drahé situace jsou při včasném zvětšování vzácné.',
+        insertP2: 'Pokud probing narazí na už existující klíč, provede se <strong>UPDATE</strong>: přepíše se pouze hodnota a <code>size</code> se <strong>nezvětší</strong>. Samotný přepis je O(1); dodatečná cena může vzniknout probingem, než se klíč najde.',
         cardBestTitle:  'Nejlepší případ — O(1)',
         cardBestDesc:   'Slot určený hashem je prázdný. Zapíšeme dvojici do slotu a končíme.',
         cardWorstTitle: 'Nejhorší případ — O(n)',
@@ -230,6 +232,7 @@ function applyLanguage() {
     document.getElementById('introBox').innerHTML = d.introBox;
 
     document.getElementById('insertP1').innerHTML = d.insertP1;
+    document.getElementById('insertP2').innerHTML = d.insertP2;
     document.getElementById('cardBestTitle').textContent = d.cardBestTitle;
     document.getElementById('cardBestDesc').innerHTML = d.cardBestDesc;
     document.getElementById('cardWorstTitle').textContent = d.cardWorstTitle;

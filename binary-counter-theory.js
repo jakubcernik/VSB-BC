@@ -22,16 +22,16 @@ const theoryDict = {
         titleSummary:   '6. Complexity Summary',
 
         // Intro
-        introP1: 'A <strong>binary counter</strong> is a k-bit register that starts at 0 and supports a single operation: <code>INCREMENT</code>. Each call adds 1 to the stored value using binary addition with carry propagation.',
+        introP1: 'A <strong>binary counter</strong> is a k-bit register that starts at 0 and supports a single operation: <code>INCREMENT</code>. Each call adds 1 to the stored value using binary addition with carry propagation. In the simulation, 8 bits are used by default for clarity, but k can be changed.',
         introP2: 'The register is stored as an array <code>A[0..k−1]</code> where <code>A[0]</code> is the least-significant bit (LSB). Incrementing is done by scanning from the LSB, flipping <code>1→0</code> until a <code>0</code> is found, then flipping that <code>0→1</code>.',
-        introBox: '💡 Key insight: each INCREMENT flips <em>at least</em> 1 bit (the 0→1 flip) and <em>at most</em> k bits (when all bits are 1). The worst case is rare — that is what amortized analysis captures.',
+        introBox: '💡 Key insight: each INCREMENT flips <em>at least</em> 1 bit (the 0→1 flip) and <em>at most</em> k bits (when all bits are 1). The worst case depends on the chosen bit length k and is rare — that is what amortized analysis captures.',
 
         // INCREMENT
-        incrementP1: 'The cost of one INCREMENT call equals the <strong>number of bits flipped</strong>. This depends on how many trailing 1-bits the counter currently has:',
+        incrementP1: 'The cost of one INCREMENT call equals the <strong>number of bits flipped</strong>. This depends on how many trailing 1-bits the counter currently has. In the simulation, Best/Worst tabs provide multiple prepared variants to compare these patterns:',
         cardBestTitle: 'Best Case — O(1)',
         cardBestDesc:  'LSB is 0. Only bit 0 is flipped (0→1). Cost = 1 bit flip.',
         cardWorstTitle:'Worst Case — O(k)',
-        cardWorstDesc: 'All k bits are 1 (counter = 2^k − 1). Every bit is flipped. Cost = k bit flips. This happens once per 2^k increments.',
+        cardWorstDesc: 'All k bits are 1 (counter = 2^k − 1). Every bit is flipped. Cost = k bit flips. This happens once per 2^k increments for the selected bit length.',
 
         // Naive
         naiveP1: 'A naive analysis looks at the worst-case cost of a single INCREMENT: <strong>O(k)</strong>. Multiplied by N operations this gives <strong>O(Nk)</strong> — but this assumes every increment flips all k bits, which is impossible.',
@@ -91,8 +91,8 @@ const theoryDict = {
         opIncrementWorst: 'INCREMENT (single worst)',
         noteIncrement:      'Amortized over N operations',
         noteIncrementBest:  'LSB is 0 → 1 bit flip',
-        noteIncrementWorst: 'When all k bits are 1 — extremely rare',
-        legendAmortized: '* Amortized O(1) — the average cost per INCREMENT over any N operations is O(1), even though individual calls can cost O(k).',
+        noteIncrementWorst: 'When all k bits are 1 for the selected length — extremely rare',
+        legendAmortized: '* Amortized O(1) — the average cost per INCREMENT over any N operations is O(1), even though individual calls can cost O(k). In the simulation you can vary k; the default k=8 is for readability.',
 
         // CTA
         ctaText:   'Ready to see carry propagation and coin accounting in action? Open the interactive simulation.',
@@ -117,16 +117,16 @@ const theoryDict = {
         titleSummary:   '6. Přehled složitostí',
 
         // Úvod
-        introP1: '<strong>Binární čítač</strong> je k-bitový registr, který začíná na 0 a podporuje jedinou operaci: <code>INCREMENT</code>. Každé volání přičte 1 k uložené hodnotě pomocí binárního sčítání s přenosem.',
+        introP1: '<strong>Binární čítač</strong> je k-bitový registr, který začíná na 0 a podporuje jedinou operaci: <code>INCREMENT</code>. Každé volání přičte 1 k uložené hodnotě pomocí binárního sčítání s přenosem. V simulaci je kvůli názornosti výchozí délka 8 bitů, ale hodnotu k lze měnit.',
         introP2: 'Registr je uložen jako pole <code>A[0..k−1]</code>, kde <code>A[0]</code> je nejméně významný bit (LSB). Inkrementování probíhá od LSB: přepínáme <code>1→0</code>, dokud nenarazíme na <code>0</code>, tu pak přepneme <code>0→1</code>.',
-        introBox: '💡 Klíčové pozorování: každý INCREMENT přepne <em>nejméně</em> 1 bit (přepnutí 0→1) a <em>nejvýše</em> k bitů (jsou-li všechny bity 1). Nejhorší případ je vzácný — to zachycuje amortizovaná analýza.',
+        introBox: '💡 Klíčové pozorování: každý INCREMENT přepne <em>nejméně</em> 1 bit (přepnutí 0→1) a <em>nejvýše</em> k bitů (jsou-li všechny bity 1). Nejhorší případ závisí na zvolené délce k a je vzácný — to zachycuje amortizovaná analýza.',
 
         // INCREMENT
-        incrementP1: 'Cena jednoho volání INCREMENT se rovná <strong>počtu přepnutých bitů</strong>. Závisí na tom, kolik za sebou jdoucích bitů 1 čítač právě obsahuje:',
+        incrementP1: 'Cena jednoho volání INCREMENT se rovná <strong>počtu přepnutých bitů</strong>. Závisí na tom, kolik koncových jedniček čítač právě obsahuje. V simulaci proto najdete u záložek Best/Worst více připravených variant pro porovnání:',
         cardBestTitle: 'Nejlepší případ — O(1)',
         cardBestDesc:  'LSB je 0. Přepne se pouze bit 0 (0→1). Cena = 1 přepnutí.',
         cardWorstTitle:'Nejhorší případ — O(k)',
-        cardWorstDesc: 'Všechny k bitů jsou 1 (čítač = 2^k − 1). Přepnou se všechny bity. Cena = k přepnutí. Nastane jednou za 2^k inkrementací.',
+        cardWorstDesc: 'Všechny k bitů jsou 1 (čítač = 2^k − 1). Přepnou se všechny bity. Cena = k přepnutí. Pro zvolenou délku registru nastane jednou za 2^k inkrementací.',
 
         // Naivní
         naiveP1: 'Naivní analýza by se podívala na nejhorší cenu jednoho INCREMENT: <strong>O(k)</strong>. Vynásobením N operacemi by dostala <strong>O(Nk)</strong> — to ale předpokládá, že každé inkrementování přepíná všechny k bitů, což není možné.',
@@ -186,8 +186,8 @@ const theoryDict = {
         opIncrementWorst: 'INCREMENT (nejhorší 1×)',
         noteIncrement:      'Amortizovaně přes N operací',
         noteIncrementBest:  'LSB je 0 → 1 přepnutí',
-        noteIncrementWorst: 'Když jsou všechny k bitů 1 — extrémně vzácné',
-        legendAmortized: '* Amortizované O(1) — průměrná cena INCREMENT přes libovolných N operací je O(1), i když jednotlivá volání mohou stát O(k).',
+        noteIncrementWorst: 'Když je všech k bitů 1 pro zvolenou délku — extrémně vzácné',
+        legendAmortized: '* Amortizované O(1) — průměrná cena INCREMENT přes libovolných N operací je O(1), i když jednotlivá volání mohou stát O(k). V simulaci lze měnit k; výchozí k=8 je kvůli přehlednosti.',
 
         // CTA
         ctaText:   'Chcete vidět šíření přenosu a účetní metodu v akci? Otevřete interaktivní simulaci.',

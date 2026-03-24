@@ -42,8 +42,8 @@
                 <label for="keyInput" id="keyLabel">Key (int):</label>
                 <input type="number" id="keyInput" placeholder="13" style="width: 140px;">
 
-                <label for="valueInput" id="valueLabel">Value (string/number):</label>
-                <input type="text" id="valueInput" placeholder="42" style="width: 160px;">
+                <label for="valueInput" id="valueLabel">Value (int):</label>
+                <input type="number" id="valueInput" placeholder="42" style="width: 160px;">
 
                 <button onclick="addManual()" id="btnInsert">Insert</button>
                 <button onclick="resetHashTable()" id="btnReset">↺ Reset</button>
@@ -69,16 +69,28 @@
         <section id="bestMode" class="mode">
             <h2 id="bestCaseTitle">Best Case</h2>
             <p id="bestCaseDesc"></p>
-            <div class="button-group">
-                <button onclick="prepareBestCase()" id="btnPrepareBest">Prepare Best Case</button>
+            <div class="button-group case-controls">
+                <div class="case-step-label" id="bestStepPrepareLabel">1) Prepare variant</div>
+                <div class="case-actions-row">
+                    <button onclick="prepareBestCase()" id="btnPrepareBest">Prepare Best Case</button>
+                    <button onclick="prepareBestCase(true)" id="btnBestNextVariant">Next Variant</button>
+                </div>
+                <div class="case-step-label" id="bestStepRunLabel">2) Insert prepared element</div>
+                <button onclick="runPreparedCaseInsert('best')" id="btnBestInsertPrepared">Insert prepared element</button>
             </div>
         </section>
 
         <section id="worstMode" class="mode">
             <h2 id="worstCaseTitle">Worst Case</h2>
             <p id="worstCaseDesc"></p>
-            <div class="button-group">
-                <button onclick="prepareWorstCase()" id="btnPrepareWorst">Prepare Worst Case</button>
+            <div class="button-group case-controls">
+                <div class="case-step-label" id="worstStepPrepareLabel">1) Prepare variant</div>
+                <div class="case-actions-row">
+                    <button onclick="prepareWorstCase()" id="btnPrepareWorst">Prepare Worst Case</button>
+                    <button onclick="prepareWorstCase(true)" id="btnWorstNextVariant">Next Variant</button>
+                </div>
+                <div class="case-step-label" id="worstStepRunLabel">2) Insert prepared element</div>
+                <button onclick="runPreparedCaseInsert('worst')" id="btnWorstInsertPrepared">Insert prepared element</button>
             </div>
         </section>
 
@@ -87,7 +99,12 @@
                 <div class="meta-item" id="metaSize">Size: 0</div>
                 <div class="meta-item" id="metaCapacity">Capacity: 8</div>
                 <div class="meta-item" id="metaLoad">Load factor: 0.00</div>
-                <div class="meta-item" id="metaThreshold">Resize threshold: 0.75</div>
+                <div class="meta-item meta-threshold-item" id="metaThreshold">
+                    <span id="metaThresholdLabel">Resize threshold</span>: <span id="metaThresholdValue">0.75</span>
+                    <span class="help-tooltip" id="metaThresholdHelp" tabindex="0" role="button" aria-label="Help">?
+                        <span class="help-tooltip-text" id="metaThresholdHelpText">When (size + 1) / capacity exceeds this value, resize + rehash is triggered.</span>
+                    </span>
+                </div>
             </div>
 
             <div id="hashTableVisualization"></div>

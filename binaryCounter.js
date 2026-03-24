@@ -19,12 +19,115 @@
  */
 
 // ─── State ────────────────────────────────────────────────────────────────────
-const NUM_BITS = 8;          // Display width (8-bit counter, value 0–255)
-let bits        = new Array(NUM_BITS).fill(0);   // bits[0] = LSB
-let coinsOnBit  = new Array(NUM_BITS).fill(0);   // saved coins per bit position (invariant: 1-bit ↔ 1 coin)
+const DEFAULT_BITS = 8;
+const MIN_BITS = 4;
+const MAX_BITS = 12;
+
+let numBits = DEFAULT_BITS;  // Display width (default 8-bit for clarity)
+let bits        = new Array(numBits).fill(0);   // bits[0] = LSB
+let coinsOnBit  = new Array(numBits).fill(0);   // saved coins per bit position (invariant: 1-bit ↔ 1 coin)
 let bank        = 0;         // coins currently in the "operation bank" (transient during one increment)
 let totalCoinsEarned = 0;    // total coins received across all increments (= steps × 2)
 let isAnimating = false;
+let bestVariantIndex = 0;
+let worstVariantIndex = 0;
+let preparedCaseMode = null;
+
+function maxCounterValue() {
+    return Math.pow(2, numBits) - 1;
+}
+
+function reinitializeCounterState() {
+    bits = new Array(numBits).fill(0);
+    coinsOnBit = new Array(numBits).fill(0);
+    bank = 0;
+    totalCoinsEarned = 0;
+    steps = 0;
+}
+
+function getBestVariants() {
+    const maxEven = Math.max(0, maxCounterValue() - (maxCounterValue() % 2));
+    const candidates = [0, 2, 6, 10, 42, 170, maxEven]
+        .filter(v => v <= maxEven)
+        .filter((v, i, a) => a.indexOf(v) === i);
+    return candidates.length ? candidates : [0];
+}
+
+function getWorstVariants() {
+    return [1, 2, 3, 4, 6, 8, numBits]
+        .filter(k => k >= 1 && k <= numBits)
+        .filter((k, i, a) => a.indexOf(k) === i)
+        .sort((a, b) => a - b);
+}
+
+function updateCaseButtons() {
+    const bestAlt = document.getElementById('btnRunBestAlt');
+    const worstAlt = document.getElementById('btnRunWorstAlt');
+    const bestInc = document.getElementById('btnBestIncrement');
+    const worstInc = document.getElementById('btnWorstIncrement');
+    if (!bestAlt || !worstAlt || !bestInc || !worstInc) return;
+
+    const bestVariants = getBestVariants();
+    const worstVariants = getWorstVariants();
+    bestAlt.disabled = bestVariants.length <= 1;
+    worstAlt.disabled = worstVariants.length <= 1;
+    bestInc.disabled = preparedCaseMode !== 'best';
+    worstInc.disabled = preparedCaseMode !== 'worst';
+}
+
+function countTrailingOnes() {
+    let t = 0;
+    while (t < numBits && bits[t] === 1) t++;
+    return t;
+}
+
+function refreshBitLengthUI() {
+    const select = document.getElementById('bitLengthSelect');
+    if (select) select.value = String(numBits);
+}
+
+function setBitLengthFromUI() {
+    const select = document.getElementById('bitLengthSelect');
+    if (!select || isAnimating) return;
+    const parsed = Number.parseInt(select.value, 10);
+    if (!Number.isInteger(parsed) || parsed < MIN_BITS || parsed > MAX_BITS) {
+        refreshBitLengthUI();
+        return;
+    }
+    numBits = parsed;
+    bestVariantIndex = 0;
+    worstVariantIndex = 0;
+    resetCounter();
+    updateCaseButtons();
+}
+
+function randomIntInclusive(min, max) {
+    return min + Math.floor(Math.random() * (max - min + 1));
+}
+
+function applyRandomStateByTrailingOnes(minTrailing, maxTrailing) {
+    const t = randomIntInclusive(minTrailing, maxTrailing);
+
+    bits = new Array(numBits).fill(0);
+    coinsOnBit = new Array(numBits).fill(0);
+
+    for (let i = 0; i < numBits; i++) {
+        let bit = 0;
+        if (i < t) bit = 1;
+        else if (i > t) bit = Math.random() < 0.5 ? 0 : 1;
+
+        bits[i] = bit;
+        coinsOnBit[i] = bit;
+    }
+
+    bank = 0;
+    totalCoinsEarned = (steps * 2) + savedCoinsTotal();
+    renderBank(0);
+    updateCoinCounter();
+    renderBits();
+
+    return t;
+}
 
 // ─── Coin total helpers ───────────────────────────────────────────────────────
 function savedCoinsTotal() {
@@ -49,7 +152,7 @@ function renderBits() {
     row.innerHTML = '';
 
     // Render MSB → LSB left-to-right for readability
-    for (let i = NUM_BITS - 1; i >= 0; i--) {
+    for (let i = numBits - 1; i >= 0; i--) {
         const cell = document.createElement('div');
         cell.classList.add('bit-cell');
         cell.id = `bit-cell-${i}`;
@@ -147,13 +250,15 @@ function renderBank(count) {
     }
 }
 
-async function spendCoinFromBank() {
+async function spendCoinFromBank(mode = 'fade') {
     const bankDiv = document.getElementById('bankCoins');
     if (!bankDiv) return;
     const last = bankDiv.lastChild;
     if (!last) return;
-    last.classList.add('removing');
-    await sleep(getDelay(300));
+    if (mode === 'fade') {
+        last.classList.add('removing');
+        await sleep(getDelay(300));
+    }
     last.remove();
     if (bankDiv.childElementCount === 0) {
         const bankEl = document.getElementById('operationBank');
@@ -162,9 +267,41 @@ async function spendCoinFromBank() {
 }
 
 async function moveCoinFromBankToBit(bitIndex) {
-    // Vizuálně odebereme minci z banku a přidáme ji na bit
-    await spendCoinFromBank();
-    await animateCoins(bitIndex, 1);
+    const bankDiv = document.getElementById('bankCoins');
+    const targetDiv = document.getElementById(`bit-coins-${bitIndex}`);
+    if (!bankDiv || !targetDiv) return;
+
+    const sourceCoin = bankDiv.lastChild;
+    if (!sourceCoin) return;
+
+    const from = sourceCoin.getBoundingClientRect();
+    const to = targetDiv.getBoundingClientRect();
+    const duration = getDelay(360);
+
+    const flying = sourceCoin.cloneNode(true);
+    flying.classList.add('flying');
+    flying.style.left = `${from.left}px`;
+    flying.style.top = `${from.top}px`;
+    flying.style.transitionDuration = `${duration}ms`;
+    document.body.appendChild(flying);
+
+    // Mince fyzicky opustí bank hned, aby bylo vidět, odkud letí.
+    await spendCoinFromBank('instant');
+
+    const dx = (to.left + (to.width / 2) - (from.left + from.width / 2));
+    const dy = (to.top + (to.height / 2) - (from.top + from.height / 2));
+    requestAnimationFrame(() => {
+        flying.style.transform = `translate(${dx}px, ${dy}px) scale(1)`;
+        flying.style.opacity = '0.95';
+    });
+
+    await sleep(duration);
+    flying.remove();
+
+    // Cílová mince se objeví přesně po doletu.
+    const landedCoin = document.createElement('div');
+    landedCoin.classList.add('bit-coin');
+    targetDiv.appendChild(landedCoin);
 }
 
 // ─── Core: increment ──────────────────────────────────────────────────────────
@@ -175,7 +312,7 @@ async function increment() {
     const valueBefore = bitsToDecimal();
 
     // Overflow guard (255 → reset for 8-bit)
-    if (valueBefore >= Math.pow(2, NUM_BITS) - 1) {
+    if (valueBefore >= maxCounterValue()) {
         resetCounter();
         return;
     }
@@ -200,7 +337,7 @@ async function increment() {
     let pos = 0;
 
     // ── KROK 2: Carry propagace – 1-bity platí ze SVÝCH mincí, banka se nedotýká
-    while (pos < NUM_BITS && bits[pos] === 1) {
+    while (pos < numBits && bits[pos] === 1) {
         const frame = document.getElementById(`bit-frame-${pos}`);
         if (frame) frame.classList.add('active-bit');
 
@@ -221,15 +358,17 @@ async function increment() {
     }
 
     // ── KROK 3: Flip 0→1 – 1 mince z banku zaplatí flip, 1 mince přeletí na bit
-    if (pos < NUM_BITS) {
+    if (pos < numBits) {
         const frame = document.getElementById(`bit-frame-${pos}`);
         if (frame) frame.classList.add('active-bit');
 
-        // Utratíme 1 minci z banku za samotný flip (zmizí z banku)
+        // Utracení mince i flip proběhnou zároveň (lépe čitelné časování).
         bank -= 1;
         createLogEntry(LOG_TYPES.COPY, d.spendSelf(pos));
-        await spendCoinFromBank();
-        await animateBitFlip(pos, 1);
+        await Promise.all([
+            spendCoinFromBank('fade'),
+            animateBitFlip(pos, 1),
+        ]);
 
         // Přesuneme 1 minci z banku na bit (rezerva pro budoucí flip 1→0)
         bank -= 1;
@@ -259,15 +398,13 @@ async function increment() {
 // ─── Reset ────────────────────────────────────────────────────────────────────
 function resetCounter() {
     isAnimating = false;
-    bits             = new Array(NUM_BITS).fill(0);
-    coinsOnBit       = new Array(NUM_BITS).fill(0);
-    bank             = 0;
-    totalCoinsEarned = 0;
-    steps            = 0;
+    preparedCaseMode = null;
+    reinitializeCounterState();
 
     updateCoinCounter();
     updateStepCounter();
     renderBits();
+    refreshBitLengthUI();
 
     const d = dict[currentLang];
     const panel = document.getElementById('infoPanel');
@@ -276,42 +413,73 @@ function resetCounter() {
     init.classList.add('log-entry', 'info');
     init.innerHTML = `<div class="log-header"><span class="log-icon">${LOG_TYPES.INFO.icon}</span><span>${d.steps} ${d.willAppear}</span></div>`;
     panel.appendChild(init);
+    updateCaseButtons();
 }
 
 // ─── Random mode ──────────────────────────────────────────────────────────────
 async function generateRandom() {
     if (isAnimating) return;
     const d = dict[currentLang];
-    const countRes = InputValidation.readInt('randomCount', { required: true, min: 1, max: 200 });
-    if (!countRes.ok) {
-        InputValidation.reportValidationError(countRes.reason, {
+    const maxTrailingAllowed = Math.max(0, numBits - 1);
+    const minTrailingRes = InputValidation.readInt('randomMinTrailing', {
+        required: true,
+        min: 0,
+        max: maxTrailingAllowed,
+    });
+    if (!minTrailingRes.ok) {
+        InputValidation.reportValidationError(minTrailingRes.reason, {
             dict: d,
-            details: countRes.details,
+            details: minTrailingRes.details,
             report: (msg) => updateInfoPanel(msg),
         });
         return;
     }
-    const count = countRes.value;
 
-    resetCounter();
-    createLogEntry(LOG_TYPES.INFO, d.randomGenerating(count));
-
-    for (let i = 0; i < count; i++) {
-        await increment();
-        await sleep(getDelay(100));
-        if (bitsToDecimal() >= Math.pow(2, NUM_BITS) - 1) break;
+    const maxTrailingRes = InputValidation.readInt('randomMaxTrailing', {
+        required: true,
+        min: 0,
+        max: maxTrailingAllowed,
+    });
+    if (!maxTrailingRes.ok) {
+        InputValidation.reportValidationError(maxTrailingRes.reason, {
+            dict: d,
+            details: maxTrailingRes.details,
+            report: (msg) => updateInfoPanel(msg),
+        });
+        return;
     }
 
-    createLogEntry(LOG_TYPES.SUCCESS, d.randomDone(count));
+    const minTrailing = minTrailingRes.value;
+    const maxTrailing = maxTrailingRes.value;
+    if (minTrailing > maxTrailing) {
+        InputValidation.reportValidationError('MIN_GT_MAX', {
+            dict: d,
+            report: (msg) => updateInfoPanel(msg),
+        });
+        return;
+    }
+
+    resetCounter();
+    createLogEntry(LOG_TYPES.INFO, d.randomGenerating(minTrailing, maxTrailing));
+
+    const t = applyRandomStateByTrailingOnes(minTrailing, maxTrailing);
+    createLogEntry(LOG_TYPES.INFO, d.randomPrepared(t));
+    await increment();
+
+    createLogEntry(LOG_TYPES.SUCCESS, d.randomDone());
 }
 
 // ─── Best Case ────────────────────────────────────────────────────────────────
-async function prepareBestCase() {
-    // Set counter to an even number (LSB = 0) → only 1 bit flip on next increment
-    // Use value 6 = 0b00000110 (all small, LSB clear)
+async function prepareBestCase(nextVariant = false) {
+    // Best case means LSB=0. We cycle through multiple even values for variety.
     resetCounter();
-    const target = 6; // 0b00000110
-    for (let i = 0; i < NUM_BITS; i++) {
+    const variants = getBestVariants();
+    bestVariantIndex = nextVariant
+        ? (bestVariantIndex + 1) % variants.length
+        : 0;
+    const target = variants[bestVariantIndex];
+
+    for (let i = 0; i < numBits; i++) {
         bits[i] = (target >> i) & 1;
         coinsOnBit[i] = bits[i]; // each 1-bit has 1 saved coin
     }
@@ -325,16 +493,22 @@ async function prepareBestCase() {
     const d = dict[currentLang];
     const panel = document.getElementById('infoPanel');
     panel.innerHTML = '';
-    createLogEntry(LOG_TYPES.SUCCESS, d.bestReady(target));
+    createLogEntry(LOG_TYPES.SUCCESS, d.bestReady(target, bestVariantIndex + 1, variants.length));
+    preparedCaseMode = 'best';
+    updateCaseButtons();
 }
 
 // ─── Worst Case ───────────────────────────────────────────────────────────────
-async function prepareWorstCase() {
-    // Set all k=4 lower bits to 1 (value = 15 = 0b00001111)
-    // Next increment will flip all 4 lower bits (carry propagates through all)
+async function prepareWorstCase(nextVariant = false) {
+    // Worst-side variants by carry depth (k trailing ones). k=numBits is true worst case.
     resetCounter();
-    const k = 4;
-    for (let i = 0; i < NUM_BITS; i++) {
+    const variants = getWorstVariants();
+    worstVariantIndex = nextVariant
+        ? (worstVariantIndex + 1) % variants.length
+        : 0;
+    const k = variants[worstVariantIndex];
+
+    for (let i = 0; i < numBits; i++) {
         bits[i] = i < k ? 1 : 0;
         coinsOnBit[i] = bits[i]; // each 1-bit has 1 saved coin
     }
@@ -348,11 +522,45 @@ async function prepareWorstCase() {
     const d = dict[currentLang];
     const panel = document.getElementById('infoPanel');
     panel.innerHTML = '';
-    createLogEntry(LOG_TYPES.WARNING, d.worstReady(k));
+    createLogEntry(
+        LOG_TYPES.WARNING,
+        d.worstReady(k, worstVariantIndex + 1, variants.length, k === numBits)
+    );
+    preparedCaseMode = 'worst';
+    updateCaseButtons();
+}
+
+async function incrementPreparedCase(mode) {
+    if (isAnimating) return;
+    const d = dict[currentLang];
+
+    if (preparedCaseMode !== mode) {
+        createLogEntry(
+            LOG_TYPES.INFO,
+            mode === 'best' ? d.prepareFirstBest : d.prepareFirstWorst
+        );
+        return;
+    }
+
+    const trailingOnes = countTrailingOnes();
+    const flips = trailingOnes + 1;
+    await increment();
+
+    if (mode === 'best') {
+        createLogEntry(LOG_TYPES.INFO, d.bestStepExplain(flips));
+    } else {
+        createLogEntry(LOG_TYPES.INFO, d.worstStepExplain(trailingOnes, flips, trailingOnes === numBits));
+    }
+
+    // Prepared scenario is consumed by this one-step action.
+    preparedCaseMode = null;
+    updateCaseButtons();
 }
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+    refreshBitLengthUI();
+    updateCaseButtons();
     renderBits();
 });
 

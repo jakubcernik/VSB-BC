@@ -33,8 +33,8 @@ const theoryDict = {
         cardWorstDesc:  'Array is full. A new larger block is allocated, all N existing elements are copied and finally the new element is inserted.',
 
         // --- Naive ---
-        naiveP1: 'A naive approach would look at a single <code>push_back</code> call and note that it can cost O(N) due to copying. Multiplying by N insertions gives a bound of <strong>O(N²)</strong> for N operations — but this is a massive overestimate.',
-        naiveP2: 'The key insight is that <strong>expensive resizes are rare</strong>. After doubling from capacity C to 2C, the next resize cannot happen for another C insertions. Amortized analysis captures this by spreading the cost of a resize over the operations that preceded it.',
+        naiveP1: 'A naive estimate takes the worst-case cost of one <code>push_back</code> (O(N) when a resize copies N elements) and multiplies it by N operations. This yields <strong>O(N²)</strong>. The bound is valid, but very loose: it assumes every operation is worst-case, which never happens.',
+        naiveP2: 'The key insight is that <strong>expensive resizes are rare</strong>. After doubling from capacity C to 2C, the next resize cannot happen for another C insertions. Amortized analysis spreads each resize cost across many cheap insertions and proves <strong>O(1) average cost per operation over any sequence</strong> (not a probabilistic average).',
 
         // --- Amortized ---
         amortizedP1: 'Amortized analysis gives a guaranteed average cost per operation over a sequence of operations, even if individual operations occasionally spike. Three classical methods are used:',
@@ -120,8 +120,8 @@ const theoryDict = {
         cardWorstDesc:  'Pole je plné. Alokuje se nový větší blok, všech N stávajících prvků se zkopíruje a teprve poté se vloží nový prvek.',
 
         // --- Naivní ---
-        naiveP1: 'Naivní přístup by se podíval na jedno volání <code>push_back</code> a zaznamenal, že může stát O(N) kvůli kopírování. Vynásobením N vloženími by vznikl odhad <strong>O(N²)</strong> pro N operací — to je ale obrovský nadodhad.',
-        naiveP2: 'Klíčové pozorování je, že <strong>nákladné resize operace jsou vzácné</strong>. Po zdvojení kapacity z C na 2C nemůže dojít k dalšímu resize dříve než po C dalších vloženích. Amortizovaná analýza toto zachycuje rozložením ceny resize na operace, které mu předcházely.',
+        naiveP1: 'Naivní odhad vezme nejhorší cenu jedné operace <code>push_back</code> (O(N), když resize kopíruje N prvků) a vynásobí ji N operacemi. Tím vyjde <strong>O(N²)</strong>. Tato mez je formálně správná, ale velmi hrubá: předpokládá, že každá operace je nejhorší případ, což v praxi nenastává.',
+        naiveP2: 'Klíčové pozorování je, že <strong>nákladné resize operace jsou vzácné</strong>. Po zdvojení kapacity z C na 2C nastane další resize až po C dalších vloženích. Amortizovaná analýza proto rozkládá cenu resize mezi mnoho levných vložení a dokazuje <strong>O(1) průměr na operaci v libovolné posloupnosti</strong> (nejde o pravděpodobnostní průměr).',
 
         // --- Amortizovaná ---
         amortizedP1: 'Amortizovaná analýza zaručuje průměrnou cenu operace v posloupnosti operací, i když jednotlivé operace občas skokově zdraží. Používají se tři klasické metody:',

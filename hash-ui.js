@@ -31,7 +31,7 @@ const dict = {
         // Manual
         manualTitle:      'Manual Mode',
         keyLabel:         'Key (int):',
-        valueLabel:       'Value (string/number):',
+        valueLabel:       'Value (int):',
         keyPH:            'e.g. 13',
         valuePH:          'e.g. 42',
         btnInsert:        'Insert',
@@ -59,17 +59,34 @@ const dict = {
 
         btnPrepareBest:   'Prepare Best Case',
         btnPrepareWorst:  'Prepare Worst Case',
+        btnNextVariant:   'Next Variant',
+        btnInsertPrepared: 'Insert Prepared Element',
+        stepPrepareLabel: '1) Prepare variant',
+        stepRunLabel:     '2) Insert prepared element',
         bestReady:        'Best Case prepared — table has plenty of free space, next insert hits an empty slot.',
         worstReady:       'Worst Case prepared — table is near the load-factor limit and next insert will trigger resize.',
+        bestReadyVariant: (v, total, key, value) => `Best Case variant ${v}/${total} prepared — next insert uses key=${key}, value=${value}.`,
+        worstReadyVariant: (v, total, key, value, kind) => `Worst Case variant ${v}/${total} prepared (${kind}) — next insert uses key=${key}, value=${value}.`,
+        prepareFirstBest:  'First prepare a Best Case variant, then run the insert action.',
+        prepareFirstWorst: 'First prepare a Worst Case variant, then run the insert action.',
+        worstKindProbe:    'long probing',
+        worstKindResize:   'resize + rehash',
+        worstKindUpdate:   'update existing key',
+        bestInsertExplain: (probes, collisions, resized) => `Best Case explanation: first hashed slot was free, so insert finished immediately. Cost: O(1) (probes=${probes}, collisions=${collisions}, resize=${resized ? 'yes' : 'no'}).`,
+        worstInsertExplain: (kind, probes, collisions, resized, wasUpdate) => `Worst Case explanation (${kind}): operation needed more work due to collisions${resized ? ', plus resize/rehash' : ''}${wasUpdate ? ', and ended as UPDATE of existing key' : ''}. Observed: probes=${probes}, collisions=${collisions}.`,
 
         // Meta
         metaSize:         'Size',
         metaCapacity:     'Capacity',
         metaLoad:         'Load factor',
         metaThreshold:    'Resize threshold',
+        metaThresholdHelp: 'If (size + 1) / capacity exceeds this threshold, the table resizes and rehashes all elements.',
+        metaThresholdHelpAria: 'Explain resize threshold',
+        slotStateEmpty:   'empty',
+        slotStateOccupied:'occupied',
 
         // Errors
-        invalidInput:     'Please enter an integer key and a value.',
+        invalidInput:     'Please enter an integer key and an integer value.',
 
         // --- Validation (shared) ---
         validationEmpty: 'Please fill out the field.',
@@ -84,15 +101,21 @@ const dict = {
         hashStart:        (key, hash, cap, start) => `hash(<strong>${key}</strong>) = <span class="log-badge slot">${hash}</span>, start index = <span class="log-badge slot">${hash} mod ${cap} = ${start}</span>`,
 
         insertCharge:     (c) => `INSERT starts: received <span class="coin-text">${c} coins</span> (fixed amortized charge)`,
+        resizeCheck:      (projected, threshold) => `Before insert: projected load factor is <span class="log-badge slot">${projected}</span> (threshold ${threshold})`,
+        resizeNeededNow:  (projected, threshold) => `Projected load ${projected} exceeds threshold ${threshold} — resize is required now to keep probing short on average.`,
+        resizeNotNeeded:  (projected, threshold) => `Projected load ${projected} is within threshold ${threshold} — no resize needed before this insert.`,
         probeCheck:       (i) => `Probe slot <span class="log-badge slot">[${i}]</span>`,
         probeNext:        (i) => `Next slot to try: <span class="log-badge slot">[${i}]</span>`,
-        probeCollision:   (i) => `Collision at <span class="log-badge slot">[${i}]</span> — continue probing`,
-        updateFound:      (i) => `Key already exists in <span class="log-badge slot">[${i}]</span> — performing <strong>UPDATE</strong> (standard hash table behavior)`,
+        probeCollision:   (i, key) => `Collision at <span class="log-badge slot">[${i}]</span> (occupied by key <strong>${key}</strong>) — continue probing to preserve correctness of open addressing`,
+        updateFound:      (i) => `Key already exists in <span class="log-badge slot">[${i}]</span> — performing <strong>UPDATE</strong> (no new element is inserted)`,
+        updateCostExplain:(i) => `UPDATE keeps table size unchanged. Cost: value overwrite in <span class="log-badge slot">[${i}]</span> is O(1); extra work can come from probing done before this slot was found.`,
         updateBorrowCoin: (i) => `Slot <span class="log-badge slot">[${i}]</span>: temporarily use the <span class="coin-text">saved coin</span> to pay for UPDATE`,
         updateDone:       (i) => `Updated value in <span class="log-badge slot">[${i}]</span> — spent <span class="coin-text">1 coin</span>`,
         updateReturnCoin: (i) => `Returned <span class="coin-text">1 coin</span> back onto <span class="log-badge slot">[${i}]</span> (reserve stays for future rehash)`,
+        emptySlotFound:   (i) => `Found first empty slot at <span class="log-badge slot">[${i}]</span> — insert stops here because linear probing always writes into the first available position.`,
         placeElement:     (i) => `Placed element into <span class="log-badge slot">[${i}]</span> — spent <span class="coin-text">1 coin</span>`,
         saveForRehash:    (i) => `Saved <span class="coin-text">1 coin</span> on <span class="log-badge slot">[${i}]</span> for future rehash`,
+        insertSummary:    (sizeNow, capNow, loadNow) => `Insert finished — size=${sizeNow}, capacity=${capNow}, load factor=${loadNow}`,
 
         resizeTitle:      (oldC, newC) => `Resize needed — rehash <span class="log-badge capacity">${oldC} → ${newC}</span>`,
         resizeWhy:        () => `Each stored element has 1 saved coin. During rehash, each element spends its coin to pay for its move.`,
@@ -121,7 +144,7 @@ const dict = {
         // Manual
         manualTitle:      'Manuální režim',
         keyLabel:         'Klíč (int):',
-        valueLabel:       'Hodnota (string/číslo):',
+        valueLabel:       'Hodnota (int):',
         keyPH:            'např. 13',
         valuePH:          'např. 42',
         btnInsert:        'Vložit',
@@ -149,17 +172,34 @@ const dict = {
 
         btnPrepareBest:   'Připravit Nejlepší případ',
         btnPrepareWorst:  'Připravit Nejhorší případ',
+        btnNextVariant:   'Další varianta',
+        btnInsertPrepared: 'Vložit připravený prvek',
+        stepPrepareLabel: '1) Připravit variantu',
+        stepRunLabel:     '2) Vložit připravený prvek',
         bestReady:        'Nejlepší případ připraven — tabulka má dost volného místa, další insert trefí prázdný slot.',
         worstReady:       'Nejhorší případ připraven — tabulka je blízko limitu a další insert vyvolá resize.',
+        bestReadyVariant: (v, total, key, value) => `Připravena varianta Best Case ${v}/${total} — další vložení použije klíč=${key}, hodnota=${value}.`,
+        worstReadyVariant: (v, total, key, value, kind) => `Připravena varianta Worst Case ${v}/${total} (${kind}) — další vložení použije klíč=${key}, hodnota=${value}.`,
+        prepareFirstBest:  'Nejprve připravte variantu Best Case a potom spusťte vložení.',
+        prepareFirstWorst: 'Nejprve připravte variantu Worst Case a potom spusťte vložení.',
+        worstKindProbe:    'dlouhý probing',
+        worstKindResize:   'resize + rehash',
+        worstKindUpdate:   'update existujícího klíče',
+        bestInsertExplain: (probes, collisions, resized) => `Vysvětlení Best Case: první hashovaný slot byl volný, takže vložení skončilo hned. Cena: O(1) (probes=${probes}, kolize=${collisions}, resize=${resized ? 'ano' : 'ne'}).`,
+        worstInsertExplain: (kind, probes, collisions, resized, wasUpdate) => `Vysvětlení Worst Case (${kind}): operace měla vyšší cenu kvůli kolizím${resized ? ', navíc proběhl resize/rehash' : ''}${wasUpdate ? ', a skončila jako UPDATE existujícího klíče' : ''}. Naměřeno: probes=${probes}, kolize=${collisions}.`,
 
         // Meta
         metaSize:         'Velikost',
         metaCapacity:     'Kapacita',
         metaLoad:         'Zaplnění',
         metaThreshold:    'Limit rehash',
+        metaThresholdHelp: 'Pokud (size + 1) / capacity překročí tento limit, tabulka se zvětší a znovu přehashuje všechny prvky.',
+        metaThresholdHelpAria: 'Vysvětlivka k limitu rehash',
+        slotStateEmpty:   'prázdný',
+        slotStateOccupied:'obsazený',
 
         // Errors
-        invalidInput:     'Zadejte celočíselný klíč a hodnotu.',
+        invalidInput:     'Zadejte celočíselný klíč a celočíselnou hodnotu.',
 
         // --- Validace (sdílené) ---
         validationEmpty: 'Vyplňte pole.',
@@ -174,15 +214,21 @@ const dict = {
         hashStart:        (key, hash, cap, start) => `hash(<strong>${key}</strong>) = <span class="log-badge slot">${hash}</span>, startovní index = <span class="log-badge slot">${hash} mod ${cap} = ${start}</span>`,
 
         insertCharge:     (c) => `INSERT začíná: přijaty <span class="coin-text">${c} mince</span> (pevný amortizovaný poplatek)`,
+        resizeCheck:      (projected, threshold) => `Před vložením: očekávané zaplnění je <span class="log-badge slot">${projected}</span> (limit ${threshold})`,
+        resizeNeededNow:  (projected, threshold) => `Očekávané zaplnění ${projected} překračuje limit ${threshold} — je potřeba resize, aby probing zůstal v průměru krátký.`,
+        resizeNotNeeded:  (projected, threshold) => `Očekávané zaplnění ${projected} je v limitu ${threshold} — před tímto vložením není resize potřeba.`,
         probeCheck:       (i) => `Kontroluji slot <span class="log-badge slot">[${i}]</span>`,
         probeNext:        (i) => `Další slot: <span class="log-badge slot">[${i}]</span>`,
-        probeCollision:   (i) => `Kolize ve <span class="log-badge slot">[${i}]</span> — pokračuji dál`,
-        updateFound:      (i) => `Klíč už existuje ve <span class="log-badge slot">[${i}]</span> — provádím <strong>UPDATE</strong> (standardní chování hash tabulky)`,
+        probeCollision:   (i, key) => `Kolize ve <span class="log-badge slot">[${i}]</span> (je tam klíč <strong>${key}</strong>) — pokračuji probingem dál, aby bylo zachováno správné chování otevřeného adresování`,
+        updateFound:      (i) => `Klíč už existuje ve <span class="log-badge slot">[${i}]</span> — provádím <strong>UPDATE</strong> (nevkládá se nový prvek)`,
+        updateCostExplain:(i) => `UPDATE nemění velikost tabulky. Cena: samotný přepis hodnoty ve <span class="log-badge slot">[${i}]</span> je O(1); dodatečná práce může vzniknout probingem před nalezením tohoto slotu.`,
         updateBorrowCoin: (i) => `Slot <span class="log-badge slot">[${i}]</span>: dočasně používám <span class="coin-text">ušetřenou minci</span> na zaplacení UPDATE`,
         updateDone:       (i) => `Hodnota aktualizována ve <span class="log-badge slot">[${i}]</span> — utracena <span class="coin-text">1 mince</span>`,
         updateReturnCoin: (i) => `Vracím <span class="coin-text">1 minci</span> zpět na <span class="log-badge slot">[${i}]</span> (rezerva zůstává pro budoucí rehash)`,
+        emptySlotFound:   (i) => `Nalezen první prázdný slot <span class="log-badge slot">[${i}]</span> — vložení končí zde, protože lineární probing zapisuje do první volné pozice.`,
         placeElement:     (i) => `Uloženo do <span class="log-badge slot">[${i}]</span> — utracena <span class="coin-text">1 mince</span>`,
         saveForRehash:    (i) => `Uložena <span class="coin-text">1 mince</span> na <span class="log-badge slot">[${i}]</span> pro budoucí rehash`,
+        insertSummary:    (sizeNow, capNow, loadNow) => `Vložení dokončeno — velikost=${sizeNow}, kapacita=${capNow}, zaplnění=${loadNow}`,
 
         resizeTitle:      (oldC, newC) => `Potřeba resize — rehash <span class="log-badge capacity">${oldC} → ${newC}</span>`,
         resizeWhy:        () => `Každý uložený prvek má 1 ušetřenou minci. Při rehashi ji utratí za svůj přesun.`,
@@ -305,6 +351,7 @@ function setMode(mode) {
     document.querySelectorAll('.mode').forEach(s => s.classList.remove('active'));
     document.getElementById(`${mode}Tab`).classList.add('active');
     document.getElementById(`${mode}Mode`).classList.add('active');
+    if (typeof updateCaseButtons === 'function') updateCaseButtons();
 }
 
 // ─── Apply language ────────────────────────────────────────────────────────────
@@ -342,10 +389,26 @@ function applyLanguage() {
     document.getElementById('bestCaseTitle').textContent = d.bestCaseTitle;
     document.getElementById('bestCaseDesc').innerHTML    = d.bestCaseDesc;
     document.getElementById('btnPrepareBest').textContent = d.btnPrepareBest;
+    document.getElementById('btnBestNextVariant').textContent = d.btnNextVariant;
+    document.getElementById('btnBestInsertPrepared').textContent = d.btnInsertPrepared;
+    document.getElementById('bestStepPrepareLabel').textContent = d.stepPrepareLabel;
+    document.getElementById('bestStepRunLabel').textContent = d.stepRunLabel;
 
     document.getElementById('worstCaseTitle').textContent = d.worstCaseTitle;
     document.getElementById('worstCaseDesc').innerHTML    = d.worstCaseDesc;
     document.getElementById('btnPrepareWorst').textContent = d.btnPrepareWorst;
+    document.getElementById('btnWorstNextVariant').textContent = d.btnNextVariant;
+    document.getElementById('btnWorstInsertPrepared').textContent = d.btnInsertPrepared;
+    document.getElementById('worstStepPrepareLabel').textContent = d.stepPrepareLabel;
+    document.getElementById('worstStepRunLabel').textContent = d.stepRunLabel;
+
+    const helpIcon = document.getElementById('metaThresholdHelp');
+    const helpText = document.getElementById('metaThresholdHelpText');
+    if (helpIcon) {
+        helpIcon.setAttribute('aria-label', d.metaThresholdHelpAria);
+        helpIcon.setAttribute('title', d.metaThresholdHelp);
+    }
+    if (helpText) helpText.textContent = d.metaThresholdHelp;
 
     document.getElementById('footerText').textContent = d.footer;
 
@@ -356,6 +419,7 @@ function applyLanguage() {
     updateStepCounter();
     updateCoinCounter();
     updateMeta();
+    if (typeof updateCaseButtons === 'function') updateCaseButtons();
 }
 
 // ─── Page init ────────────────────────────────────────────────────────────────
