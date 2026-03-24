@@ -70,7 +70,7 @@ const dict = {
         insertTitle:        (val, idx) => `Inserting <strong>${val}</strong> into slot <span class="log-badge slot">[${idx}]</span>`,
         insertAllocCoins:   (n)        => `Allocated <span class="coin-text">${n} coin${n !== 1 ? 's' : ''}</span> (amortized prepayment)`,
         insertPaySelf:      ()         => `Spent <span class="coin-text">1 coin</span> for insertion`,
-        insertPayCopy:      ()         => `Saved <span class="coin-text">1 coin</span> for future copy`,
+        insertPayCopy:      ()         => `Saved <span class="coin-text">2 coins</span> for future copy`,
 
         // --- Resize ---
         resizeTitle:        (old, nw)  => `Array full — resizing <span class="log-badge capacity">${old} → ${nw}</span>`,
@@ -157,7 +157,7 @@ const dict = {
         insertTitle:        (val, idx) => `Vkládám <strong>${val}</strong> na pozici <span class="log-badge slot">[${idx}]</span>`,
         insertAllocCoins:   (n)        => `Přiděleno <span class="coin-text">${n} ${n === 1 ? 'mince' : (n >= 2 && n <= 4 ? 'mince' : 'mincí')}</span> (amortizovaná záloha)`,
         insertPaySelf:      ()         => `Utracena <span class="coin-text">1 mince</span> za samotné vložení`,
-        insertPayCopy:      ()         => `Ušetřena <span class="coin-text">1 mince</span> na budoucí kopírování`,
+        insertPayCopy:      ()         => `Ušetřeny <span class="coin-text">2 mince</span> na budoucí kopírování`,
 
         // --- Resize ---
         resizeTitle:        (old, nw)  => `Pole plné — zvětšuji <span class="log-badge capacity">${old} → ${nw}</span>`,
