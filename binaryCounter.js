@@ -31,6 +31,7 @@ let totalCoinsEarned = 0;    // total coins received across all increments (= st
 let isAnimating = false;
 let bestVariantIndex = 0;
 let worstVariantIndex = 0;
+let preparedCaseMode = null;
 
 function maxCounterValue() {
     return Math.pow(2, numBits) - 1;
@@ -62,12 +63,22 @@ function getWorstVariants() {
 function updateCaseButtons() {
     const bestAlt = document.getElementById('btnRunBestAlt');
     const worstAlt = document.getElementById('btnRunWorstAlt');
-    if (!bestAlt || !worstAlt) return;
+    const bestInc = document.getElementById('btnBestIncrement');
+    const worstInc = document.getElementById('btnWorstIncrement');
+    if (!bestAlt || !worstAlt || !bestInc || !worstInc) return;
 
     const bestVariants = getBestVariants();
     const worstVariants = getWorstVariants();
     bestAlt.disabled = bestVariants.length <= 1;
     worstAlt.disabled = worstVariants.length <= 1;
+    bestInc.disabled = preparedCaseMode !== 'best';
+    worstInc.disabled = preparedCaseMode !== 'worst';
+}
+
+function countTrailingOnes() {
+    let t = 0;
+    while (t < numBits && bits[t] === 1) t++;
+    return t;
 }
 
 function refreshBitLengthUI() {
@@ -323,6 +334,7 @@ async function increment() {
 // ─── Reset ────────────────────────────────────────────────────────────────────
 function resetCounter() {
     isAnimating = false;
+    preparedCaseMode = null;
     reinitializeCounterState();
 
     updateCoinCounter();
@@ -337,6 +349,7 @@ function resetCounter() {
     init.classList.add('log-entry', 'info');
     init.innerHTML = `<div class="log-header"><span class="log-icon">${LOG_TYPES.INFO.icon}</span><span>${d.steps} ${d.willAppear}</span></div>`;
     panel.appendChild(init);
+    updateCaseButtons();
 }
 
 // ─── Random mode ──────────────────────────────────────────────────────────────
@@ -391,6 +404,8 @@ async function prepareBestCase(nextVariant = false) {
     const panel = document.getElementById('infoPanel');
     panel.innerHTML = '';
     createLogEntry(LOG_TYPES.SUCCESS, d.bestReady(target, bestVariantIndex + 1, variants.length));
+    preparedCaseMode = 'best';
+    updateCaseButtons();
 }
 
 // ─── Worst Case ───────────────────────────────────────────────────────────────
@@ -421,6 +436,35 @@ async function prepareWorstCase(nextVariant = false) {
         LOG_TYPES.WARNING,
         d.worstReady(k, worstVariantIndex + 1, variants.length, k === numBits)
     );
+    preparedCaseMode = 'worst';
+    updateCaseButtons();
+}
+
+async function incrementPreparedCase(mode) {
+    if (isAnimating) return;
+    const d = dict[currentLang];
+
+    if (preparedCaseMode !== mode) {
+        createLogEntry(
+            LOG_TYPES.INFO,
+            mode === 'best' ? d.prepareFirstBest : d.prepareFirstWorst
+        );
+        return;
+    }
+
+    const trailingOnes = countTrailingOnes();
+    const flips = trailingOnes + 1;
+    await increment();
+
+    if (mode === 'best') {
+        createLogEntry(LOG_TYPES.INFO, d.bestStepExplain(flips));
+    } else {
+        createLogEntry(LOG_TYPES.INFO, d.worstStepExplain(trailingOnes, flips, trailingOnes === numBits));
+    }
+
+    // Prepared scenario is consumed by this one-step action.
+    preparedCaseMode = null;
+    updateCaseButtons();
 }
 
 // ─── Init ─────────────────────────────────────────────────────────────────────

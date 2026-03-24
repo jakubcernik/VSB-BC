@@ -73,9 +73,14 @@
             <h2 id="bestCaseTitle">Best Case</h2>
             <div class="description-box">
                 <p id="bestCaseDesc"></p>
-                <div class="control-panel">
-                    <button onclick="prepareBestCase()" id="btnRunBest">Prepare Best Case</button>
-                    <button onclick="prepareBestCase(true)" id="btnRunBestAlt">Next Variant</button>
+                <div class="control-panel case-controls">
+                    <div class="case-step-label" id="bestStepPrepareLabel">1) Prepare variant</div>
+                    <div class="case-actions-row">
+                        <button onclick="prepareBestCase()" id="btnRunBest">Prepare Best Case</button>
+                        <button onclick="prepareBestCase(true)" id="btnRunBestAlt">Next Variant</button>
+                    </div>
+                    <div class="case-step-label" id="bestStepRunLabel">2) Run one increment</div>
+                    <button onclick="incrementPreparedCase('best')" id="btnBestIncrement" class="case-primary-action">+ Increment prepared case</button>
                 </div>
             </div>
         </section>
@@ -85,9 +90,14 @@
             <h2 id="worstCaseTitle">Worst Case</h2>
             <div class="description-box">
                 <p id="worstCaseDesc"></p>
-                <div class="control-panel">
-                    <button onclick="prepareWorstCase()" id="btnRunWorst">Prepare Worst Case</button>
-                    <button onclick="prepareWorstCase(true)" id="btnRunWorstAlt">Next Variant</button>
+                <div class="control-panel case-controls">
+                    <div class="case-step-label" id="worstStepPrepareLabel">1) Prepare variant</div>
+                    <div class="case-actions-row">
+                        <button onclick="prepareWorstCase()" id="btnRunWorst">Prepare Worst Case</button>
+                        <button onclick="prepareWorstCase(true)" id="btnRunWorstAlt">Next Variant</button>
+                    </div>
+                    <div class="case-step-label" id="worstStepRunLabel">2) Run one increment</div>
+                    <button onclick="incrementPreparedCase('worst')" id="btnWorstIncrement" class="case-primary-action">+ Increment prepared case</button>
                 </div>
             </div>
         </section>

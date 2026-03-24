@@ -30,6 +30,10 @@ const dict = {
         btnGenRandom:     'Generate',
         bestCaseTitle:    'Best Case',
         worstCaseTitle:   'Worst Case',
+        btnPrepareVariant: 'Prepare Variant',
+        btnIncrementPrepared: 'Run One Increment',
+        stepPrepareLabel: '1) Prepare variant',
+        stepRunLabel: '2) Run one increment',
         bitLengthLabel:   'Bit length:',
         bitLengthHint:    'Default 8 bits is for clarity; you can change it.',
         coins:            'Coins',
@@ -63,6 +67,12 @@ const dict = {
         worstReady: (k, variant, total, isFullWorst = false) => isFullWorst
             ? `Worst Case variant ${variant}/${total} prepared — counter is 2^${k}−1 (all ${k} bits = 1). Next increment flips all bits.`
             : `Carry-depth variant ${variant}/${total} prepared — counter ends with ${k} trailing 1-bits. Next increment flips ${k + 1} bits.`,
+        prepareFirstBest:  'First prepare a Best Case variant, then run the one-step increment.',
+        prepareFirstWorst: 'First prepare a Worst Case variant, then run the one-step increment.',
+        bestStepExplain:  (flips) => `There was free space immediately at the first bit (LSB=0), so only one bit flipped. One coin paid the flip, so this step is constant-time (O(1), flips: ${flips}).`,
+        worstStepExplain: (trailingOnes, flips, isFullWorst = false) => isFullWorst
+            ? `Here all bits were 1, so carry had to propagate through the whole register (${flips} flips). This single step is expensive, but rare, so the amortized cost is still O(1).`
+            : `There were ${trailingOnes} trailing 1-bits, so carry propagated through them and then set the next 0 to 1 (${flips} flips). This step is heavier, but amortized over many increments it remains O(1).`,
 
         // Log messages
         incrTitle:      (from, to) => `Increment <span class="log-badge slot">${from}</span> → <span class="log-badge slot">${to}</span>`,
@@ -98,6 +108,10 @@ const dict = {
         btnGenRandom:     'Generovat',
         bestCaseTitle:    'Nejlepší případ',
         worstCaseTitle:   'Nejhorší případ',
+        btnPrepareVariant: 'Připravit variantu',
+        btnIncrementPrepared: 'Spustit 1 inkrementaci',
+        stepPrepareLabel: '1) Připravit variantu',
+        stepRunLabel: '2) Spustit 1 inkrementaci',
         bitLengthLabel:   'Délka čítače:',
         bitLengthHint:    'Výchozích 8 bitů je pro názornost; délku lze změnit.',
         coins:            'Mince',
@@ -131,6 +145,12 @@ const dict = {
         worstReady: (k, variant, total, isFullWorst = false) => isFullWorst
             ? `Připravena nejhorší varianta ${variant}/${total} — čítač je 2^${k}−1 (všechny ${k} bity = 1). Inkrementování přepne všechny bity.`
             : `Připravena varianta hloubky přenosu ${variant}/${total} — čítač končí ${k} jedničkami. Inkrementování přepne ${k + 1} bitů.`,
+        prepareFirstBest:  'Nejprve připravte variantu Best Case a potom spusťte jednokrokovou inkrementaci.',
+        prepareFirstWorst: 'Nejprve připravte variantu Worst Case a potom spusťte jednokrokovou inkrementaci.',
+        bestStepExplain:  (flips) => `Byl volný hned první bit (LSB=0), takže se přepnul jen on. Utratila se 1 mince za přepnutí, proto je tento krok konstantní, tedy O(1) (přepnutí: ${flips}).`,
+        worstStepExplain: (trailingOnes, flips, isFullWorst = false) => isFullWorst
+            ? `Tady byly všechny bity 1, takže přenos prošel celým registrem (${flips} přepnutí). Tento jeden krok je drahý, ale je vzácný, takže amortizovaně to stále vychází O(1).`
+            : `Na konci bylo ${trailingOnes} jedniček za sebou, proto se přenos postupně propagoval a pak se nastavila další 0 na 1 (${flips} přepnutí). Tento krok je těžší, ale v průměru přes mnoho operací zůstává O(1).`,
 
         // Log zprávy
         incrTitle:      (from, to) => `Inkrementace <span class="log-badge slot">${from}</span> → <span class="log-badge slot">${to}</span>`,
@@ -288,13 +308,19 @@ function applyLanguage() {
 
     document.getElementById('bestCaseTitle').textContent  = d.bestCaseTitle;
     document.getElementById('bestCaseDesc').innerHTML     = d.bestCaseDesc;
-    document.getElementById('btnRunBest').textContent     = d.best;
+    document.getElementById('btnRunBest').textContent     = d.btnPrepareVariant;
     document.getElementById('btnRunBestAlt').textContent  = d.btnNextVariant;
+    document.getElementById('btnBestIncrement').textContent = d.btnIncrementPrepared;
+    document.getElementById('bestStepPrepareLabel').textContent = d.stepPrepareLabel;
+    document.getElementById('bestStepRunLabel').textContent = d.stepRunLabel;
 
     document.getElementById('worstCaseTitle').textContent = d.worstCaseTitle;
     document.getElementById('worstCaseDesc').innerHTML    = d.worstCaseDesc;
-    document.getElementById('btnRunWorst').textContent    = d.worst;
+    document.getElementById('btnRunWorst').textContent    = d.btnPrepareVariant;
     document.getElementById('btnRunWorstAlt').textContent = d.btnNextVariant;
+    document.getElementById('btnWorstIncrement').textContent = d.btnIncrementPrepared;
+    document.getElementById('worstStepPrepareLabel').textContent = d.stepPrepareLabel;
+    document.getElementById('worstStepRunLabel').textContent = d.stepRunLabel;
 
     document.getElementById('bitLengthLabel').textContent = d.bitLengthLabel;
     document.getElementById('bitLengthHint').textContent  = d.bitLengthHint;

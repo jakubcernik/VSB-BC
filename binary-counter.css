@@ -40,6 +40,44 @@
     background: #5f7c8c;
 }
 
+.case-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.case-actions-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+}
+
+.case-step-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #5d6b75;
+}
+
+.case-primary-action {
+    background: #f0ad4e;
+    color: #2f2f2f;
+    font-weight: 700;
+    min-width: 230px;
+}
+
+.case-primary-action:hover {
+    background: #e39b35;
+}
+
+.case-controls button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
 /* ── Row of bits ── */
 #bitsRow {
     display: flex;
@@ -244,6 +282,19 @@ body.dark-mode #bitLengthSelect {
 
 body.dark-mode #bitLengthHint {
     color: #9fa6ad;
+}
+
+body.dark-mode .case-step-label {
+    color: #b2bac2;
+}
+
+body.dark-mode .case-primary-action {
+    background: #d49a45;
+    color: #1d1d1d;
+}
+
+body.dark-mode .case-primary-action:hover {
+    background: #c6892f;
 }
 
 /* ── Reset button variant ── */
