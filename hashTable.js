@@ -327,7 +327,7 @@ async function addManual() {
         return;
     }
 
-    const valueRes = InputValidation.readString('valueInput', { required: true });
+    const valueRes = InputValidation.readInt('valueInput', { required: true });
     if (!valueRes.ok) {
         InputValidation.reportValidationError(valueRes.reason, {
             dict: d,

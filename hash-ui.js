@@ -31,7 +31,7 @@ const dict = {
         // Manual
         manualTitle:      'Manual Mode',
         keyLabel:         'Key (int):',
-        valueLabel:       'Value (string/number):',
+        valueLabel:       'Value (int):',
         keyPH:            'e.g. 13',
         valuePH:          'e.g. 42',
         btnInsert:        'Insert',
@@ -73,7 +73,7 @@ const dict = {
         slotStateOccupied:'occupied',
 
         // Errors
-        invalidInput:     'Please enter an integer key and a value.',
+        invalidInput:     'Please enter an integer key and an integer value.',
 
         // --- Validation (shared) ---
         validationEmpty: 'Please fill out the field.',
@@ -122,7 +122,7 @@ const dict = {
         // Manual
         manualTitle:      'Manuální režim',
         keyLabel:         'Klíč (int):',
-        valueLabel:       'Hodnota (string/číslo):',
+        valueLabel:       'Hodnota (int):',
         keyPH:            'např. 13',
         valuePH:          'např. 42',
         btnInsert:        'Vložit',
@@ -164,7 +164,7 @@ const dict = {
         slotStateOccupied:'obsazený',
 
         // Errors
-        invalidInput:     'Zadejte celočíselný klíč a hodnotu.',
+        invalidInput:     'Zadejte celočíselný klíč a celočíselnou hodnotu.',
 
         // --- Validace (sdílené) ---
         validationEmpty: 'Vyplňte pole.',
