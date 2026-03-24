@@ -87,7 +87,12 @@
                 <div class="meta-item" id="metaSize">Size: 0</div>
                 <div class="meta-item" id="metaCapacity">Capacity: 8</div>
                 <div class="meta-item" id="metaLoad">Load factor: 0.00</div>
-                <div class="meta-item" id="metaThreshold">Resize threshold: 0.75</div>
+                <div class="meta-item meta-threshold-item" id="metaThreshold">
+                    <span id="metaThresholdLabel">Resize threshold</span>: <span id="metaThresholdValue">0.75</span>
+                    <span class="help-tooltip" id="metaThresholdHelp" tabindex="0" role="button" aria-label="Help">?
+                        <span class="help-tooltip-text" id="metaThresholdHelpText">When (size + 1) / capacity exceeds this value, resize + rehash is triggered.</span>
+                    </span>
+                </div>
             </div>
 
             <div id="hashTableVisualization"></div>

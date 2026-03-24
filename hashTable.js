@@ -75,11 +75,19 @@ function updateMeta() {
     const elCap = document.getElementById('metaCapacity');
     const elLoad = document.getElementById('metaLoad');
     const elTh = document.getElementById('metaThreshold');
+    const elThLabel = document.getElementById('metaThresholdLabel');
+    const elThValue = document.getElementById('metaThresholdValue');
 
     if (elSize) elSize.textContent = `${d.metaSize}: ${size}`;
     if (elCap) elCap.textContent = `${d.metaCapacity}: ${capacity}`;
     if (elLoad) elLoad.textContent = `${d.metaLoad}: ${(currentLoadFactor()).toFixed(2)}`;
-    if (elTh) elTh.textContent = `${d.metaThreshold}: ${LOAD_THRESHOLD}`;
+    if (elThLabel && elThValue) {
+        elThLabel.textContent = d.metaThreshold;
+        elThValue.textContent = String(LOAD_THRESHOLD);
+    } else if (elTh) {
+        // Fallback for older markup.
+        elTh.textContent = `${d.metaThreshold}: ${LOAD_THRESHOLD}`;
+    }
 }
 
 // ─── Visualisation ────────────────────────────────────────────────────────────

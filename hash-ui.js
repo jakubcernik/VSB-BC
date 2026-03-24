@@ -67,6 +67,8 @@ const dict = {
         metaCapacity:     'Capacity',
         metaLoad:         'Load factor',
         metaThreshold:    'Resize threshold',
+        metaThresholdHelp: 'If (size + 1) / capacity exceeds this threshold, the table resizes and rehashes all elements.',
+        metaThresholdHelpAria: 'Explain resize threshold',
         slotStateEmpty:   'empty',
         slotStateOccupied:'occupied',
 
@@ -156,6 +158,8 @@ const dict = {
         metaCapacity:     'Kapacita',
         metaLoad:         'Zaplnění',
         metaThreshold:    'Limit rehash',
+        metaThresholdHelp: 'Pokud (size + 1) / capacity překročí tento limit, tabulka se zvětší a znovu přehashuje všechny prvky.',
+        metaThresholdHelpAria: 'Vysvětlivka k limitu rehash',
         slotStateEmpty:   'prázdný',
         slotStateOccupied:'obsazený',
 
@@ -344,6 +348,14 @@ function applyLanguage() {
     document.getElementById('worstCaseTitle').textContent = d.worstCaseTitle;
     document.getElementById('worstCaseDesc').innerHTML    = d.worstCaseDesc;
     document.getElementById('btnPrepareWorst').textContent = d.btnPrepareWorst;
+
+    const helpIcon = document.getElementById('metaThresholdHelp');
+    const helpText = document.getElementById('metaThresholdHelpText');
+    if (helpIcon) {
+        helpIcon.setAttribute('aria-label', d.metaThresholdHelpAria);
+        helpIcon.setAttribute('title', d.metaThresholdHelp);
+    }
+    if (helpText) helpText.textContent = d.metaThresholdHelp;
 
     document.getElementById('footerText').textContent = d.footer;
 
