@@ -1,12 +1,36 @@
 let currentLang = localStorage.getItem('lang') || 'cz';
 
-// Pevná pomalá rychlost animací
-const animationDelay = 1;
+// Rychlost animací je řízená sliderem (1 = nejpomalejší, 5 = nejrychlejší).
+let animationDelay = 3;
+let instantAnimationMode = false;
 
 // Vrátí zpoždění v ms pro danou základní hodnotu
 function getDelay(base = 1) {
+    if (instantAnimationMode) return 0;
     const multipliers = { 1: 4, 2: 2, 3: 1, 4: 0.4, 5: 0.15 };
     return Math.round(base * (multipliers[animationDelay] || 1));
+}
+
+function getSpeedMultiplierValue(level = animationDelay) {
+    const multipliers = { 1: 0.25, 2: 0.5, 3: 1, 4: 2.5, 5: 6.67 };
+    return multipliers[level] || 1;
+}
+
+function updateRandomSpeedValue() {
+    const speedEl = document.getElementById('randomSpeedValue');
+    if (!speedEl) return;
+    speedEl.textContent = `${getSpeedMultiplierValue().toFixed(2)}x`;
+}
+
+function setAnimationSpeedLevel(level) {
+    animationDelay = Math.max(1, Math.min(5, Number(level) || 3));
+    const slider = document.getElementById('randomSpeed');
+    if (slider) slider.value = String(animationDelay);
+    updateRandomSpeedValue();
+}
+
+function setInstantAnimationMode(enabled) {
+    instantAnimationMode = !!enabled;
 }
 
 
@@ -53,6 +77,18 @@ const dict = {
         randomCountPlaceholder: 'Enter count',
         randomMinPlaceholder: 'Min value',
         randomMaxPlaceholder: 'Max value',
+        manualStepTitle: 'Step Controls',
+        stepHelpLabel: 'What is small vs big step?',
+        stepHelpSmall: 'Small step: executes one atomic coin-cost action (for example copying one element).',
+        stepHelpBig: 'Big step: completes one full push_back operation from the entered value, including resize/copy if needed.',
+        randomParamsTitle: 'Generation Parameters',
+        randomRunTitle: 'Run',
+        randomSpeedTitle: 'Simulation Speed',
+        smallStep: 'Small Step',
+        bigStep: 'Big Step (Full Insert)',
+        randomPause: 'Pause',
+        randomResume: 'Resume',
+        randomSpeed: 'Speed:',
         coins: 'Coins',
         steps: 'Steps',
         willAppear: 'will appear here.',
@@ -71,6 +107,10 @@ const dict = {
         insertAllocCoins:   (n)        => `Allocated <span class="coin-text">${n} coin${n !== 1 ? 's' : ''}</span> (amortized prepayment)`,
         insertPaySelf:      ()         => `Spent <span class="coin-text">1 coin</span> for insertion`,
         insertPayCopy:      ()         => `Saved <span class="coin-text">2 coins</span> for future copy`,
+        atomicAllocStep:    (idx, n)   => `Slot <span class="log-badge slot">[${idx}]</span>: allocated <span class="coin-text">${n} coins</span>`,
+        atomicInsertStep:   (val, idx) => `Inserting <strong>${val}</strong> into slot <span class="log-badge slot">[${idx}]</span>`,
+        atomicSpendStep:    (idx)      => `Slot <span class="log-badge slot">[${idx}]</span>: spent <span class="coin-text">1 coin</span> for insertion`,
+        atomicDepositStep:  (idx)      => `Slot <span class="log-badge slot">[${idx}]</span>: saved <span class="coin-text">1 coin</span> to bank`,
 
         // --- Resize ---
         resizeTitle:        (old, nw)  => `Array full — resizing <span class="log-badge capacity">${old} → ${nw}</span>`,
@@ -140,6 +180,18 @@ const dict = {
         randomCountPlaceholder: 'Zadej počet',
         randomMinPlaceholder: 'Min hodnota',
         randomMaxPlaceholder: 'Max hodnota',
+        manualStepTitle: 'Krokování simulace',
+        stepHelpLabel: 'Co je malý a velký krok?',
+        stepHelpSmall: 'Malý krok: provede jednu atomickou akci za minci (např. zkopírování jednoho prvku).',
+        stepHelpBig: 'Velký krok: dokončí celé vložení hodnoty ze vstupu, včetně resize/kopírování pokud je potřeba.',
+        randomParamsTitle: 'Parametry generování',
+        randomRunTitle: 'Spuštění',
+        randomSpeedTitle: 'Rychlost simulace',
+        smallStep: 'Malý krok',
+        bigStep: 'Velký krok (celé vložení)',
+        randomPause: 'Pozastavit',
+        randomResume: 'Pokračovat',
+        randomSpeed: 'Rychlost:',
         coins: 'Mince',
         steps: 'Kroky',
         willAppear: 'se budou zobrazovat zde.',
@@ -158,6 +210,10 @@ const dict = {
         insertAllocCoins:   (n)        => `Přiděleno <span class="coin-text">${n} ${n === 1 ? 'mince' : (n >= 2 && n <= 4 ? 'mince' : 'mincí')}</span> (amortizovaná záloha)`,
         insertPaySelf:      ()         => `Utracena <span class="coin-text">1 mince</span> za samotné vložení`,
         insertPayCopy:      ()         => `Ušetřeny <span class="coin-text">2 mince</span> na budoucí kopírování`,
+        atomicAllocStep:    (idx, n)   => `Pozice <span class="log-badge slot">[${idx}]</span>: přiděleny <span class="coin-text">${n} mince</span>`,
+        atomicInsertStep:   (val, idx) => `Vkládám <strong>${val}</strong> na pozici <span class="log-badge slot">[${idx}]</span>`,
+        atomicSpendStep:    (idx)      => `Pozice <span class="log-badge slot">[${idx}]</span>: utracena <span class="coin-text">1 mince</span> za vložení`,
+        atomicDepositStep:  (idx)      => `Pozice <span class="log-badge slot">[${idx}]</span>: uložena <span class="coin-text">1 mince</span> do banky`,
 
         // --- Resize ---
         resizeTitle:        (old, nw)  => `Pole plné — zvětšuji <span class="log-badge capacity">${old} → ${nw}</span>`,
@@ -258,6 +314,16 @@ function setMode(mode)
 
     document.getElementById('worstCaseInputGroup').style.display = 'none';
     document.getElementById('btnRunWorst').style.display = 'inline-block';
+
+    const randomPause = document.getElementById('btnRandomPause');
+    if (randomPause) {
+        randomPause.disabled = true;
+        randomPause.dataset.state = 'pause';
+    }
+
+    if (typeof stopRandomGeneration === 'function') {
+        stopRandomGeneration();
+    }
 }
 
 // Log types with icons
@@ -399,8 +465,12 @@ function applyLanguage()
         document.querySelector('#worstCaseInputGroup button').textContent = d.worstCase.insert;
     }
 
-    document.querySelector('#manualMode .input-group button').textContent = d.addNumber;
     document.getElementById('manualInput').placeholder = d.enterNumber;
+    document.getElementById('manualStepTitle').textContent = d.manualStepTitle;
+    document.getElementById('stepHelpSummary').textContent = d.stepHelpLabel;
+    document.getElementById('stepHelpText').innerHTML = `${d.stepHelpSmall}<br>${d.stepHelpBig}`;
+    document.getElementById('btnSmallStep').textContent = d.smallStep;
+    document.getElementById('btnBigStep').textContent = d.bigStep;
 
     document.querySelector('#randomMode h2').textContent = d.randomModeTitle;
     document.querySelector('label[for="randomCount"]').textContent = d.randomCountLabel;
@@ -409,7 +479,19 @@ function applyLanguage()
     document.getElementById('randomCount').placeholder = d.randomCountPlaceholder;
     document.getElementById('randomMin').placeholder   = d.randomMinPlaceholder;
     document.getElementById('randomMax').placeholder   = d.randomMaxPlaceholder;
-    document.querySelector('#randomMode button').textContent = d.generateRandom;
+    document.getElementById('randomParamsTitle').textContent = d.randomParamsTitle;
+    document.getElementById('randomRunTitle').textContent = d.randomRunTitle;
+    document.getElementById('randomSpeedTitle').textContent = d.randomSpeedTitle;
+    document.getElementById('btnRandomStart').textContent = d.generateRandom;
+
+    const randomPause = document.getElementById('btnRandomPause');
+    if (randomPause) {
+        const state = randomPause.dataset.state || 'pause';
+        randomPause.textContent = state === 'resume' ? d.randomResume : d.randomPause;
+    }
+
+    document.getElementById('randomSpeedLabel').textContent = d.randomSpeed;
+    updateRandomSpeedValue();
 
     document.querySelector('header h1').textContent = d.pageTitle;
     document.getElementById('pageNavHomeLabel').textContent   = d.pageNavHome;
@@ -439,6 +521,7 @@ function applyLanguage()
 document.addEventListener('DOMContentLoaded', () => {
     applyTheme();
     applyLanguage();
+    setAnimationSpeedLevel(3);
 });
 
 window.addEventListener('load', () => {

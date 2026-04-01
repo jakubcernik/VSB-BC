@@ -37,26 +37,53 @@
 
     <main id="mainContent">
         <!-- Manual Mode -->
-        <section id="manualMode" class="mode active">
-            <div class="input-group">
-                <label id="manualInputLabel" for="manualInput" class="visually-hidden">Enter a number</label>
-                <input type="number" id="manualInput" placeholder="Enter a number">
-                <button onclick="addElement()">Add Number</button>
+        <section id="manualMode" class="mode active modern-controls">
+            <div class="control-card">
+                <h3 class="control-title" id="manualStepTitle">Step Controls</h3>
+                <div class="input-group manual-step-controls control-row">
+                    <label id="manualInputLabel" for="manualInput" class="visually-hidden">Enter a number</label>
+                    <input type="number" id="manualInput" placeholder="Enter a number">
+                    <button class="btn-secondary" id="btnSmallStep" onclick="runSmallStepFromInput()">Small Step</button>
+                    <button class="btn-primary" id="btnBigStep" onclick="runBigStepFromInput()">Big Step</button>
+                </div>
+                <details class="step-help" id="stepHelp">
+                    <summary id="stepHelpSummary">What is small vs big step?</summary>
+                    <div class="step-help-text" id="stepHelpText"></div>
+                </details>
             </div>
         </section>
 
         <!-- Random Mode -->
-        <section id="randomMode" class="mode">
+        <section id="randomMode" class="mode modern-controls">
             <h2>Random Mode</h2>
-            <div class="input-group">
-                <label for="randomCount">Count:</label>
-                <input type="number" id="randomCount" placeholder="Enter count" min="1">
-                <label for="randomMin">Min:</label>
-                <input type="number" id="randomMin" placeholder="Min value">
-                <label for="randomMax">Max:</label>
-                <input type="number" id="randomMax" placeholder="Max value">
+            <div class="control-card">
+                <h3 class="control-title" id="randomParamsTitle">Generation Parameters</h3>
+                <div class="input-group random-params control-row">
+                    <label for="randomCount">Count:</label>
+                    <input type="number" id="randomCount" placeholder="Enter count" min="1">
+                    <label for="randomMin">Min:</label>
+                    <input type="number" id="randomMin" placeholder="Min value">
+                    <label for="randomMax">Max:</label>
+                    <input type="number" id="randomMax" placeholder="Max value">
+                </div>
             </div>
-            <button onclick="generateRandomArray()">Generate Random Array</button>
+
+            <div class="control-card">
+                <h3 class="control-title" id="randomRunTitle">Run</h3>
+                <div class="input-group random-controls control-row">
+                    <button class="btn-primary" id="btnRandomStart" onclick="generateRandomArray()">Generate Random Array</button>
+                    <button class="btn-secondary" id="btnRandomPause" onclick="toggleRandomPause()" disabled>Pause</button>
+                </div>
+            </div>
+
+            <div class="control-card">
+                <h3 class="control-title" id="randomSpeedTitle">Simulation Speed</h3>
+                <div class="input-group speed-controls control-row">
+                    <label id="randomSpeedLabel" for="randomSpeed">Speed:</label>
+                    <input type="range" id="randomSpeed" min="1" max="5" step="1" value="3" oninput="setRandomSpeedFromSlider(this.value)">
+                    <span id="randomSpeedValue">1.00x</span>
+                </div>
+            </div>
         </section>
 
         <!-- Best Case Mode -->

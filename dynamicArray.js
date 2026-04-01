@@ -7,6 +7,67 @@ let steps = 0;
 // Coins are accumulated over cheap operations and spent during expensive resizes.
 let bank = 0;
 
+const simulationController = {
+    queue: [],
+    isExecuting: false,
+    nextOpId: 1,
+};
+
+const randomController = {
+    running: false,
+    paused: false,
+    loopActive: false,
+    total: 0,
+    remaining: 0,
+    min: 0,
+    max: 0,
+};
+
+function isStrictIntegerString(value)
+{
+    return /^-?\d+$/.test((value || '').trim());
+}
+
+function hasValidRandomInputs()
+{
+    const countEl = document.getElementById('randomCount');
+    const minEl = document.getElementById('randomMin');
+    const maxEl = document.getElementById('randomMax');
+    if (!countEl || !minEl || !maxEl) return false;
+
+    const countRaw = countEl.value.trim();
+    const minRaw = minEl.value.trim();
+    const maxRaw = maxEl.value.trim();
+    if (!isStrictIntegerString(countRaw) || !isStrictIntegerString(minRaw) || !isStrictIntegerString(maxRaw)) return false;
+
+    const count = Number(countRaw);
+    const min = Number(minRaw);
+    const max = Number(maxRaw);
+    return Number.isInteger(count) && Number.isInteger(min) && Number.isInteger(max) && count >= 1 && min <= max;
+}
+
+function updateManualStepButtons()
+{
+    const input = document.getElementById('manualInput');
+    const smallBtn = document.getElementById('btnSmallStep');
+    const bigBtn = document.getElementById('btnBigStep');
+    if (!input || !smallBtn || !bigBtn) return;
+
+    const hasQueuedSteps = simulationController.queue.length > 0;
+    const canQueueFromInput = isStrictIntegerString(input.value);
+    const canRun = !simulationController.isExecuting && (hasQueuedSteps || canQueueFromInput);
+
+    smallBtn.disabled = !canRun;
+    bigBtn.disabled = !canRun;
+    input.disabled = hasQueuedSteps || simulationController.isExecuting;
+}
+
+function syncControlStates()
+{
+    updateManualStepButtons();
+    updateRandomButtons();
+}
+
 // ── Bank animation helpers ─────────────────────────────────────────────────
 
 function getBankEl() {
@@ -31,7 +92,8 @@ function createFlyingCoinFromRect(rect) {
     return coin;
 }
 
-async function flyCoin(fromEl, toEl) {
+async function flyCoin(fromEl, toEl, animate = true) {
+    if (!animate) return;
     if (!fromEl || !toEl) return;
     const fromRect = fromEl.getBoundingClientRect();
     const toRect = toEl.getBoundingClientRect();
@@ -50,7 +112,7 @@ async function flyCoin(fromEl, toEl) {
     coin.remove();
 }
 
-async function depositToBank(fromSlotIndex, count) {
+async function depositToBank(fromSlotIndex, count, animate = true) {
     const fromCoins = getSlotCoinsEl(fromSlotIndex);
     const bankEl = getBankEl();
     if (!fromCoins || !bankEl) return;
@@ -60,21 +122,21 @@ async function depositToBank(fromSlotIndex, count) {
         const current = creditsPerSlot[fromSlotIndex] ?? 0;
         const next = Math.max(0, current - 1);
         creditsPerSlot[fromSlotIndex] = next;
-        await animateCoinUpdate(fromSlotIndex, next);
-        await flyCoin(fromCoins, bankEl);
+        await animateCoinUpdate(fromSlotIndex, next, animate);
+        await flyCoin(fromCoins, bankEl, animate);
         bank += 1;
         updateCredits();
     }
 }
 
-async function withdrawFromBank(toSlotIndex, count) {
+async function withdrawFromBank(toSlotIndex, count, animate = true) {
     const toCoins = getSlotCoinsEl(toSlotIndex);
     const bankEl = getBankEl();
     if (!toCoins || !bankEl) return;
 
     for (let k = 0; k < count; k++) {
         if (bank <= 0) return;
-        await flyCoin(bankEl, toCoins);
+        await flyCoin(bankEl, toCoins, animate);
         bank -= 1;
         updateCredits();
     }
@@ -103,6 +165,9 @@ function resetValues()
     capacity = 1;
     steps = 0;
     bank = 0;
+    simulationController.queue = [];
+    simulationController.isExecuting = false;
+    stopRandomGeneration();
 
     const d = dict[currentLang];
     document.getElementById("creditCounter").textContent = `${d.coins}: 0`;
@@ -122,6 +187,7 @@ function resetValues()
     infoPanel.appendChild(initialEntry);
 
     visualizeArray();
+    syncControlStates();
 }
 
 function visualizeArray()
@@ -154,11 +220,23 @@ function visualizeArray()
     document.getElementById("stepCounter").textContent = `${d.steps}: ${steps}`;
 }
 
-async function animateCoinUpdate(frameIndex, coinsNeeded)
+async function animateCoinUpdate(frameIndex, coinsNeeded, animate = true)
 {
     const frame = document.querySelector(`.frame:nth-child(${frameIndex + 1}) .coins`);
     if (!frame) return;
     const currentCoins = frame.childElementCount;
+
+    if (!animate) {
+        while (frame.childElementCount < coinsNeeded) {
+            const coin = document.createElement("div");
+            coin.classList.add("coin");
+            frame.appendChild(coin);
+        }
+        while (frame.childElementCount > coinsNeeded) {
+            frame.lastChild?.remove();
+        }
+        return;
+    }
 
     if (coinsNeeded > currentCoins)
     {
@@ -219,7 +297,6 @@ async function resizeArray()
 
 async function addElement()
 {
-    const input = document.getElementById("manualInput");
     const d = dict[currentLang];
 
     const valueRes = InputValidation.readInt('manualInput', { required: true });
@@ -233,47 +310,8 @@ async function addElement()
     }
 
     const value = valueRes.value;
-
-    steps++;
-    const slotIndex = array.length;
-
-    beginLogGroup(value, steps);
-
-    if (array.length === capacity)
-    {
-        updateInfoPanel(d.arrayFull);
-        await resizeArray();
-    }
-
-    // Visualize the 3-coin amortized charge on the new slot:
-    // start with 3 coins, spend 1 for insertion, deposit 2 into the bank.
-    creditsPerSlot[slotIndex] = 3;
-    visualizeArray();
-    await animateCoinUpdate(slotIndex, 3);
-
-    updateInfoPanelWithDetails(
-        d.insertTitle(value, slotIndex),
-        [
-            d.insertAllocCoins(INSERT_CHARGE),
-            d.insertPaySelf(),
-            d.insertPayCopy(),
-        ].join('<br>')
-    );
-
-    array.push(value);
-    visualizeArray();
-    await new Promise(resolve => setTimeout(resolve, getDelay(400)));
-
-    // Spend 1 coin for the actual insertion (3 -> 2 on the slot)
-    creditsPerSlot[slotIndex] = 2;
-    await animateCoinUpdate(slotIndex, 2);
-
-    // Deposit the remaining 2 coins into the bank (they will finance future copies).
-    // Expectation: only 1 coin disappears for insertion, the remaining 2 directly fly into the bank.
-    await depositToBank(slotIndex, 2);
-
-    endLogGroup();
-    input.value = "";
+    enqueueInsertOperation(value, { clearInputs: ['manualInput'] });
+    await runBigStep();
 }
 
 function getRandomNumber(min, max)
@@ -336,6 +374,193 @@ function makeArrayOfSize(n)
     return Array.from({ length: n }, (_, i) => (i + 1) * 10);
 }
 
+function createQueueAction(opId, run)
+{
+    return { opId, run };
+}
+
+function enqueueInsertOperation(value, options = {})
+{
+    const opId = simulationController.nextOpId++;
+    const d = dict[currentLang];
+    const actions = [];
+    const clearInputs = Array.isArray(options.clearInputs) ? options.clearInputs : [];
+    const slotIndex = array.length;
+    const needsResize = array.length === capacity;
+    const oldCapacity = capacity;
+    let operationStarted = false;
+
+    function startOperationIfNeeded() {
+        if (operationStarted) return;
+        steps++;
+        beginLogGroup(value, steps);
+        operationStarted = true;
+    }
+
+    if (needsResize) {
+        actions.push(createQueueAction(opId, async (animate) => {
+            startOperationIfNeeded();
+            updateInfoPanel(d.arrayFull);
+            capacity *= 2;
+            updateInfoPanelWithDetails(
+                d.resizeTitle(oldCapacity, capacity),
+                d.resizeWhy()
+            );
+            visualizeArray();
+            if (animate) {
+                await new Promise(resolve => setTimeout(resolve, getDelay(400)));
+            }
+            updateInfoPanel(d.resizeNewSlots(oldCapacity, capacity));
+        }));
+
+        for (let i = 0; i < oldCapacity; i++) {
+            actions.push(createQueueAction(opId, async (animate) => {
+                startOperationIfNeeded();
+                if (bank > 0) {
+                    await withdrawFromBank(i, 1, animate);
+                }
+                updateInfoPanel(d.resizeCopySlot(i));
+            }));
+        }
+
+        actions.push(createQueueAction(opId, async () => {
+            startOperationIfNeeded();
+            updateInfoPanel(d.resizeDoneSlots(oldCapacity));
+            visualizeArray();
+        }));
+    }
+
+    actions.push(createQueueAction(opId, async (animate) => {
+        startOperationIfNeeded();
+        creditsPerSlot[slotIndex] = 3;
+        visualizeArray();
+        await animateCoinUpdate(slotIndex, 3, animate);
+        updateInfoPanel(d.atomicAllocStep(slotIndex, INSERT_CHARGE));
+    }));
+
+    actions.push(createQueueAction(opId, async (animate) => {
+        startOperationIfNeeded();
+        array.push(value);
+        visualizeArray();
+        updateInfoPanel(d.atomicInsertStep(value, slotIndex));
+        if (animate) {
+            await new Promise(resolve => setTimeout(resolve, getDelay(400)));
+        }
+    }));
+
+    actions.push(createQueueAction(opId, async (animate) => {
+        startOperationIfNeeded();
+        creditsPerSlot[slotIndex] = 2;
+        await animateCoinUpdate(slotIndex, 2, animate);
+        updateInfoPanel(d.atomicSpendStep(slotIndex));
+    }));
+
+    actions.push(createQueueAction(opId, async (animate) => {
+        startOperationIfNeeded();
+        await depositToBank(slotIndex, 1, animate);
+        updateInfoPanel(d.atomicDepositStep(slotIndex));
+    }));
+
+    actions.push(createQueueAction(opId, async (animate) => {
+        startOperationIfNeeded();
+        await depositToBank(slotIndex, 1, animate);
+        updateInfoPanel(d.atomicDepositStep(slotIndex));
+        endLogGroup();
+        for (const inputId of clearInputs) {
+            const input = document.getElementById(inputId);
+            if (input) input.value = '';
+        }
+    }));
+
+    simulationController.queue.push(...actions);
+    syncControlStates();
+}
+
+async function runNextQueueAction(animate = true)
+{
+    if (simulationController.isExecuting) return false;
+    const action = simulationController.queue.shift();
+    if (!action) return false;
+
+    simulationController.isExecuting = true;
+    try {
+        await action.run(animate);
+    } finally {
+        simulationController.isExecuting = false;
+        syncControlStates();
+    }
+
+    return true;
+}
+
+async function runSmallStep()
+{
+    await runNextQueueAction(true);
+}
+
+async function runBigStep()
+{
+    if (simulationController.queue.length === 0) return;
+    const opId = simulationController.queue[0].opId;
+
+    while (simulationController.queue.length > 0 && simulationController.queue[0].opId === opId) {
+        await runNextQueueAction(true);
+    }
+}
+
+async function finishQueue()
+{
+    if (simulationController.queue.length === 0) return;
+
+    setInstantAnimationMode(true);
+    try {
+        while (simulationController.queue.length > 0) {
+            await runNextQueueAction(false);
+        }
+    } finally {
+        setInstantAnimationMode(false);
+    }
+}
+
+function ensureManualOperationQueued()
+{
+    if (simulationController.queue.length > 0) return true;
+
+    const d = dict[currentLang];
+    const valueRes = InputValidation.readInt('manualInput', { required: true });
+    if (!valueRes.ok) {
+        InputValidation.reportValidationError(valueRes.reason, {
+            dict: d,
+            details: valueRes.details,
+            report: (msg) => updateInfoPanel(msg),
+        });
+        syncControlStates();
+        return false;
+    }
+
+    enqueueInsertOperation(valueRes.value, { clearInputs: ['manualInput'] });
+    syncControlStates();
+    return true;
+}
+
+async function runSmallStepFromInput()
+{
+    if (!ensureManualOperationQueued()) return;
+    await runSmallStep();
+}
+
+async function runBigStepFromInput()
+{
+    if (!ensureManualOperationQueued()) return;
+    await runBigStep();
+}
+
+async function finishQueuedSteps()
+{
+    if (!ensureManualOperationQueued()) return;
+    await finishQueue();
+}
+
 async function generateRandomArray()
 {
     const d = dict[currentLang];
@@ -360,20 +585,106 @@ async function generateRandomArray()
         return;
     }
 
-    const count = countRes.value;
-    const min = rangeRes.min;
-    const max = rangeRes.max;
+    randomController.running = true;
+    randomController.paused = false;
+    randomController.loopActive = false;
+    randomController.total = countRes.value;
+    randomController.remaining = countRes.value;
+    randomController.min = rangeRes.min;
+    randomController.max = rangeRes.max;
 
-    updateInfoPanel(d.randomGenerating(count, min, max));
+    updateRandomButtons();
+    updateInfoPanel(d.randomGenerating(randomController.total, randomController.min, randomController.max));
+    await runRandomLoop();
+}
 
-    for (let i = 0; i < count; i++)
-    {
-        document.getElementById("manualInput").value = getRandomNumber(min, max);
-        await addElement();
+function setRandomSpeedFromSlider(value)
+{
+    setAnimationSpeedLevel(Number(value));
+}
+
+function updateRandomButtons()
+{
+    const d = dict[currentLang];
+    const startBtn = document.getElementById('btnRandomStart');
+    const pauseBtn = document.getElementById('btnRandomPause');
+    if (!startBtn || !pauseBtn) return;
+
+    startBtn.disabled = randomController.running || simulationController.isExecuting || !hasValidRandomInputs();
+    pauseBtn.disabled = !randomController.running;
+    pauseBtn.dataset.state = randomController.paused ? 'resume' : 'pause';
+    pauseBtn.textContent = randomController.paused ? d.randomResume : d.randomPause;
+}
+
+async function runRandomLoop()
+{
+    if (randomController.loopActive) return;
+    randomController.loopActive = true;
+
+    try {
+        while (randomController.running && !randomController.paused) {
+            if (simulationController.queue.length === 0) {
+                if (randomController.remaining <= 0) break;
+                const value = getRandomNumber(randomController.min, randomController.max);
+                enqueueInsertOperation(value);
+                randomController.remaining -= 1;
+            }
+
+            await runBigStep();
+        }
+    } finally {
+        randomController.loopActive = false;
     }
 
-    updateInfoPanel(d.randomDone(count));
+    if (randomController.running && !randomController.paused && randomController.remaining === 0 && simulationController.queue.length === 0) {
+        const d = dict[currentLang];
+        updateInfoPanel(d.randomDone(randomController.total));
+        stopRandomGeneration();
+    }
+
+    updateRandomButtons();
 }
+
+function stopRandomGeneration()
+{
+    randomController.running = false;
+    randomController.paused = false;
+    randomController.loopActive = false;
+    randomController.total = 0;
+    randomController.remaining = 0;
+    syncControlStates();
+}
+
+async function toggleRandomPause()
+{
+    if (!randomController.running) return;
+
+    randomController.paused = !randomController.paused;
+    updateRandomButtons();
+
+    if (!randomController.paused) {
+        await runRandomLoop();
+    }
+}
+
+function attachControlStateListeners()
+{
+    const manualInput = document.getElementById('manualInput');
+    if (manualInput) {
+        manualInput.addEventListener('input', () => updateManualStepButtons());
+    }
+
+    ['randomCount', 'randomMin', 'randomMax'].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', () => updateRandomButtons());
+        }
+    });
+
+    syncControlStates();
+}
+
+attachControlStateListeners();
 
 function prepareBestCase(next = false)
 {
@@ -425,10 +736,8 @@ async function finishBestCase()
         return;
     }
 
-    const value = valueRes.value;
-
     // Reuse logic
-    document.getElementById("manualInput").value = value;
+    document.getElementById("manualInput").value = valueRes.value;
     await addElement();
     
     // Disable input after done
@@ -488,10 +797,8 @@ async function finishWorstCase()
         return;
     }
 
-    const value = valueRes.value;
-
     // Reuse logic
-    document.getElementById("manualInput").value = value;
+    document.getElementById("manualInput").value = valueRes.value;
     await addElement();
 
     // Disable input after done
