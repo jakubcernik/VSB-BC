@@ -50,6 +50,7 @@ body.page-loaded {
     display: flex;
     flex-direction: column;
     gap: 14px;
+    align-items: center;
 }
 
 /* ─── Desktop: just give the card more room, keep single-column flow ───────── */
@@ -103,7 +104,7 @@ body.page-loaded {
         align-items: stretch;
     }
 
-    #trackers div {
+    #trackers > div {
         text-align: center;
     }
 }
@@ -468,18 +469,147 @@ button:hover {
 #trackers {
     display: flex;
     justify-content: center;
-    gap: 30px;
-    margin: 10px 0;
-    font-size: 1.2rem;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin: 10px 0 14px;
+    font-size: 1rem;
     font-weight: 600;
     color: #333;
 }
 
-#trackers div {
-    padding: 10px 20px;
+#trackers > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 58px;
+    padding: 10px 14px;
     background: #eef2f5;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #d6e1e8;
+    border-radius: 14px;
+    box-shadow: 0 6px 14px rgba(20, 48, 62, 0.1);
+}
+
+#creditCounter {
+    min-width: 170px;
+    text-align: center;
+}
+
+.metric-counters-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.metric-counters-group #stepCounter,
+.metric-counters-group #instructionCounter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    background: #ffffff;
+    box-shadow: none;
+    border: 1px solid #c8d8e3;
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-size: 0.98rem;
+    font-weight: 700;
+}
+
+#metricsHelpButton {
+    min-height: 40px;
+    background: #f7fbff;
+    color: #2a7a9b;
+    border: 1px solid #b7cfdd;
+    border-radius: 999px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    padding: 8px 14px;
+}
+
+#metricsHelpButton:hover {
+    background: #eaf3fa;
+}
+
+.metrics-help-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(22, 37, 46, 0.48);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1200;
+    padding: 14px;
+}
+
+.metrics-help-modal.open {
+    display: flex;
+}
+
+.metrics-help-dialog {
+    position: relative;
+    width: min(560px, 96vw);
+    padding: 18px 18px 14px;
+    border-radius: 14px;
+    background: #ffffff;
+    border: 1px solid #d7e3ea;
+    box-shadow: 0 24px 48px rgba(15, 38, 51, 0.26);
+    text-align: left;
+}
+
+.metrics-help-dialog h3 {
+    margin: 0 30px 10px 0;
+    color: #2b617a;
+    font-size: 1.02rem;
+}
+
+.metrics-help-dialog p {
+    margin: 0 0 8px;
+    color: #405d6c;
+    line-height: 1.45;
+    font-size: 0.92rem;
+}
+
+.metrics-help-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: 1px solid #cfdae1;
+    background: #f7fbfe;
+    color: #4b6b7b;
+    font-size: 1rem;
+    line-height: 1;
+    padding: 0;
+}
+
+.metrics-help-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.metrics-help-theory-link {
+    color: #2a7a9b;
+    font-weight: 700;
+    text-decoration: none;
+    margin-right: auto;
+    font-size: 0.88rem;
+}
+
+.metrics-help-theory-link:hover {
+    text-decoration: underline;
+}
+
+body.modal-open {
+    overflow: hidden;
 }
 
 .mode {
@@ -644,6 +774,32 @@ button:hover {
     white-space: nowrap;
     align-self: flex-start;
     padding-top: 2px;
+}
+
+.log-unit-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.log-unit-badge.operation {
+    background: #e8f3fb;
+    color: #1b6694;
+    border: 1px solid #b9d7ec;
+}
+
+.log-unit-badge.instruction {
+    background: #fff3de;
+    color: #9a5b00;
+    border: 1px solid #f0cf95;
 }
 
 .log-details {
@@ -934,9 +1090,91 @@ body.dark-mode #pageTransitionOverlay {
     background: #1e1e1e;
 }
 
-body.dark-mode #trackers div {
-    background: #333;
-    color: #ccc;
+body.dark-mode #trackers > div {
+    background: #313b42;
+    color: #d3dce2;
+    border-color: #495b67;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.24);
+}
+
+body.dark-mode .metric-counters-group #stepCounter,
+body.dark-mode .metric-counters-group #instructionCounter {
+    background: #2a343b;
+    border-color: #577081;
+    color: #d8e6ee;
+}
+
+body.dark-mode #metricsHelpButton {
+    background: #37454e;
+    color: #bce2f3;
+    border-color: #628193;
+}
+
+body.dark-mode #metricsHelpButton:hover {
+    background: #42535f;
+}
+
+body.dark-mode .metrics-help-modal {
+    background: rgba(0, 0, 0, 0.6);
+}
+
+body.dark-mode .metrics-help-dialog {
+    background: #2f373d;
+    border-color: #4b5d69;
+}
+
+body.dark-mode .metrics-help-dialog h3 {
+    color: #a6d3e6;
+}
+
+body.dark-mode .metrics-help-dialog p {
+    color: #c3d4dd;
+}
+
+body.dark-mode .metrics-help-close {
+    background: #3b454c;
+    border-color: #5a6972;
+    color: #d6e5ec;
+}
+
+body.dark-mode .metrics-help-theory-link {
+    color: #8bc6e0;
+}
+
+@media (max-width: 700px) {
+
+    #trackers {
+        gap: 10px;
+    }
+
+    #trackers > div {
+        width: 100%;
+    }
+
+    .metric-counters-group {
+        justify-content: stretch;
+    }
+
+    .metric-counters-group #stepCounter,
+    .metric-counters-group #instructionCounter {
+        flex: 1 1 160px;
+    }
+
+    #metricsHelpButton {
+        width: 100%;
+    }
+}
+
+body.dark-mode .log-unit-badge.operation {
+    background: #1b3b4f;
+    color: #9ad2f5;
+    border-color: #2d5f7c;
+}
+
+body.dark-mode .log-unit-badge.instruction {
+    background: #49361e;
+    color: #ffd08b;
+    border-color: #6d522e;
 }
 
 

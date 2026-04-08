@@ -90,7 +90,21 @@ const dict = {
         randomResume: 'Resume',
         randomSpeed: 'Speed:',
         coins: 'Coins',
+        operations: 'Operations',
         steps: 'Steps',
+        instructions: 'Instructions',
+        instructionBoundIdle: 'Instruction limit is shown after first operation.',
+        instructionBoundWithin: (instructionCount, operationCount, limit) => `Within limit: ${instructionCount}/${limit} instructions for ${operationCount} operations.`,
+        instructionBoundExceeded: (instructionCount, operationCount, limit) => `Limit exceeded: ${instructionCount}/${limit} instructions for ${operationCount} operations.`,
+        metricsHelpButton: 'What do metrics mean?',
+        metricsHelpTitle: 'Metrics explained',
+        metricsHelpLine1: 'Operation = one push_back request from the user.',
+        metricsHelpLine2: 'Instruction = one atomic action that costs one coin (insert one item or copy one item).',
+        metricsHelpLine3: 'In this simulation, instruction count should stay at most three times the operation count.',
+        metricsHelpTheoryLink: 'Open theory section',
+        metricsHelpClose: 'Close',
+        badgeOperation: 'OP',
+        badgeInstruction: 'INS',
         willAppear: 'will appear here.',
         footer: '2026 by Jakub Cernik. Developed for educational purposes as a Bachelor Thesis.',
         pleaseEnterValidNumber: 'Please enter a valid number.',
@@ -193,7 +207,21 @@ const dict = {
         randomResume: 'Pokračovat',
         randomSpeed: 'Rychlost:',
         coins: 'Mince',
+        operations: 'Operace',
         steps: 'Kroky',
+        instructions: 'Instrukce',
+        instructionBoundIdle: 'Limit instrukcí se zobrazí po první operaci.',
+        instructionBoundWithin: (instructionCount, operationCount, limit) => `V limitu: ${instructionCount}/${limit} instrukcí pro ${operationCount} operací.`,
+        instructionBoundExceeded: (instructionCount, operationCount, limit) => `Limit překročen: ${instructionCount}/${limit} instrukcí pro ${operationCount} operací.`,
+        metricsHelpButton: 'Co znamenají metriky?',
+        metricsHelpTitle: 'Vysvětlení metrik',
+        metricsHelpLine1: 'Operace = jeden požadavek push_back od uživatele.',
+        metricsHelpLine2: 'Instrukce = jedna atomická akce za jednu minci (vložit prvek nebo zkopírovat prvek).',
+        metricsHelpLine3: 'V této simulaci by počet instrukcí měl být nejvýše trojnásobek počtu operací.',
+        metricsHelpTheoryLink: 'Otevřít část teorie',
+        metricsHelpClose: 'Zavřít',
+        badgeOperation: 'OP',
+        badgeInstruction: 'INS',
         willAppear: 'se budou zobrazovat zde.',
         footer: '2026 by Jakub Cernik. Vyvinuto pro vzdělávací účely jako bakalářská práce.',
         pleaseEnterValidNumber: 'Zadejte platné číslo.',
@@ -298,6 +326,42 @@ function updateLangToggleUI()
     document.getElementById('langOptEN').classList.toggle('active', currentLang === 'en');
 }
 
+function openMetricsHelp()
+{
+    const modal = document.getElementById('metricsHelpModal');
+    if (!modal) return;
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+}
+
+function closeMetricsHelp()
+{
+    const modal = document.getElementById('metricsHelpModal');
+    if (!modal) return;
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+}
+
+function initializeMetricsHelpModal()
+{
+    const modal = document.getElementById('metricsHelpModal');
+    if (!modal) return;
+
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            closeMetricsHelp();
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && modal.classList.contains('open')) {
+            closeMetricsHelp();
+        }
+    });
+}
+
 function setMode(mode)
 {
     resetValues();
@@ -353,6 +417,7 @@ function beginLogGroup(value, stepNum) {
     header.innerHTML = `
         <span class="log-group-icon">▶</span>
         <span class="log-group-title">${d.groupLabel ? d.groupLabel(value, stepNum) : d.logStep(stepNum) + ` — ${value}`}</span>
+        <span class="log-unit-badge operation">${d.badgeOperation || 'OP'}</span>
     `;
 
     const body = document.createElement("div");
@@ -370,17 +435,21 @@ function endLogGroup() {
     currentLogGroup = null;
 }
 
-function createLogEntry(type, title, details = null)
+function createLogEntry(type, title, details = null, meta = null)
 {
     const target = currentLogGroup || document.getElementById("infoPanel");
     const logEntry = document.createElement("div");
     logEntry.classList.add('log-entry', type.class);
 
     const d = dict[currentLang];
+    const unitBadge = meta && meta.unit === 'instruction'
+        ? `<span class="log-unit-badge instruction">${d.badgeInstruction || 'INS'}</span>`
+        : '';
     let html = `
         <div class="log-header">
             <span class="log-icon">${type.icon}</span>
             <span class="log-title">${title}</span>
+            ${unitBadge}
             ${!currentLogGroup ? `<span class="log-step">${d.logStep(steps)}</span>` : ''}
         </div>
     `;
@@ -402,7 +471,7 @@ function createLogEntry(type, title, details = null)
     infoPanel.scrollTop = infoPanel.scrollHeight;
 }
 
-function updateInfoPanel(message)
+function updateInfoPanel(message, meta = null)
 {
     let type = LOG_TYPES.INFO;
 
@@ -420,10 +489,10 @@ function updateInfoPanel(message)
         type = LOG_TYPES.COPY;
     }
 
-    createLogEntry(type, message);
+    createLogEntry(type, message, null, meta);
 }
 
-function updateInfoPanelWithDetails(mainMessage, details)
+function updateInfoPanelWithDetails(mainMessage, details, meta = null)
 {
     let type = LOG_TYPES.INFO;
 
@@ -433,7 +502,7 @@ function updateInfoPanelWithDetails(mainMessage, details)
         type = LOG_TYPES.RESIZE;
     }
 
-    createLogEntry(type, mainMessage, details);
+    createLogEntry(type, mainMessage, details, meta);
 }
 
 function applyLanguage()
@@ -472,7 +541,6 @@ function applyLanguage()
     document.getElementById('btnSmallStep').textContent = d.smallStep;
     document.getElementById('btnBigStep').textContent = d.bigStep;
 
-    document.querySelector('#randomMode h2').textContent = d.randomModeTitle;
     document.querySelector('label[for="randomCount"]').textContent = d.randomCountLabel;
     document.querySelector('label[for="randomMin"]').textContent   = d.randomMinLabel;
     document.querySelector('label[for="randomMax"]').textContent   = d.randomMaxLabel;
@@ -498,8 +566,48 @@ function applyLanguage()
     document.getElementById('pageNavSimLabel').textContent    = d.pageNavSim;
     document.getElementById('pageNavTheoryLabel').textContent = d.pageNavTheory;
 
-    document.getElementById('creditCounter').textContent = `${d.coins}: 0`;
-    document.getElementById('stepCounter').textContent   = `${d.steps}: 0`;
+    const creditCounter = document.getElementById('creditCounter');
+    if (creditCounter) creditCounter.textContent = `${d.coins}: 0`;
+
+    const stepCounter = document.getElementById('stepCounter');
+    if (stepCounter) {
+        const operationsLabel = d.operations || d.steps;
+        stepCounter.textContent = `${operationsLabel}: 0`;
+    }
+
+    const instructionCounter = document.getElementById('instructionCounter');
+    if (instructionCounter) instructionCounter.textContent = `${d.instructions}: 0`;
+
+    const instructionBound = document.getElementById('instructionBound');
+    if (instructionBound) instructionBound.textContent = d.instructionBoundIdle || '';
+
+    const metricsHelpButton = document.getElementById('metricsHelpButton');
+    if (metricsHelpButton) metricsHelpButton.textContent = d.metricsHelpButton || '';
+
+    const metricsHelpTitle = document.getElementById('metricsHelpTitle');
+    if (metricsHelpTitle) metricsHelpTitle.textContent = d.metricsHelpTitle || '';
+
+    const metricsHelpLine1 = document.getElementById('metricsHelpLine1');
+    if (metricsHelpLine1) metricsHelpLine1.textContent = d.metricsHelpLine1 || '';
+
+    const metricsHelpLine2 = document.getElementById('metricsHelpLine2');
+    if (metricsHelpLine2) metricsHelpLine2.textContent = d.metricsHelpLine2 || '';
+
+    const metricsHelpLine3 = document.getElementById('metricsHelpLine3');
+    if (metricsHelpLine3) metricsHelpLine3.textContent = d.metricsHelpLine3 || '';
+
+    const metricsHelpTheoryLink = document.getElementById('metricsHelpTheoryLink');
+    if (metricsHelpTheoryLink) metricsHelpTheoryLink.textContent = d.metricsHelpTheoryLink || '';
+
+    const metricsHelpCloseBtn = document.getElementById('metricsHelpCloseBtn');
+    if (metricsHelpCloseBtn) metricsHelpCloseBtn.textContent = d.metricsHelpClose || '';
+
+    const metricsHelpCloseX = document.getElementById('metricsHelpCloseX');
+    if (metricsHelpCloseX) metricsHelpCloseX.setAttribute('aria-label', d.metricsHelpClose || 'Close');
+
+    if (typeof window.renderVectorTrackers === 'function') {
+        window.renderVectorTrackers();
+    }
 
     document.getElementById('footerText').textContent = d.footer;
 
@@ -519,6 +627,7 @@ function applyLanguage()
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    initializeMetricsHelpModal();
     applyTheme();
     applyLanguage();
     setAnimationSpeedLevel(3);
