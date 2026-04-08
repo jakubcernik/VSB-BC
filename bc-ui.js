@@ -78,9 +78,6 @@ const dict = {
             : `There were ${trailingOnes} trailing 1-bits, so carry propagated through them and then set the next 0 to 1 (${flips} flips). This step is heavier, but amortized over many increments it remains O(1).`,
 
         // Log messages
-        incrTitle:      (from, to) => `Increment <span class="log-badge slot">${from}</span> → <span class="log-badge slot">${to}</span>`,
-        flipZeroToOne:  (pos)      => `Bit <span class="log-badge slot">[${pos}]</span> flipped <span class="log-badge capacity">0 → 1</span> — <span class="coin-text">1 coin spent</span>, <span class="coin-text">1 coin saved</span>`,
-        flipOneToZero:  (pos)      => `Bit <span class="log-badge slot">[${pos}]</span> flipped <span class="log-badge capacity">1 → 0</span> — <span class="coin-text">1 saved coin spent</span>`,
         earned:         'received',
         spent:          'spent',
         saved:          'saved on bits',
@@ -160,9 +157,6 @@ const dict = {
             : `Na konci bylo ${trailingOnes} jedniček za sebou, proto se přenos postupně propagoval a pak se nastavila další 0 na 1 (${flips} přepnutí). Tento krok je těžší, ale v průměru přes mnoho operací zůstává O(1).`,
 
         // Log zprávy
-        incrTitle:      (from, to) => `Inkrementace <span class="log-badge slot">${from}</span> → <span class="log-badge slot">${to}</span>`,
-        flipZeroToOne:  (pos)      => `Bit <span class="log-badge slot">[${pos}]</span> přepnut <span class="log-badge capacity">0 → 1</span> — <span class="coin-text">1 mince utracena</span>, <span class="coin-text">1 mince ušetřena</span>`,
-        flipOneToZero:  (pos)      => `Bit <span class="log-badge slot">[${pos}]</span> přepnut <span class="log-badge capacity">1 → 0</span> — <span class="coin-text">1 ušetřená mince utracena</span>`,
         earned:         'přijato celkem',
         spent:          'utraceno',
         saved:          'uloženo na bitech',

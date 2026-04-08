@@ -29,11 +29,6 @@ function setAnimationSpeedLevel(level) {
     updateRandomSpeedValue();
 }
 
-function setInstantAnimationMode(enabled) {
-    instantAnimationMode = !!enabled;
-}
-
-
 const dict = {
     en: {
         manual: 'Manual',
@@ -117,10 +112,6 @@ const dict = {
         validationMinGreaterThanMax: 'Minimum must not be greater than maximum.',
 
         // --- Insertion ---
-        insertTitle:        (val, idx) => `Inserting <strong>${val}</strong> into slot <span class="log-badge slot">[${idx}]</span>`,
-        insertAllocCoins:   (n)        => `Allocated <span class="coin-text">${n} coin${n !== 1 ? 's' : ''}</span> (amortized prepayment)`,
-        insertPaySelf:      ()         => `Spent <span class="coin-text">1 coin</span> for insertion`,
-        insertPayCopy:      ()         => `Saved <span class="coin-text">2 coins</span> for future copy`,
         atomicAllocStep:    (idx, n)   => `Slot <span class="log-badge slot">[${idx}]</span>: allocated <span class="coin-text">${n} coins</span>`,
         atomicInsertStep:   (val, idx) => `Inserting <strong>${val}</strong> into slot <span class="log-badge slot">[${idx}]</span>`,
         atomicSpendStep:    (idx)      => `Slot <span class="log-badge slot">[${idx}]</span>: spent <span class="coin-text">1 coin</span> for insertion`,
@@ -142,10 +133,6 @@ const dict = {
         noCoinsLeft:        'No coins left for insertion in slot',
         groupLabel:         (val, step) => `Step ${step} — inserting <strong>${val}</strong>`,
         logStep:            (n)         => `Step ${n}`,
-
-        // --- Borrow / Invariant ---
-        borrowFromSlot:     (i, lender) => `Slot <span class="log-badge slot">[${i}]</span> has <span class="log-badge coin">0 coins</span> — borrowing from <span class="log-badge slot">[${lender}]</span>`,
-        invariantBroken:    (i)         => `Slot <span class="log-badge slot">[${i}]</span> — invariant broken, no coins!`,
 
         // --- Best / Worst finish ---
         bestCaseDone:       'Best Case — only one coin spent for push.',
@@ -234,10 +221,6 @@ const dict = {
         validationMinGreaterThanMax: 'Minimum nesmí být větší než maximum.',
 
         // --- Vložení ---
-        insertTitle:        (val, idx) => `Vkládám <strong>${val}</strong> na pozici <span class="log-badge slot">[${idx}]</span>`,
-        insertAllocCoins:   (n)        => `Přiděleno <span class="coin-text">${n} ${n === 1 ? 'mince' : (n >= 2 && n <= 4 ? 'mince' : 'mincí')}</span> (amortizovaná záloha)`,
-        insertPaySelf:      ()         => `Utracena <span class="coin-text">1 mince</span> za samotné vložení`,
-        insertPayCopy:      ()         => `Ušetřeny <span class="coin-text">2 mince</span> na budoucí kopírování`,
         atomicAllocStep:    (idx, n)   => `Pozice <span class="log-badge slot">[${idx}]</span>: přiděleny <span class="coin-text">${n} mince</span>`,
         atomicInsertStep:   (val, idx) => `Vkládám <strong>${val}</strong> na pozici <span class="log-badge slot">[${idx}]</span>`,
         atomicSpendStep:    (idx)      => `Pozice <span class="log-badge slot">[${idx}]</span>: utracena <span class="coin-text">1 mince</span> za vložení`,
@@ -259,10 +242,6 @@ const dict = {
         noCoinsLeft:        'Nedostatek mincí na pozici',
         groupLabel:         (val, step) => `Krok ${step} — vkládám <strong>${val}</strong>`,
         logStep:            (n)         => `Krok ${n}`,
-
-        // --- Půjčování / Invariant ---
-        borrowFromSlot:     (i, lender) => `Pozice <span class="log-badge slot">[${i}]</span> má <span class="log-badge coin">0 mincí</span> — půjčujeme z <span class="log-badge slot">[${lender}]</span>`,
-        invariantBroken:    (i)         => `Pozice <span class="log-badge slot">[${i}]</span> — invariant porušen, žádné mince!`,
 
         // --- Dokončení Best / Worst ---
         bestCaseDone:       'Nejlepší případ — utracena pouze jedna mince za vložení.',
