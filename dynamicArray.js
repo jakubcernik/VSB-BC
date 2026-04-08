@@ -298,41 +298,6 @@ async function animateCoinUpdate(frameIndex, coinsNeeded, animate = true)
     }
 }
 
-async function resizeArray()
-{
-    const d = dict[currentLang];
-    const oldCapacity = capacity;
-    capacity *= 2;
-
-    // When resizing, we simply create new empty slots (no coins on empty slots).
-
-    updateInfoPanelWithDetails(
-        d.resizeTitle(oldCapacity, capacity),
-        d.resizeWhy()
-    );
-
-    visualizeArray();
-    await new Promise(resolve => setTimeout(resolve, getDelay(400)));
-
-    updateInfoPanel(d.resizeNewSlots(oldCapacity, capacity));
-
-    for (let i = 0; i < oldCapacity; i++)
-    {
-        // Copying one element costs 1 coin, paid from the central bank.
-        // Animate a withdrawal from the bank for better intuition.
-        if (bank > 0) {
-            await withdrawFromBank(i, 1);
-        }
-
-        instructions += 1;
-        updateCredits();
-        updateInfoPanel(d.resizeCopySlot(i), { unit: 'instruction' });
-    }
-
-    updateInfoPanel(d.resizeDoneSlots(oldCapacity));
-    visualizeArray();
-}
-
 async function addElement()
 {
     const d = dict[currentLang];
@@ -572,20 +537,6 @@ async function runBigStep()
     }
 }
 
-async function finishQueue()
-{
-    if (simulationController.queue.length === 0) return;
-
-    setInstantAnimationMode(true);
-    try {
-        while (simulationController.queue.length > 0) {
-            await runNextQueueAction(false);
-        }
-    } finally {
-        setInstantAnimationMode(false);
-    }
-}
-
 function ensureManualOperationQueued()
 {
     if (simulationController.queue.length > 0) return true;
@@ -617,12 +568,6 @@ async function runBigStepFromInput()
 {
     if (!ensureManualOperationQueued()) return;
     await runBigStep();
-}
-
-async function finishQueuedSteps()
-{
-    if (!ensureManualOperationQueued()) return;
-    await finishQueue();
 }
 
 async function generateRandomArray()
