@@ -2,6 +2,7 @@ let array = [];             // Vložená čísla
 let capacity = 1;           // Aktuální kapacita pole
 let creditsPerSlot = [];    // Mince nad každým políčkem
 let steps = 0;
+let instructions = 0;       // Atomické instrukce (1 instrukce = 1 mince)
 
 // Central "bank" used for the borrowing/accounting story.
 // Coins are accumulated over cheap operations and spent during expensive resizes.
@@ -154,9 +155,45 @@ const INSERT_CHARGE = 3;
 function updateCredits()
 {
     const d = dict[currentLang];
-    // We display the bank (saved coins) as the main invariant-relevant counter.
-    document.getElementById("creditCounter").textContent = `${d.coins}: ${bank}`;
+    const creditCounterEl = document.getElementById("creditCounter");
+    const stepCounterEl = document.getElementById("stepCounter");
+    const instructionCounterEl = document.getElementById("instructionCounter");
+    const instructionBoundEl = document.getElementById("instructionBound");
+
+    if (creditCounterEl) {
+        creditCounterEl.textContent = `${d.coins}: ${bank}`;
+    }
+
+    if (stepCounterEl) {
+        const operationsLabel = d.operations || d.steps;
+        stepCounterEl.textContent = `${operationsLabel}: ${steps}`;
+    }
+
+    if (instructionCounterEl) {
+        const instructionsLabel = d.instructions || 'Instructions';
+        instructionCounterEl.textContent = `${instructionsLabel}: ${instructions}`;
+    }
+
+    if (instructionBoundEl) {
+        if (steps === 0) {
+            instructionBoundEl.textContent = d.instructionBoundIdle || '';
+            instructionBoundEl.classList.remove('over-limit');
+        } else {
+            const limit = steps * INSERT_CHARGE;
+            const overLimit = instructions > limit;
+            instructionBoundEl.textContent = overLimit
+                ? (typeof d.instructionBoundExceeded === 'function'
+                    ? d.instructionBoundExceeded(instructions, steps, limit)
+                    : `${instructions} / ${limit}`)
+                : (typeof d.instructionBoundWithin === 'function'
+                    ? d.instructionBoundWithin(instructions, steps, limit)
+                    : `${instructions} / ${limit}`);
+            instructionBoundEl.classList.toggle('over-limit', overLimit);
+        }
+    }
 }
+
+window.renderVectorTrackers = updateCredits;
 
 function resetValues()
 {
@@ -164,14 +201,14 @@ function resetValues()
     creditsPerSlot = [];
     capacity = 1;
     steps = 0;
+    instructions = 0;
     bank = 0;
     simulationController.queue = [];
     simulationController.isExecuting = false;
     stopRandomGeneration();
 
     const d = dict[currentLang];
-    document.getElementById("creditCounter").textContent = `${d.coins}: 0`;
-    document.getElementById("stepCounter").textContent   = `${d.steps}: 0`;
+    updateCredits();
 
     // Clear log panel and show initial message
     const infoPanel = document.getElementById("infoPanel");
@@ -216,8 +253,7 @@ function visualizeArray()
         arrayContainer.appendChild(frame);
     }
 
-    const d = dict[currentLang];
-    document.getElementById("stepCounter").textContent = `${d.steps}: ${steps}`;
+    updateCredits();
 }
 
 async function animateCoinUpdate(frameIndex, coinsNeeded, animate = true)
@@ -288,7 +324,9 @@ async function resizeArray()
             await withdrawFromBank(i, 1);
         }
 
-        updateInfoPanel(d.resizeCopySlot(i));
+        instructions += 1;
+        updateCredits();
+        updateInfoPanel(d.resizeCopySlot(i), { unit: 'instruction' });
     }
 
     updateInfoPanel(d.resizeDoneSlots(oldCapacity));
@@ -346,6 +384,27 @@ function bankAfterInserting(n)
     return b;
 }
 
+function instructionsAfterInserting(n)
+{
+    let total = 0;
+    let cap = 1;
+    let size = 0;
+
+    while (size < n)
+    {
+        if (size === cap)
+        {
+            total += cap;
+            cap *= 2;
+        }
+
+        total += 1;
+        size += 1;
+    }
+
+    return total;
+}
+
 // ── Best/Worst case variants ───────────────────────────────────────────────
 
 let bestVariantIndex = 0;
@@ -393,6 +452,7 @@ function enqueueInsertOperation(value, options = {})
     function startOperationIfNeeded() {
         if (operationStarted) return;
         steps++;
+        updateCredits();
         beginLogGroup(value, steps);
         operationStarted = true;
     }
@@ -419,7 +479,9 @@ function enqueueInsertOperation(value, options = {})
                 if (bank > 0) {
                     await withdrawFromBank(i, 1, animate);
                 }
-                updateInfoPanel(d.resizeCopySlot(i));
+                instructions += 1;
+                updateCredits();
+                updateInfoPanel(d.resizeCopySlot(i), { unit: 'instruction' });
             }));
         }
 
@@ -452,7 +514,9 @@ function enqueueInsertOperation(value, options = {})
         startOperationIfNeeded();
         creditsPerSlot[slotIndex] = 2;
         await animateCoinUpdate(slotIndex, 2, animate);
-        updateInfoPanel(d.atomicSpendStep(slotIndex));
+        instructions += 1;
+        updateCredits();
+        updateInfoPanel(d.atomicSpendStep(slotIndex), { unit: 'instruction' });
     }));
 
     actions.push(createQueueAction(opId, async (animate) => {
@@ -701,6 +765,7 @@ function prepareBestCase(next = false)
     creditsPerSlot = new Array(capacity).fill(0);
     bank = bankAfterInserting(array.length);
     steps = array.length;
+    instructions = instructionsAfterInserting(array.length);
 
     visualizeArray();
     updateCredits();
@@ -762,6 +827,7 @@ function prepareWorstCase(next = false)
     creditsPerSlot = new Array(capacity).fill(0);
     bank = bankAfterInserting(array.length);
     steps = array.length;
+    instructions = instructionsAfterInserting(array.length);
 
     visualizeArray();
     updateCredits();
