@@ -27,7 +27,8 @@ let numBits = DEFAULT_BITS;  // Display width (default 8-bit for clarity)
 let bits        = new Array(numBits).fill(0);   // bits[0] = LSB
 let coinsOnBit  = new Array(numBits).fill(0);   // saved coins per bit position (invariant: 1-bit ↔ 1 coin)
 let bank        = 0;         // coins currently in the "operation bank" (transient during one increment)
-let totalCoinsEarned = 0;    // total coins received across all increments (= steps × 2)
+let totalCoinsEarned = 0;    // total coins received across all increments (= operations × 2)
+let totalBitSteps = 0;       // total atomic work = number of bit flips (1 flip = 1 step)
 let isAnimating = false;
 let bestVariantIndex = 0;
 let worstVariantIndex = 0;
@@ -43,6 +44,7 @@ function reinitializeCounterState() {
     bank = 0;
     totalCoinsEarned = 0;
     steps = 0;
+    totalBitSteps = 0;
 }
 
 function getBestVariants() {
@@ -143,7 +145,14 @@ function updateCoinCounter() {
 
 function updateStepCounter() {
     const d = dict[currentLang];
-    document.getElementById('stepCounter').textContent = `${d.steps}: ${steps}`;
+    const el = document.getElementById('stepCounter');
+    if (el) el.textContent = `${d.operations ?? d.steps}: ${steps}`;
+}
+
+function updateInstructionCounter() {
+    const d = dict[currentLang];
+    const el = document.getElementById('instructionCounter');
+    if (el) el.textContent = `${d.bitSteps ?? d.steps}: ${totalBitSteps}`;
 }
 
 // ─── Visualisation ────────────────────────────────────────────────────────────
@@ -353,6 +362,8 @@ async function increment() {
         if (frame) frame.classList.remove('active-bit');
 
         flipCount++;
+        totalBitSteps++;
+        updateInstructionCounter();
         pos++;
         await sleep(getDelay(200));
     }
@@ -382,6 +393,8 @@ async function increment() {
         if (frame) frame.classList.remove('active-bit');
 
         flipCount++;
+        totalBitSteps++;
+        updateInstructionCounter();
     }
 
     // Banka je nyní přesně prázdná (0 mincí)
@@ -403,6 +416,7 @@ function resetCounter() {
 
     updateCoinCounter();
     updateStepCounter();
+    updateInstructionCounter();
     renderBits();
     refreshBitLengthUI();
 
@@ -486,8 +500,10 @@ async function prepareBestCase(nextVariant = false) {
     bank = 0;
     totalCoinsEarned = savedCoinsTotal(); // coins on bits = "already earned & saved" from past ops
     steps = 0;
+    totalBitSteps = 0;
     updateCoinCounter();
     updateStepCounter();
+    updateInstructionCounter();
     renderBits();
 
     const d = dict[currentLang];
@@ -515,8 +531,10 @@ async function prepareWorstCase(nextVariant = false) {
     bank = 0;
     totalCoinsEarned = savedCoinsTotal();
     steps = 0;
+    totalBitSteps = 0;
     updateCoinCounter();
     updateStepCounter();
+    updateInstructionCounter();
     renderBits();
 
     const d = dict[currentLang];
@@ -561,6 +579,8 @@ async function incrementPreparedCase(mode) {
 document.addEventListener('DOMContentLoaded', () => {
     refreshBitLengthUI();
     updateCaseButtons();
+    updateStepCounter();
+    updateInstructionCounter();
     renderBits();
 });
 

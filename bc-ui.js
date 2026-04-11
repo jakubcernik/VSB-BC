@@ -40,7 +40,16 @@ const dict = {
         bitLengthLabel:   'Bit length:',
         bitLengthHint:    'Default 8 bits is for clarity; you can change it.',
         coins:            'Coins',
+        operations:       'Operations',
         steps:            'Steps',
+        bitSteps:         'Bit flips',
+        metricsHelpButton: 'What do metrics mean?',
+        metricsHelpTitle: 'Metrics explanation',
+        metricsHelpLine1: 'Operations = number of INCREMENT requests (one push of increment button).',
+        metricsHelpLine2: 'Bit flips = number of atomic bit changes 0↔1 (each costs 1 coin).',
+        metricsHelpLine3: 'Amortized analysis shows total bit flips stay linear in operations.',
+        metricsHelpTheoryLink: 'Open theory',
+        metricsHelpClose: 'Close',
         bankLabel:        'Operation charge (2 coins)',
         willAppear:       'will appear here.',
         footer:           '2026 by Jakub Cernik. Developed for educational purposes as a Bachelor Thesis.',
@@ -119,7 +128,16 @@ const dict = {
         bitLengthLabel:   'Délka čítače:',
         bitLengthHint:    'Výchozích 8 bitů je pro názornost; délku lze změnit.',
         coins:            'Mince',
+        operations:       'Operace',
         steps:            'Kroky',
+        bitSteps:         'Kroky bitů',
+        metricsHelpButton: 'Co znamenají metriky?',
+        metricsHelpTitle: 'Vysvětlení metrik',
+        metricsHelpLine1: 'Operace = počet požadavků na INCREMENT (jedno stisknutí tlačítka).',
+        metricsHelpLine2: 'Kroky bitů = počet atomických přepnutí bitu 0↔1 (každé stojí 1 minci).',
+        metricsHelpLine3: 'Amortizovaná analýza ukazuje, že celkový počet přepnutí zůstává lineární vůči počtu operací.',
+        metricsHelpTheoryLink: 'Otevřít teorii',
+        metricsHelpClose: 'Zavřít',
         bankLabel:        'Poplatek za operaci (2 mince)',
         willAppear:       'se budou zobrazovat zde.',
         footer:           '2026 by Jakub Cernik. Vyvinuto pro vzdělávací účely jako bakalářská práce.',
@@ -275,6 +293,35 @@ function updateLangToggleUI() {
     document.getElementById('langOptEN').classList.toggle('active', currentLang === 'en');
 }
 
+function openMetricsHelp() {
+    const modal = document.getElementById('metricsHelpModal');
+    if (!modal) return;
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+}
+
+function closeMetricsHelp() {
+    const modal = document.getElementById('metricsHelpModal');
+    if (!modal) return;
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+}
+
+function initializeMetricsHelpModal() {
+    const modal = document.getElementById('metricsHelpModal');
+    if (!modal) return;
+
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) closeMetricsHelp();
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && modal.classList.contains('open')) closeMetricsHelp();
+    });
+}
+
 // ─── Mode switching ────────────────────────────────────────────────────────────
 function setMode(mode) {
     resetCounter();
@@ -331,9 +378,27 @@ function applyLanguage() {
     document.getElementById('bitLengthHint').textContent  = d.bitLengthHint;
 
     document.getElementById('creditCounter').textContent = `${d.coins} 0`;
-    document.getElementById('stepCounter').textContent   = `${d.steps}: 0`;
-    const bankLabelEl = document.getElementById('bankLabel');
-    if (bankLabelEl) bankLabelEl.textContent = d.bankLabel;
+    document.getElementById('stepCounter').textContent   = `${d.operations ?? d.steps}: 0`;
+    const instructionCounter = document.getElementById('instructionCounter');
+    if (instructionCounter) instructionCounter.textContent = `${d.bitSteps ?? d.steps}: 0`;
+    const metricsHelpButton = document.getElementById('metricsHelpButton');
+    if (metricsHelpButton) metricsHelpButton.textContent = d.metricsHelpButton || '';
+    const metricsHelpTitle = document.getElementById('metricsHelpTitle');
+    if (metricsHelpTitle) metricsHelpTitle.textContent = d.metricsHelpTitle || '';
+    const metricsHelpLine1 = document.getElementById('metricsHelpLine1');
+    if (metricsHelpLine1) metricsHelpLine1.textContent = d.metricsHelpLine1 || '';
+    const metricsHelpLine2 = document.getElementById('metricsHelpLine2');
+    if (metricsHelpLine2) metricsHelpLine2.textContent = d.metricsHelpLine2 || '';
+    const metricsHelpLine3 = document.getElementById('metricsHelpLine3');
+    if (metricsHelpLine3) metricsHelpLine3.textContent = d.metricsHelpLine3 || '';
+    const metricsHelpTheoryLink = document.getElementById('metricsHelpTheoryLink');
+    if (metricsHelpTheoryLink) metricsHelpTheoryLink.textContent = d.metricsHelpTheoryLink || '';
+    const metricsHelpCloseBtn = document.getElementById('metricsHelpCloseBtn');
+    if (metricsHelpCloseBtn) metricsHelpCloseBtn.textContent = d.metricsHelpClose || '';
+    const metricsHelpCloseX = document.getElementById('metricsHelpCloseX');
+    if (metricsHelpCloseX) metricsHelpCloseX.setAttribute('aria-label', d.metricsHelpClose || 'Close');
+     const bankLabelEl = document.getElementById('bankLabel');
+     if (bankLabelEl) bankLabelEl.textContent = d.bankLabel;
     document.getElementById('footerText').textContent    = d.footer;
 
     const panel = document.getElementById('infoPanel');
@@ -351,8 +416,9 @@ function applyLanguage() {
 
 // ─── Boot ──────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-    applyTheme();
-    applyLanguage();
+    initializeMetricsHelpModal();
+     applyTheme();
+     applyLanguage();
 });
 
 window.addEventListener('load', () => {
