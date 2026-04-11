@@ -126,10 +126,10 @@ const theoryDict = {
         cardBestTitle: 'Nejlepší případ — O(1)',
         cardBestDesc:  'LSB je 0. Přepne se pouze bit 0 (0→1). Cena = 1 přepnutí.',
         cardWorstTitle:'Nejhorší případ — O(k)',
-        cardWorstDesc: 'Všechny k bitů jsou 1 (čítač = 2^k − 1). Přepnou se všechny bity. Cena = k přepnutí. Pro zvolenou délku registru nastane jednou za 2^k inkrementací.',
+        cardWorstDesc: 'Všech k bitů je 1 (čítač = 2^k − 1). Přepnou se všechny bity. Cena = k přepnutí. Pro zvolenou délku registru nastane jednou za 2^k inkrementací.',
 
         // Naivní
-        naiveP1: 'Naivní analýza by se podívala na nejhorší cenu jednoho INCREMENT: <strong>O(k)</strong>. Vynásobením N operacemi by dostala <strong>O(Nk)</strong> — to ale předpokládá, že každé inkrementování přepíná všechny k bitů, což není možné.',
+        naiveP1: 'Naivní analýza by se podívala na nejhorší cenu jednoho INCREMENT: <strong>O(k)</strong>. Vynásobením N operacemi by dostala <strong>O(Nk)</strong> — to ale předpokládá, že každé inkrementování přepíná všech k bitů, což není možné.',
         naiveP2: 'Ve skutečnosti se bit 0 přepíná při každém inkrementování, bit 1 každý druhý, bit 2 každý čtvrtý atd. Drahé případy jsou exponenciálně vzácnější. Amortizovaná analýza to zohledňuje.',
 
         // Amortizovaná
