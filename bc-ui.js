@@ -163,7 +163,7 @@ const dict = {
         allocCoins:     ()         => `INCREMENT začíná: přijaty <span class="coin-text">2 mince</span> (pevný amortizovaný poplatek — vždy přesně 2, bez ohledu na počet přepnutých bitů)`,
         spendSelf:      (pos)      => `Bit <span class="log-badge slot">[${pos}]</span>: utracena <span class="coin-text">1 mince</span> z přijatých 2 → přepnut 0→1`,
         saveCoin:       (pos)      => `Bit <span class="log-badge slot">[${pos}]</span>: <span class="coin-text">1 mince</span> z dotace aktuální operace uložena k tomuto bitu (rezerva na budoucí přepnutí 1→0)`,
-        spendSaved:     (pos)      => `Bit <span class="log-badge slot">[${pos}]</span>: utracena <span class="coin-text">1 uložená mince</span> (byla k tomuto bitu přiřazena dříve) → přepnut 1→0. Žádné nové mince nejsou potřeba!`,
+        spendSaved:     (pos)      => `Bit <span class="log-badge slot">[${pos}]</span>: utracena <span class="coin-text">1 mince</span>, která zde byla uložena dříve → přepnut 1→0. Žádné nové mince nejsou potřeba!`,
         incrDone:       (flips)    => `Hotovo — přepnuto <strong>${flips}</strong> ${flips === 1 ? 'bit' : (flips >= 2 && flips <= 4 ? 'bity' : 'bitů')}`,
         groupLabel:     (from, to, step) => `Krok ${step} — inkrementace ${from} → ${to}`,
         logStep:        (n)        => `Krok ${n}`,
