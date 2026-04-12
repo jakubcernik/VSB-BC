@@ -49,7 +49,7 @@ const theoryDict = {
         aggregateMath:  'Bit i flips exactly ⌊N / 2^i⌋ times in N increments.',
         aggregateP2:    'Total flips:',
         aggregateMath2: 'Σ_{i=0}^{k−1} ⌊N/2^i⌋  ≤  N · Σ_{i=0}^{∞} 1/2^i  =  N · 2  =  2N',
-        aggregateConclusion: 'Total cost = <strong>2N</strong> bit flips for N increments. Dividing by N gives an amortized cost of <strong>O(1) per INCREMENT</strong>.',
+        aggregateConclusion: 'Total cost is <strong>at most 2N</strong> bit flips for N increments (i.e., total cost ≤ 2N). Dividing by N gives amortized cost <strong>at most 2 = O(1) per INCREMENT</strong>.',
 
         accountingTitle: 'Accounting Method',
         accountingP1:    'Each INCREMENT is charged a fixed amortized fee of <strong>2 coins</strong>. They are used as follows:',
@@ -83,7 +83,7 @@ const theoryDict = {
         tdWeightK:  '2^i',
         tdFreqK:    '⌊N/2^i⌋',
         tdContribK: '≤ N/2^i',
-        tableP2: 'Summing the geometric series: N + N/2 + N/4 + … < 2N. Average per increment: 2N / N = <strong>2 = O(1)</strong>.',
+        tableP2: 'Summing the geometric series: N + N/2 + N/4 + … < 2N. Therefore the average cost per increment is <strong>< 2, and in particular O(1)</strong>.',
 
         // Complexity summary (unified: best / amortized / single worst)
         opIncrement:      'INCREMENT (amortized)',
@@ -144,7 +144,7 @@ const theoryDict = {
         aggregateMath:  'Bit i se přepne přesně ⌊N / 2^i⌋-krát při N inkrementacích.',
         aggregateP2:    'Celkový počet přepnutí:',
         aggregateMath2: 'Σ_{i=0}^{k−1} ⌊N/2^i⌋  ≤  N · Σ_{i=0}^{∞} 1/2^i  =  N · 2  =  2N',
-        aggregateConclusion: 'Celková cena = <strong>2N</strong> přepnutí bitů pro N inkrementací. Dělením N dostaneme amortizovanou cenu <strong>O(1) na INCREMENT</strong>.',
+        aggregateConclusion: 'Celková cena je <strong>nejvýše 2N</strong> přepnutí bitů pro N inkrementací (tj. celková cena ≤ 2N). Po vydělení N vychází amortizovaná cena <strong>nejvýše 2 = O(1) na INCREMENT</strong>.',
 
         accountingTitle: 'Účetní metoda',
         accountingP1:    'Každé INCREMENT je účtováno pevným amortizovaným poplatkem <strong>2 mince</strong>. Jsou použity takto:',
@@ -178,7 +178,7 @@ const theoryDict = {
         tdWeightK:  '2^i',
         tdFreqK:    '⌊N/2^i⌋',
         tdContribK: '≤ N/2^i',
-        tableP2: 'Součet geometrické řady: N + N/2 + N/4 + … < 2N. Průměr na inkrementaci: 2N / N = <strong>2 = O(1)</strong>.',
+        tableP2: 'Součet geometrické řady: N + N/2 + N/4 + … < 2N. Z toho plyne, že průměrná cena jedné inkrementace je <strong>< 2, a tedy O(1)</strong>.',
 
         // Přehled složitostí (sjednoceno: nejlepší / amortizovaně / nejhorší 1×)
         opIncrement:      'INCREMENT (amortizovaně)',
