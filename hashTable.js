@@ -45,14 +45,14 @@ function getBestVariants() {
 function getWorstVariants() {
     return [
         {
-            kindKey: 'worstKindProbe',
-            entries: [{ key: 0, value: 10 }, { key: 8, value: 20 }, { key: 16, value: 30 }, { key: 24, value: 40 }, { key: 32, value: 50 }],
-            insert: { key: 40, value: 60 },
-        },
-        {
             kindKey: 'worstKindResize',
             entries: [{ key: 0, value: 10 }, { key: 8, value: 20 }, { key: 16, value: 30 }, { key: 24, value: 40 }, { key: 32, value: 50 }, { key: 40, value: 60 }],
             insert: { key: 48, value: 70 },
+        },
+        {
+            kindKey: 'worstKindProbe',
+            entries: [{ key: 0, value: 10 }, { key: 8, value: 20 }, { key: 16, value: 30 }, { key: 24, value: 40 }, { key: 32, value: 50 }],
+            insert: { key: 40, value: 60 },
         },
         {
             kindKey: 'worstKindUpdate',
