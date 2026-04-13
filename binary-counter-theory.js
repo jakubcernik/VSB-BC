@@ -156,7 +156,7 @@ const theoryDict = {
         accountingConclusion: 'Protože každé INCREMENT platí nejvýše 2 mince a žádná operace si nepůjčuje od budoucích, amortizovaná cena je <strong>O(1) na INCREMENT</strong>.',
 
         potentialTitle: 'Potenciálová metoda',
-        potentialP1:    'Definujeme potenciál Φ jako počet bitů nastaveních na 1 v čítači:',
+        potentialP1:    'Definujeme potenciál Φ jako počet bitů nastavených na 1 v čítači:',
         potentialMath:  'Φ = počet bitů 1 v čítači  (vždy ≥ 0)',
         potentialP2:    'Nechť t = počet po sobě jdoucích bitů 1 před INCREMENT (bity přepnuté 1→0). Skutečná cena = t + 1 (přepiš t jedniček na nulu, pak jednu nulu na jedničku). ΔΦ = 1 − t (jeden nový bit 1, t bitů 1 odstraněno). Amortizovaná cena:',
         potentialMath2: 'â = (t + 1) + (1 − t) = 2',
