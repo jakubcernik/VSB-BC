@@ -22,12 +22,12 @@ const theoryDict = {
         introP2: 'In an implementation with <strong>open addressing</strong>, every element is stored directly inside the array. If the target slot is already taken, the table probes other slots (for example <em>linear probing</em>): check the next slot, then the next… until an empty slot is found.',
         introBox: '💡 Important parameter: the <em>load factor</em> α = size / capacity. To keep operations fast, the table is resized (capacity doubled) once α exceeds a chosen threshold (e.g. 0.75).',
 
-        insertP1: 'The operation <code>INSERT(key, value)</code> computes an index and may need to probe several slots due to collisions. This makes the <em>single-operation worst case</em> linear, but expensive situations are rare if we resize in time.',
+        insertP1: 'The operation <code>INSERT(key, value)</code> computes an index and may need probing due to collisions. With a good hash function and a bounded load factor, the expected probing cost stays constant; the primary expensive single-operation worst case is when insert triggers <strong>resize + rehash</strong>.',
         insertP2: 'If probing finds an existing key, the table performs <strong>UPDATE</strong>: it replaces only the value and does <strong>not</strong> increase <code>size</code>. The write itself is O(1); extra cost can come from probing before the key is found.',
         cardBestTitle:  'Best Case — O(1)',
         cardBestDesc:   'The hashed slot is empty. We write the pair into the slot and finish immediately.',
         cardWorstTitle: 'Worst Case — O(n)',
-        cardWorstDesc:  'Many consecutive slots are occupied (or a resize is triggered). We may probe Θ(n) slots and/or rehash Θ(n) elements.',
+        cardWorstDesc:  'Primary single-operation worst case: insert triggers resize, so we must rehash and move Θ(n) stored elements. Probing can still be long on adversarial inputs, but under uniform hashing and bounded load factor its expected cost is constant.',
 
         resizeP1: 'When the table becomes too full (α > threshold), we allocate a new array of double capacity and re-insert all existing elements into the new table. This is called <strong>rehashing</strong>.',
         resizeP2: 'In open addressing, rehashing is not a simple “copy the array”. The target index is computed as <code>h(key) mod capacity</code>. When the capacity changes, the modulo changes — so many keys get a different start slot. Therefore we must take each stored element and <strong>INSERT it again</strong> into the new array (including probing on collisions).',
@@ -56,7 +56,7 @@ const theoryDict = {
         coinStep1: '<strong>2 coins</strong> are received at the start of every INSERT (fixed amortized charge).',
         coinStep2: '<strong>1 coin</strong> pays for placing the new element into the table (the write).',
         coinStep3: '<strong>1 coin</strong> is saved <em>on that element</em> to pay for moving it during a future rehash.',
-        coinStep4: 'Collisions (probing) can still make a single operation slower, but rehashing itself is fully paid by the saved coins.',
+        coinStep4: 'Probing can still be long for unlucky/adversarial key sequences, but in average-case analysis with good hashing and bounded load factor it remains expected O(1); the coin argument here pays for rehash moves.',
         accountingMath: 'When resize happens, each of the n stored elements spends its saved coin to pay for exactly one move into the new table. Therefore the rehash cost is fully paid by saved coins.',
         accountingConclusion: 'Since each INSERT is charged a constant number of coins and we never borrow from the future, INSERT runs in amortized O(1).',
 
@@ -74,7 +74,7 @@ const theoryDict = {
 
         noteInsert: 'Over any sequence of inserts with resizing by doubling and a constant load-factor threshold.',
         noteInsertBest: 'Hashed slot is empty.',
-        noteInsertWorst: 'Rare: when many collisions happen and/or a resize is triggered.',
+        noteInsertWorst: 'Rare: insert crosses the load threshold and triggers resize + rehash (single operation O(n)).',
 
         legendAmortized: '* Amortized O(1) means the average cost per INSERT over any N operations is bounded by a constant, even though a single INSERT can sometimes cost Θ(n).',
 
@@ -101,12 +101,12 @@ const theoryDict = {
         introP2: 'V implementaci s <strong>otevřeným adresováním</strong> se každý prvek ukládá přímo do pole. Pokud je cílový slot obsazený, tabulka zkouší další sloty (např. <em>lineární prohledávání</em>): další, další… dokud nenajde prázdný.',
         introBox: '💡 Důležitý parametr: <em>load factor</em> α = velikost / kapacita. Aby operace zůstaly rychlé, tabulka se zvětší (kapacita se zdvojnásobí), když α překročí zvolený limit (např. 0.75).',
 
-        insertP1: 'Operace <code>INSERT(klíč, hodnota)</code> spočítá index a kvůli kolizím může procházet několik slotů. Proto může mít <em>nejhorší případ jedné operace</em> lineární cenu, ale drahé situace jsou při včasném zvětšování vzácné.',
+        insertP1: 'Operace <code>INSERT(klíč, hodnota)</code> spočítá index a kvůli kolizím může provádět probing. Při dobré hash funkci a omezeném zaplnění má probing očekávaně konstantní cenu; hlavní drahý <em>nejhorší případ jedné operace</em> nastává, když vložení vyvolá <strong>resize + rehash</strong>.',
         insertP2: 'Pokud probing narazí na už existující klíč, provede se <strong>UPDATE</strong>: přepíše se pouze hodnota a <code>size</code> se <strong>nezvětší</strong>. Samotný přepis je O(1); dodatečná cena může vzniknout probingem, než se klíč najde.',
         cardBestTitle:  'Nejlepší případ — O(1)',
         cardBestDesc:   'Slot určený hashem je prázdný. Zapíšeme dvojici do slotu a končíme.',
         cardWorstTitle: 'Nejhorší případ — O(n)',
-        cardWorstDesc:  'Mnoho navazujících slotů je obsazených (nebo se vyvolá resize). Můžeme projít Θ(n) slotů a/nebo přesunout Θ(n) prvků při rehashi.',
+        cardWorstDesc:  'Hlavní nejhorší případ jedné operace: vložení vyvolá resize, takže je potřeba přehashovat a přesunout Θ(n) uložených prvků. Probing může být na nepříznivém vstupu dlouhý, ale při rovnoměrném hashování a omezeném zaplnění má v průměru konstantní cenu.',
 
         resizeP1: 'Když je tabulka příliš plná (α > limit), alokujeme nové pole s dvojnásobnou kapacitou a znovu vložíme všechny existující prvky do nové tabulky. Tomu se říká <strong>rehash</strong>.',
         resizeP2: 'U otevřeného adresování není rehash jen „zkopírování pole“. Index se počítá jako <code>h(klíč) mod kapacita</code>. Když se kapacita změní, změní se i modulo — a mnoho klíčů tak dostane jiný startovní slot. Proto se musí každý uložený prvek <strong>znovu vložit</strong> do nové tabulky (včetně probingu při kolizích).',
@@ -135,7 +135,7 @@ const theoryDict = {
         coinStep1: '<strong>2 mince</strong> se přidělí na začátku každého INSERT (pevný amortizovaný poplatek).',
         coinStep2: '<strong>1 mince</strong> zaplatí uložení nového prvku do tabulky (zápis).',
         coinStep3: '<strong>1 mince</strong> se uloží <em>na tento prvek</em> a později zaplatí jeho přesun při rehashi.',
-        coinStep4: 'Kolize (probing) mohou jednu operaci zpomalit, ale samotný rehash je plně zaplacen ušetřenými mincemi.',
+        coinStep4: 'Probing může být pro nepříznivé sekvence klíčů dlouhý, ale v analýze průměrného případu při dobrém hashování a omezeném zaplnění zůstává očekávaně O(1); mincový argument zde platí přesuny při rehashi.',
         accountingMath: 'Když nastane resize, každý z n uložených prvků utratí svou ušetřenou minci a zaplatí přesně jeden přesun do nové tabulky. Rehash je tedy plně zaplacen ušetřenými mincemi.',
         accountingConclusion: 'Protože každý INSERT účtuje konstantní počet mincí a nikdy si nepůjčujeme z budoucnosti, INSERT běží v amortizovaném O(1).',
 
@@ -153,7 +153,7 @@ const theoryDict = {
 
         noteInsert: 'Pro libovolnou sekvenci vložení při zdvojnásobování kapacity a konstantním limitu zaplnění.',
         noteInsertBest: 'Slot určený hashem je prázdný.',
-        noteInsertWorst: 'Vzácně: když vznikne mnoho kolizí a/nebo se vyvolá resize.',
+        noteInsertWorst: 'Vzácně: vložení překročí limit zaplnění a vyvolá resize + rehash (jedna operace O(n)).',
 
         legendAmortized: '* Amortizované O(1) znamená, že průměrná cena na INSERT přes libovolných N operací je omezená konstantou, i když jednotlivý INSERT může občas stát Θ(n).',
 
