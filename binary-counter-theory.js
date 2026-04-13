@@ -158,7 +158,7 @@ const theoryDict = {
         potentialTitle: 'Potenciálová metoda',
         potentialP1:    'Definujeme potenciál Φ jako počet bitů nastavených na 1 v čítači:',
         potentialMath:  'Φ = počet bitů 1 v čítači  (vždy ≥ 0)',
-        potentialP2:    'Nechť t = počet po sobě jdoucích bitů 1 před INCREMENT (bity přepnuté 1→0). Skutečná cena = t + 1 (přepiš t jedniček na nulu, pak jednu nulu na jedničku). ΔΦ = 1 − t (jeden nový bit 1, t bitů 1 odstraněno). Amortizovaná cena:',
+        potentialP2:    'Nechť t je počet po sobě jdoucích bitů 1 od nejméně významného bitu před operací INCREMENT (to jsou bity přepnuté 1→0). Skutečná cena = t + 1 (přepiš t jedniček na nulu, pak jednu nulu na jedničku). ΔΦ = 1 − t (jeden nový bit 1, t bitů 1 odstraněno). Amortizovaná cena:',
         potentialMath2: 'â = (t + 1) + (1 − t) = 2',
         potentialConclusion: 'V každém případě â = 2 = <strong>O(1)</strong>. Potenciálová metoda potvrzuje, že amortizovaná cena je konstantní bez ohledu na délku přenosu.',
 
