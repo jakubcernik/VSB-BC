@@ -65,18 +65,18 @@ const dict = {
         stepPrepareLabel: '1) Prepare variant',
         stepRunLabel:     '2) Insert prepared element',
         bestReady:        'Best Case prepared — table has plenty of free space, next insert hits an empty slot.',
-        worstReady:       'Worst Case prepared — table is near the load-factor limit and next insert will trigger resize.',
+        worstReady:       'Worst Case prepared — primary worst-case path is set: table is near the load-factor limit and next insert will trigger resize + rehash.',
         bestReadyVariant: (v, total, key, value) => `Best Case variant ${v}/${total} prepared — next insert uses key=${key}, value=${value}.`,
         worstReadyVariant: (v, total, key, value, kind, projected, threshold, willResize) =>
             `Worst Case variant ${v}/${total} prepared (${kind}) — next insert uses key=${key}, value=${value}. ` +
-            `Projected load after insert: ${projected} (threshold ${threshold})${willResize ? ', so this insert will trigger resize + rehash.' : ', so this insert will not trigger resize.'}`,
+            `Projected load after insert: ${projected} (threshold ${threshold})${willResize ? ', so this insert will trigger resize + rehash (the primary single-operation worst case).' : ', so this run is a probing/update variant (didactic), not the primary asymptotic worst-case trigger.'}`,
         prepareFirstBest:  'First prepare a Best Case variant, then run the insert action.',
         prepareFirstWorst: 'First prepare a Worst Case variant, then run the insert action.',
-        worstKindProbe:    'extended probing',
+        worstKindProbe:    'adversarial probing input',
         worstKindResize:   'resize + rehash',
         worstKindUpdate:   'update existing key',
         bestInsertExplain: (probes, collisions, resized) => `Best Case explanation: first hashed slot was free, so insert finished immediately. Cost: O(1) (probes=${probes}, collisions=${collisions}, resize=${resized ? 'yes' : 'no'}).`,
-        worstInsertExplain: (kind, probes, collisions, resized, wasUpdate) => `Worst Case explanation (${kind}): the expensive part is usually resize/rehash when many elements are moved${resized ? ', and this run included it' : ''}. Collisions can add extra probing work${wasUpdate ? ', and this run ended as UPDATE of an existing key' : ''}. Observed: probes=${probes}, collisions=${collisions}.`,
+        worstInsertExplain: (kind, probes, collisions, resized, wasUpdate) => `Worst Case explanation (${kind}): the primary expensive case is resize/rehash, where many elements are moved${resized ? ', and this run included it' : ', while this run illustrates a probing/update-heavy path'}. Under good hashing with bounded load factor, probing is expected O(1) on average${wasUpdate ? '; this run ended as UPDATE of an existing key' : ''}. Observed: probes=${probes}, collisions=${collisions}.`,
 
         // Meta
         metaSize:         'Size',
@@ -183,18 +183,18 @@ const dict = {
         stepPrepareLabel: '1) Připravit variantu',
         stepRunLabel:     '2) Vložit připravený prvek',
         bestReady:        'Nejlepší případ připraven — tabulka má dost volného místa, další insert trefí prázdný slot.',
-        worstReady:       'Nejhorší případ připraven — tabulka je blízko limitu a další insert vyvolá resize.',
+        worstReady:       'Nejhorší případ připraven — nastaven hlavní worst-case průchod: tabulka je blízko limitu zaplnění a další insert vyvolá resize + rehash.',
         bestReadyVariant: (v, total, key, value) => `Připravena varianta Best Case ${v}/${total} — další vložení použije klíč=${key}, hodnota=${value}.`,
         worstReadyVariant: (v, total, key, value, kind, projected, threshold, willResize) =>
             `Připravena varianta Worst Case ${v}/${total} (${kind}) — další vložení použije klíč=${key}, hodnota=${value}. ` +
-            `Očekávané zaplnění po vložení: ${projected} (limit ${threshold})${willResize ? ', takže tento insert vyvolá resize + rehash.' : ', takže tento insert resize nevyvolá.'}`,
+            `Očekávané zaplnění po vložení: ${projected} (limit ${threshold})${willResize ? ', takže tento insert vyvolá resize + rehash (hlavní nejhorší případ jedné operace).' : ', takže tento běh je spíše probing/update varianta (didaktická), ne hlavní asymptotický trigger nejhoršího případu.'}`,
         prepareFirstBest:  'Nejprve připravte variantu Best Case a potom spusťte vložení.',
         prepareFirstWorst: 'Nejprve připravte variantu Worst Case a potom spusťte vložení.',
-        worstKindProbe:    'prodloužený probing',
+        worstKindProbe:    'nepříznivý vstup pro probing',
         worstKindResize:   'resize + rehash',
         worstKindUpdate:   'update existujícího klíče',
         bestInsertExplain: (probes, collisions, resized) => `Vysvětlení Best Case: první hashovaný slot byl volný, takže vložení skončilo hned. Cena: O(1) (probes=${probes}, kolize=${collisions}, resize=${resized ? 'ano' : 'ne'}).`,
-        worstInsertExplain: (kind, probes, collisions, resized, wasUpdate) => `Vysvětlení Worst Case (${kind}): nejdražší část bývá resize/rehash, kdy se přesouvá mnoho prvků${resized ? ', a v tomto běhu k němu došlo' : ''}. Kolize mohou přidat další práci probingem${wasUpdate ? ', a tento běh skončil jako UPDATE existujícího klíče' : ''}. Naměřeno: probes=${probes}, kolize=${collisions}.`,
+        worstInsertExplain: (kind, probes, collisions, resized, wasUpdate) => `Vysvětlení Worst Case (${kind}): hlavní drahý případ je resize/rehash, kdy se přesouvá mnoho prvků${resized ? ', a v tomto běhu k němu došlo' : ', zatímco tento běh ukazuje cestu s více probingem/update'}. Při dobrém hashování a omezeném zaplnění má probing v průměru očekávaně O(1)${wasUpdate ? '; tento běh skončil jako UPDATE existujícího klíče' : ''}. Naměřeno: probes=${probes}, kolize=${collisions}.`,
 
         // Meta
         metaSize:         'Velikost',
