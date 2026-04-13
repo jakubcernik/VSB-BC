@@ -53,9 +53,10 @@ const dict = {
         bestCaseDesc: `The <strong>Best Case</strong> happens when the hashed slot is empty.
             The element is inserted immediately (no collisions, no resize).
             <br><br>Complexity: <strong class="badge">O(1)</strong>`,
-        worstCaseDesc: `The <strong>Worst Case</strong> happens when the table is almost full and many collisions occur.
-            Inserting may scan many slots and can also trigger <strong>resize + rehash</strong>.
-            <br><br>Single operation: <strong class="badge">O(n)</strong>, amortized: <strong class="badge">O(1)</strong>`,
+        worstCaseDesc: `The <strong>Worst Case</strong> for a single insert is typically when it triggers <strong>resize + rehash</strong>,
+            because many stored elements must be moved.
+            Collisions can still increase probing work, but with a good hash function and bounded load factor, probing is expected to stay constant on average.
+            <br><br>Single operation: <strong class="badge">O(n)</strong>, amortized over many inserts: <strong class="badge">O(1)</strong>`,
 
         btnPrepareBest:   'Prepare Best Case',
         btnPrepareWorst:  'Prepare Worst Case',
@@ -69,11 +70,11 @@ const dict = {
         worstReadyVariant: (v, total, key, value, kind) => `Worst Case variant ${v}/${total} prepared (${kind}) — next insert uses key=${key}, value=${value}.`,
         prepareFirstBest:  'First prepare a Best Case variant, then run the insert action.',
         prepareFirstWorst: 'First prepare a Worst Case variant, then run the insert action.',
-        worstKindProbe:    'long probing',
+        worstKindProbe:    'extended probing',
         worstKindResize:   'resize + rehash',
         worstKindUpdate:   'update existing key',
         bestInsertExplain: (probes, collisions, resized) => `Best Case explanation: first hashed slot was free, so insert finished immediately. Cost: O(1) (probes=${probes}, collisions=${collisions}, resize=${resized ? 'yes' : 'no'}).`,
-        worstInsertExplain: (kind, probes, collisions, resized, wasUpdate) => `Worst Case explanation (${kind}): operation needed more work due to collisions${resized ? ', plus resize/rehash' : ''}${wasUpdate ? ', and ended as UPDATE of existing key' : ''}. Observed: probes=${probes}, collisions=${collisions}.`,
+        worstInsertExplain: (kind, probes, collisions, resized, wasUpdate) => `Worst Case explanation (${kind}): the expensive part is usually resize/rehash when many elements are moved${resized ? ', and this run included it' : ''}. Collisions can add extra probing work${wasUpdate ? ', and this run ended as UPDATE of an existing key' : ''}. Observed: probes=${probes}, collisions=${collisions}.`,
 
         // Meta
         metaSize:         'Size',
@@ -168,9 +169,10 @@ const dict = {
         bestCaseDesc: `<strong>Nejlepší případ</strong> nastane, když je slot vypočtený hashem prázdný.
             Prvek se vloží okamžitě (bez kolizí a bez resize).
             <br><br>Složitost: <strong class="badge">O(1)</strong>`,
-        worstCaseDesc: `<strong>Nejhorší případ</strong> nastane, když je tabulka téměř plná a vzniká mnoho kolizí.
-            Vložení může projít mnoho slotů a může také vyvolat <strong>resize + rehash</strong>.
-            <br><br>Jedna operace: <strong class="badge">O(n)</strong>, amortizovaně: <strong class="badge">O(1)</strong>`,
+        worstCaseDesc: `<strong>Nejhorší případ</strong> jedné operace nastává typicky tehdy, když vložení vyvolá <strong>resize + rehash</strong>,
+            protože je potřeba přesunout mnoho uložených prvků.
+            Kolize mohou zvýšit práci probingem, ale při dobré hash funkci a omezeném zaplnění je očekávaný počet probingů v průměru konstantní.
+            <br><br>Jedna operace: <strong class="badge">O(n)</strong>, amortizovaně přes mnoho vložení: <strong class="badge">O(1)</strong>`,
 
         btnPrepareBest:   'Připravit Nejlepší případ',
         btnPrepareWorst:  'Připravit Nejhorší případ',
@@ -184,11 +186,11 @@ const dict = {
         worstReadyVariant: (v, total, key, value, kind) => `Připravena varianta Worst Case ${v}/${total} (${kind}) — další vložení použije klíč=${key}, hodnota=${value}.`,
         prepareFirstBest:  'Nejprve připravte variantu Best Case a potom spusťte vložení.',
         prepareFirstWorst: 'Nejprve připravte variantu Worst Case a potom spusťte vložení.',
-        worstKindProbe:    'dlouhý probing',
+        worstKindProbe:    'prodloužený probing',
         worstKindResize:   'resize + rehash',
         worstKindUpdate:   'update existujícího klíče',
         bestInsertExplain: (probes, collisions, resized) => `Vysvětlení Best Case: první hashovaný slot byl volný, takže vložení skončilo hned. Cena: O(1) (probes=${probes}, kolize=${collisions}, resize=${resized ? 'ano' : 'ne'}).`,
-        worstInsertExplain: (kind, probes, collisions, resized, wasUpdate) => `Vysvětlení Worst Case (${kind}): operace měla vyšší cenu kvůli kolizím${resized ? ', navíc proběhl resize/rehash' : ''}${wasUpdate ? ', a skončila jako UPDATE existujícího klíče' : ''}. Naměřeno: probes=${probes}, kolize=${collisions}.`,
+        worstInsertExplain: (kind, probes, collisions, resized, wasUpdate) => `Vysvětlení Worst Case (${kind}): nejdražší část bývá resize/rehash, kdy se přesouvá mnoho prvků${resized ? ', a v tomto běhu k němu došlo' : ''}. Kolize mohou přidat další práci probingem${wasUpdate ? ', a tento běh skončil jako UPDATE existujícího klíče' : ''}. Naměřeno: probes=${probes}, kolize=${collisions}.`,
 
         // Meta
         metaSize:         'Velikost',
