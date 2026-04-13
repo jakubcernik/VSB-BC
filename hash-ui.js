@@ -67,7 +67,9 @@ const dict = {
         bestReady:        'Best Case prepared — table has plenty of free space, next insert hits an empty slot.',
         worstReady:       'Worst Case prepared — table is near the load-factor limit and next insert will trigger resize.',
         bestReadyVariant: (v, total, key, value) => `Best Case variant ${v}/${total} prepared — next insert uses key=${key}, value=${value}.`,
-        worstReadyVariant: (v, total, key, value, kind) => `Worst Case variant ${v}/${total} prepared (${kind}) — next insert uses key=${key}, value=${value}.`,
+        worstReadyVariant: (v, total, key, value, kind, projected, threshold, willResize) =>
+            `Worst Case variant ${v}/${total} prepared (${kind}) — next insert uses key=${key}, value=${value}. ` +
+            `Projected load after insert: ${projected} (threshold ${threshold})${willResize ? ', so this insert will trigger resize + rehash.' : ', so this insert will not trigger resize.'}`,
         prepareFirstBest:  'First prepare a Best Case variant, then run the insert action.',
         prepareFirstWorst: 'First prepare a Worst Case variant, then run the insert action.',
         worstKindProbe:    'extended probing',
@@ -183,7 +185,9 @@ const dict = {
         bestReady:        'Nejlepší případ připraven — tabulka má dost volného místa, další insert trefí prázdný slot.',
         worstReady:       'Nejhorší případ připraven — tabulka je blízko limitu a další insert vyvolá resize.',
         bestReadyVariant: (v, total, key, value) => `Připravena varianta Best Case ${v}/${total} — další vložení použije klíč=${key}, hodnota=${value}.`,
-        worstReadyVariant: (v, total, key, value, kind) => `Připravena varianta Worst Case ${v}/${total} (${kind}) — další vložení použije klíč=${key}, hodnota=${value}.`,
+        worstReadyVariant: (v, total, key, value, kind, projected, threshold, willResize) =>
+            `Připravena varianta Worst Case ${v}/${total} (${kind}) — další vložení použije klíč=${key}, hodnota=${value}. ` +
+            `Očekávané zaplnění po vložení: ${projected} (limit ${threshold})${willResize ? ', takže tento insert vyvolá resize + rehash.' : ', takže tento insert resize nevyvolá.'}`,
         prepareFirstBest:  'Nejprve připravte variantu Best Case a potom spusťte vložení.',
         prepareFirstWorst: 'Nejprve připravte variantu Worst Case a potom spusťte vložení.',
         worstKindProbe:    'prodloužený probing',

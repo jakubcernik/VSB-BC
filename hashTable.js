@@ -519,7 +519,21 @@ function prepareWorstCase(nextVariant = false) {
 
     const d = dict[currentLang];
     const kindLabel = d[scenario.kindKey] || scenario.kindKey;
-    updateInfoPanel(d.worstReadyVariant(worstVariantIndex + 1, variants.length, scenario.insert.key, scenario.insert.value, kindLabel));
+    const projectedLoad = ((size + 1) / capacity).toFixed(2);
+    const threshold = LOAD_THRESHOLD.toFixed(2);
+    const willResize = ((size + 1) / capacity) > LOAD_THRESHOLD;
+    updateInfoPanel(
+        d.worstReadyVariant(
+            worstVariantIndex + 1,
+            variants.length,
+            scenario.insert.key,
+            scenario.insert.value,
+            kindLabel,
+            projectedLoad,
+            threshold,
+            willResize
+        )
+    );
     updateCaseButtons();
 }
 
