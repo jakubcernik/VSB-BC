@@ -59,9 +59,9 @@ const theoryDict = {
         accountingConclusion: 'Because every operation is charged a constant number of coins (3) and the bank never goes negative, <code>push_back</code> runs in amortized <strong>O(1)</strong>.',
 
         potentialTitle: 'Potential Method',
-        potentialP1:    'Define a potential function Φ over the state of the data structure. Let <em>size</em> = number of elements, <em>capacity</em> = allocated slots:',
+        potentialP1:    'Define a potential function Φ over the state of the data structure. Let <em>size</em> be the number of elements and let <em>capacity</em> be the number of allocated slots:',
         potentialMath:  'Φ = 2 · size − capacity',
-        potentialP2:    'The amortized cost â of an operation = actual cost c + ΔΦ.',
+        potentialP2:    'The amortized cost â of an operation is given by actual cost c plus ΔΦ.',
         potentialMath2: 'Normal push_back: â = 1 + (2·(s+1) − cap) − (2·s − cap) = 1 + 2 = 3 (upper bound)\nResize push_back (doubling): actual cost = N+1 (copy N + insert 1), ΔΦ = 2·(N+1) − 2N − (2N − N) = 2 − N\nâ = (N+1) + (2 − N) = 3',
         potentialConclusion: 'With this standard potential choice, â is bounded by a constant (here ≤ 3), so amortized <code>push_back</code> is <strong>O(1)</strong>. This matches the 3-coin accounting/bank story used in the simulation.',
 
@@ -146,9 +146,9 @@ const theoryDict = {
         accountingConclusion: 'Protože každá operace účtuje konstantní počet mincí (3) a banka nikdy nejde do minusu, amortizovaná cena je <strong>O(1) na push_back</strong>.',
 
         potentialTitle: 'Potenciálová metoda',
-        potentialP1:    'Definujeme potenciálovou funkci Φ nad stavem datové struktury. Nechť <em>size</em> = počet prvků, <em>capacity</em> = alokovaná místa:',
+        potentialP1:    'Definujeme potenciálovou funkci Φ nad stavem datové struktury. Nechť <em>size</em> je počet prvků a <em>capacity</em> je počet alokovaných míst:',
         potentialMath:  'Φ = 2 · size − capacity',
-        potentialP2:    'Amortizovaná cena â operace = skutečná cena c + ΔΦ.',
+        potentialP2:    'Amortizovaná cena â operace je dána jako součet skutečné ceny c a změny potenciálu ΔΦ.',
         potentialMath2: 'Normální push_back: â = 1 + (2·(s+1) − cap) − (2·s − cap) = 1 + 2 = 3 (horní odhad)\nResize push_back (zdvojení): skutečná cena = N+1 (kopie N + vložení 1), ΔΦ = 2·(N+1) − 2N − (2N − N) = 2 − N\nâ = (N+1) + (2 − N) = 3',
         potentialConclusion: 'S touto standardní volbou potenciálu je â omezeno konstantou (zde ≤ 3), takže amortizovaně vychází <code>push_back</code> jako <strong>O(1)</strong>. To odpovídá i 3-mincovému „bankovnímu“ příběhu použitému v simulaci.',
 

@@ -63,7 +63,7 @@ const theoryDict = {
         potentialTitle: 'Potential Method',
         potentialP1:    'Define the potential Φ as the number of 1-bits currently set in the counter:',
         potentialMath:  'Φ = number of 1-bits in the counter  (always ≥ 0)',
-        potentialP2:    'Let t = number of trailing 1-bits before INCREMENT (bits that get flipped 1→0). Actual cost = t + 1 (flip t ones to zero, then flip one zero to one). ΔΦ = 1 − t (one new 1-bit, t 1-bits removed). Amortized cost:',
+        potentialP2:    'Let t be the number of consecutive 1-bits from the least-significant bit before INCREMENT (these are the bits flipped 1→0). The actual cost is t + 1 (flip t ones to zero, then flip one zero to one). ΔΦ is 1 − t (one new 1-bit, t 1-bits removed). Amortized cost:',
         potentialMath2: 'â = (t + 1) + (1 − t) = 2',
         potentialConclusion: 'In every case â = 2 = <strong>O(1)</strong>. The potential method confirms the amortized cost is constant regardless of the number of carry propagations.',
 
@@ -158,7 +158,7 @@ const theoryDict = {
         potentialTitle: 'Potenciálová metoda',
         potentialP1:    'Definujeme potenciál Φ jako počet bitů nastavených na 1 v čítači:',
         potentialMath:  'Φ = počet bitů 1 v čítači  (vždy ≥ 0)',
-        potentialP2:    'Nechť t je počet po sobě jdoucích bitů 1 od nejméně významného bitu před operací INCREMENT (to jsou bity přepnuté 1→0). Skutečná cena = t + 1 (přepiš t jedniček na nulu, pak jednu nulu na jedničku). ΔΦ = 1 − t (jeden nový bit 1, t bitů 1 odstraněno). Amortizovaná cena:',
+        potentialP2:    'Nechť t je počet po sobě jdoucích bitů 1 od nejméně významného bitu před operací INCREMENT (to jsou bity přepnuté 1→0). Skutečná cena je t + 1 (přepiš t jedniček na nulu, pak jednu nulu na jedničku). ΔΦ je 1 − t (jeden nový bit 1, t bitů 1 odstraněno). Amortizovaná cena:',
         potentialMath2: 'â = (t + 1) + (1 − t) = 2',
         potentialConclusion: 'V každém případě â = 2 = <strong>O(1)</strong>. Potenciálová metoda potvrzuje, že amortizovaná cena je konstantní bez ohledu na délku přenosu.',
 
