@@ -95,7 +95,9 @@ const dict = {
         validationMinGreaterThanMax: 'Minimum must not be greater than maximum.',
 
         // Log
-        groupLabel:       (k, step) => `Step ${step} — inserting <strong>${k}</strong>`,
+        groupLabel:       (k, v, step) => v === null || v === undefined
+            ? `Step ${step} — inserting key <strong>${k}</strong>`
+            : `Step ${step} — inserting value <strong>${v}</strong> with key <strong>${k}</strong>`,
         logStep:          (n) => `Step ${n}`,
 
         hashStart:        (key, hash, cap, start) => `hash(<strong>${key}</strong>) = <span class="log-badge slot">${hash}</span>, start index = <span class="log-badge slot">${hash} mod ${cap} = ${start}</span>`,
@@ -208,7 +210,9 @@ const dict = {
         validationMinGreaterThanMax: 'Minimum nesmí být větší než maximum.',
 
         // Log
-        groupLabel:       (k, step) => `Krok ${step} — vkládám <strong>${k}</strong>`,
+        groupLabel:       (k, v, step) => v === null || v === undefined
+            ? `Krok ${step} — vkládám klíč <strong>${k}</strong>`
+            : `Krok ${step} — vkládám hodnotu <strong>${v}</strong> s klíčem <strong>${k}</strong>`,
         logStep:          (n) => `Krok ${n}`,
 
         hashStart:        (key, hash, cap, start) => `hash(<strong>${key}</strong>) = <span class="log-badge slot">${hash}</span>, startovní index = <span class="log-badge slot">${hash} mod ${cap} = ${start}</span>`,
@@ -255,7 +259,7 @@ const LOG_TYPES = {
 let currentLogGroup = null;
 let steps = 0; // shared with hashTable.js (same pattern as other pages)
 
-function beginLogGroup(key) {
+function beginLogGroup(key, value = null) {
     const d = dict[currentLang];
     const panel = document.getElementById('infoPanel');
     const group = document.createElement('div');
@@ -265,7 +269,7 @@ function beginLogGroup(key) {
     header.classList.add('log-group-header');
     header.innerHTML = `
         <span class="log-group-icon">▶</span>
-        <span class="log-group-title">${d.groupLabel(key, steps)}</span>
+        <span class="log-group-title">${d.groupLabel(key, value, steps)}</span>
     `;
     const body = document.createElement('div');
     body.classList.add('log-group-body');

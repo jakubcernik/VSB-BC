@@ -298,7 +298,7 @@ async function insertKV(keyInt, value) {
     const d = dict[currentLang];
     steps++;
 
-    beginLogGroup(String(keyInt));
+    beginLogGroup(String(keyInt), String(value));
     createLogEntry(LOG_TYPES.INSERT, d.insertCharge(INSERT_CHARGE));
 
     let resized = false;
@@ -573,5 +573,4 @@ window.addEventListener('load', () => {
     coinsOnSlot = new Array(capacity).fill(0);
     resetHashTable();
 });
-
 
