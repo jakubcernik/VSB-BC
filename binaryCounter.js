@@ -350,7 +350,7 @@ async function increment() {
         const frame = document.getElementById(`bit-frame-${pos}`);
         if (frame) frame.classList.add('active-bit');
 
-        createLogEntry(LOG_TYPES.COPY, d.spendSaved(pos));
+        createLogEntry(LOG_TYPES.COPY, d.spendSaved(pos), null, { unit: 'instruction' });
 
         bits[pos] = 0;
         coinsOnBit[pos] = 0;
@@ -375,7 +375,7 @@ async function increment() {
 
         // Utracení mince i flip proběhnou zároveň (lépe čitelné časování).
         bank -= 1;
-        createLogEntry(LOG_TYPES.COPY, d.spendSelf(pos));
+        createLogEntry(LOG_TYPES.COPY, d.spendSelf(pos), null, { unit: 'instruction' });
         await Promise.all([
             spendCoinFromBank('fade'),
             animateBitFlip(pos, 1),

@@ -50,6 +50,8 @@ const dict = {
         metricsHelpLine3: 'Amortized analysis shows total bit flips stay linear in operations.',
         metricsHelpTheoryLink: 'Open theory',
         metricsHelpClose: 'Close',
+        badgeOperation: 'OP',
+        badgeInstruction: 'INS',
         bankLabel:        'Operation charge (2 coins)',
         willAppear:       'will appear here.',
         footer:           '2026 by Jakub Cernik. Developed for educational purposes as a Bachelor Thesis.',
@@ -138,6 +140,8 @@ const dict = {
         metricsHelpLine3: 'Amortizovaná analýza ukazuje, že celkový počet přepnutí zůstává lineární vůči počtu operací.',
         metricsHelpTheoryLink: 'Otevřít teorii',
         metricsHelpClose: 'Zavřít',
+        badgeOperation: 'OP',
+        badgeInstruction: 'INS',
         bankLabel:        'Poplatek za operaci (2 mince)',
         willAppear:       'se budou zobrazovat zde.',
         footer:           '2026 by Jakub Cernik. Vyvinuto pro vzdělávací účely jako bakalářská práce.',
@@ -217,6 +221,7 @@ function beginLogGroup(from, to) {
     header.innerHTML = `
         <span class="log-group-icon">▶</span>
         <span class="log-group-title">${d.groupLabel(from, to, steps)}</span>
+        <span class="log-unit-badge operation">${d.badgeOperation || 'OP'}</span>
     `;
     const body = document.createElement('div');
     body.classList.add('log-group-body');
@@ -230,16 +235,21 @@ function beginLogGroup(from, to) {
 
 function endLogGroup() { currentLogGroup = null; }
 
-function createLogEntry(type, title, details = null) {
+function createLogEntry(type, title, details = null, meta = null) {
     const target = currentLogGroup || document.getElementById('infoPanel');
     const d = dict[currentLang];
     const entry = document.createElement('div');
     entry.classList.add('log-entry', type.class);
 
+    const unitBadge = meta && meta.unit === 'instruction'
+        ? `<span class="log-unit-badge instruction">${d.badgeInstruction || 'INS'}</span>`
+        : '';
+
     let html = `
         <div class="log-header">
             <span class="log-icon">${type.icon}</span>
             <span class="log-title">${title}</span>
+            ${unitBadge}
             ${!currentLogGroup ? `<span class="log-step">${d.logStep(steps)}</span>` : ''}
         </div>
     `;

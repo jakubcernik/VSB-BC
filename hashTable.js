@@ -292,7 +292,12 @@ async function resizeAndRehash(newCapacity) {
 
         moved++;
         renderTable(to);
-        createLogEntry(LOG_TYPES.COPY, d.moveElement(from, to), d.moveElementDetails(entry.key, oldStart, newStart, probes));
+        createLogEntry(
+            LOG_TYPES.COPY,
+            d.moveElement(from, to),
+            d.moveElementDetails(entry.key, oldStart, newStart, probes),
+            { unit: 'instruction' }
+        );
         await new Promise(r => setTimeout(r, getDelay(350)));
     }
 
@@ -340,7 +345,7 @@ async function insertKV(keyInt, value) {
         probeCount++;
         instructions++; // one probe check instruction
         renderTable(i);
-        createLogEntry(LOG_TYPES.PROBE, d.probeCheck(i));
+        createLogEntry(LOG_TYPES.PROBE, d.probeCheck(i), null, { unit: 'instruction' });
         await new Promise(r => setTimeout(r, getDelay(250)));
 
         // If the key already exists, a standard hash table performs UPDATE.
@@ -363,7 +368,7 @@ async function insertKV(keyInt, value) {
             table[i].value = value;
             instructions++; // one write/update instruction
             if (bank > 0) bank -= 1;
-            createLogEntry(LOG_TYPES.SUCCESS, d.updateDone(i));
+            createLogEntry(LOG_TYPES.SUCCESS, d.updateDone(i), null, { unit: 'instruction' });
             await new Promise(r => setTimeout(r, getDelay(160)));
 
             // return the coin back to the element so invariants for rehash stay intact
@@ -404,7 +409,7 @@ async function insertKV(keyInt, value) {
 
         // 1 coin pays for placement
         if (bank > 0) bank--;
-        createLogEntry(LOG_TYPES.SUCCESS, d.placeElement(i));
+        createLogEntry(LOG_TYPES.SUCCESS, d.placeElement(i), null, { unit: 'instruction' });
 
         // Save 1 coin on the element for future rehash.
         coinsOnSlot[i] = 1;

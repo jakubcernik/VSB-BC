@@ -34,6 +34,8 @@ const dict = {
         metricsHelpLine3: 'Amortized argument here pays mainly for resize/rehash moves; probing is explained via expected average cost with good hashing and bounded load factor.',
         metricsHelpTheoryLink: 'Open theory',
         metricsHelpClose: 'Close',
+        badgeOperation: 'OP',
+        badgeInstruction: 'INS',
         willAppear:       'will appear here.',
         footer:           '2026 by Jakub Cernik. Developed for educational purposes as a Bachelor Thesis.',
 
@@ -161,6 +163,8 @@ const dict = {
         metricsHelpLine3: 'Amortizace zde platí hlavně přesuny při resize/rehashi; probing je vysvětlen přes očekávanou průměrnou cenu při dobrém hashování a omezeném zaplnění.',
         metricsHelpTheoryLink: 'Otevřít teorii',
         metricsHelpClose: 'Zavřít',
+        badgeOperation: 'OP',
+        badgeInstruction: 'INS',
         willAppear:       'se budou zobrazovat zde.',
         footer:           '2026 by Jakub Cernik. Vyvinuto pro vzdělávací účely jako bakalářská práce.',
 
@@ -294,6 +298,7 @@ function beginLogGroup(key, value = null) {
     header.innerHTML = `
         <span class="log-group-icon">▶</span>
         <span class="log-group-title">${d.groupLabel(key, value, steps)}</span>
+        <span class="log-unit-badge operation">${d.badgeOperation || 'OP'}</span>
     `;
     const body = document.createElement('div');
     body.classList.add('log-group-body');
@@ -307,17 +312,22 @@ function beginLogGroup(key, value = null) {
 
 function endLogGroup() { currentLogGroup = null; }
 
-function createLogEntry(type, title, details = null) {
+function createLogEntry(type, title, details = null, meta = null) {
     const target = currentLogGroup || document.getElementById('infoPanel');
     const d = dict[currentLang];
 
     const entry = document.createElement('div');
     entry.classList.add('log-entry', type.class);
 
+    const unitBadge = meta && meta.unit === 'instruction'
+        ? `<span class="log-unit-badge instruction">${d.badgeInstruction || 'INS'}</span>`
+        : '';
+
     let html = `
         <div class="log-header">
             <span class="log-icon">${type.icon}</span>
             <span class="log-title">${title}</span>
+            ${unitBadge}
             ${!currentLogGroup ? `<span class="log-step">${d.logStep(steps)}</span>` : ''}
         </div>
     `;
@@ -333,7 +343,7 @@ function createLogEntry(type, title, details = null) {
     panel.scrollTop = panel.scrollHeight;
 }
 
-function updateInfoPanel(msg) { createLogEntry(LOG_TYPES.INFO, msg); }
+function updateInfoPanel(msg, meta = null) { createLogEntry(LOG_TYPES.INFO, msg, null, meta); }
 
 function openMetricsHelp() {
     const modal = document.getElementById('metricsHelpModal');
