@@ -624,7 +624,7 @@ body.modal-open {
 
 #infoPanel {
     background: #f8f9fa;
-    padding: 15px;
+    padding: 10px 12px;
     font-size: 0.9rem;
     color: #333;
     text-align: left;
@@ -634,16 +634,16 @@ body.modal-open {
     position: relative;
     width: 100%;
 
-    /* Responsive height but still scrollable.
-       Keep it smaller on short screens to avoid double-scroll effects. */
-    max-height: clamp(180px, 32vh, 420px);
+    /* Keep logs readable when many entries are produced. */
+    min-height: clamp(240px, 36dvh, 380px);
+    max-height: clamp(340px, 52dvh, 620px);
     overflow-y: auto;
     box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.08);
     border-radius: 12px;
 }
 
 .log-group {
-    margin-bottom: 18px;
+    margin-bottom: 12px;
     border-radius: 10px;
     border: 2px solid #c8dce8;
     background: #f0f6fa;
@@ -654,12 +654,12 @@ body.modal-open {
 .log-group-header {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 10px 16px;
+    gap: 8px;
+    padding: 8px 12px;
     background: #2a7a9b;
     color: #fff;
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 0.88rem;
     letter-spacing: 0.01em;
 }
 
@@ -673,14 +673,14 @@ body.modal-open {
 }
 
 .log-group-body {
-    padding: 10px 10px 4px 10px;
+    padding: 8px 8px 2px 8px;
     display: flex;
     flex-direction: column;
     gap: 0;
 }
 
 .log-group-body .log-entry {
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .log-group-body .log-entry:last-child {
@@ -689,8 +689,8 @@ body.modal-open {
 
 /* Log entry styles */
 .log-entry {
-    margin-bottom: 12px;
-    padding: 14px 16px;
+    margin-bottom: 8px;
+    padding: 9px 10px;
     border-radius: 8px;
     border-left: 4px solid #ddd;
     background: white;
@@ -744,16 +744,16 @@ body.modal-open {
 .log-header {
     display: flex;
     align-items: flex-start;
-    gap: 8px;
+    gap: 6px;
     font-weight: 600;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
     flex-wrap: nowrap;
     width: 100%;
 }
 
 .log-icon {
-    font-size: 1.1rem;
-    min-width: 20px;
+    font-size: 0.98rem;
+    min-width: 18px;
     flex-shrink: 0;
 }
 
@@ -761,29 +761,30 @@ body.modal-open {
     flex: 1;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    line-height: 1.5;
+    line-height: 1.35;
+    font-size: 0.88rem;
     min-width: 0;
 }
 
 .log-step {
     color: #666;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: normal;
     margin-left: auto;
     flex-shrink: 0;
     white-space: nowrap;
     align-self: flex-start;
-    padding-top: 2px;
+    padding-top: 0;
 }
 
 .log-unit-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 38px;
-    padding: 2px 8px;
+    min-width: 34px;
+    padding: 2px 6px;
     border-radius: 999px;
-    font-size: 0.68rem;
+    font-size: 0.64rem;
     font-weight: 700;
     letter-spacing: 0.03em;
     white-space: nowrap;
@@ -803,12 +804,12 @@ body.modal-open {
 }
 
 .log-details {
-    margin-top: 8px;
-    padding-left: 28px;
-    padding-right: 8px;
-    font-size: 0.85rem;
+    margin-top: 4px;
+    padding-left: 24px;
+    padding-right: 0;
+    font-size: 0.8rem;
     color: #555;
-    line-height: 1.8;
+    line-height: 1.5;
     word-wrap: break-word;
     overflow-wrap: break-word;
     display: block;
@@ -818,11 +819,11 @@ body.modal-open {
 
 .log-badge {
     display: inline-block;
-    padding: 3px 7px;
+    padding: 2px 6px;
     border-radius: 10px;
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     font-weight: 600;
-    margin: 0 4px;
+    margin: 0 2px;
     white-space: nowrap;
     vertical-align: middle;
     line-height: 1;
@@ -847,6 +848,67 @@ body.modal-open {
 .coin-text {
     color: #ffa500;
     font-weight: 700;
+}
+
+@media (max-height: 920px) {
+    #container {
+        padding: 18px;
+    }
+
+    header h1 {
+        font-size: 1.7rem;
+        margin-bottom: 12px;
+    }
+
+    #navigation {
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .mode.active {
+        margin: 10px 0;
+    }
+
+    #trackers {
+        margin: 8px 0 10px;
+    }
+
+    #infoPanel {
+        min-height: 220px;
+        max-height: 56dvh;
+    }
+}
+
+@media (max-height: 760px) {
+    #container {
+        padding: 14px;
+    }
+
+    header h1 {
+        font-size: 1.45rem;
+        margin-bottom: 8px;
+    }
+
+    #pageNav {
+        margin-top: 4px;
+        margin-bottom: 2px;
+        font-size: 0.84rem;
+    }
+
+    #navigation button {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+
+    #trackers > div {
+        min-height: 48px;
+        padding: 7px 10px;
+    }
+
+    #infoPanel {
+        min-height: 190px;
+        max-height: 60dvh;
+    }
 }
 
 /* Flying coin used by Vector bank animations */
