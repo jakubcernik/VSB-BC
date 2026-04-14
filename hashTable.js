@@ -28,6 +28,7 @@ let size = 0; // number of live entries
 let table = []; // { key, value } | null
 let coinsOnSlot = []; // saved coin per occupied slot (0/1)
 let stepsLocal = 0; // internal step count, mirrored to global `steps` from hash-ui.js
+let instructions = 0; // atomic internal work units (probe/write/move)
 let isAnimating = false;
 let preparedCaseMode = null;
 let preparedScenario = null;
@@ -112,7 +113,13 @@ function updateCoinCounter() {
 function updateStepCounter() {
     const d = dict[currentLang];
     const el = document.getElementById('stepCounter');
-    if (el) el.textContent = `${d.steps}: ${steps}`;
+    if (el) el.textContent = `${d.operations || d.steps}: ${steps}`;
+}
+
+function updateInstructionCounter() {
+    const d = dict[currentLang];
+    const el = document.getElementById('instructionCounter');
+    if (el) el.textContent = `${d.instructions || d.steps}: ${instructions}`;
 }
 
 function currentLoadFactor() {
@@ -192,6 +199,7 @@ function renderTable(highlightIndex = null) {
 
     updateMeta();
     updateStepCounter();
+    updateInstructionCounter();
     updateCoinCounter();
 }
 
@@ -280,6 +288,7 @@ async function resizeAndRehash(newCapacity) {
 
         table[to] = entry;
         coinsOnSlot[to] = 1; // coin re-saved on new slot (invariant continues)
+        instructions++; // one moved/reinserted element instruction
 
         moved++;
         renderTable(to);
@@ -329,6 +338,7 @@ async function insertKV(keyInt, value) {
     for (let offset = 0; offset < capacity; offset++) {
         const i = (h + offset) % capacity;
         probeCount++;
+        instructions++; // one probe check instruction
         renderTable(i);
         createLogEntry(LOG_TYPES.PROBE, d.probeCheck(i));
         await new Promise(r => setTimeout(r, getDelay(250)));
@@ -351,6 +361,7 @@ async function insertKV(keyInt, value) {
 
             // do the update
             table[i].value = value;
+            instructions++; // one write/update instruction
             if (bank > 0) bank -= 1;
             createLogEntry(LOG_TYPES.SUCCESS, d.updateDone(i));
             await new Promise(r => setTimeout(r, getDelay(160)));
@@ -389,6 +400,7 @@ async function insertKV(keyInt, value) {
         // write
         table[i] = { key: keyInt, value };
         size++;
+        instructions++; // one write instruction
 
         // 1 coin pays for placement
         if (bank > 0) bank--;
@@ -572,6 +584,7 @@ function resetHashTable() {
     coinsOnSlot = new Array(capacity).fill(0);
     steps = 0;
     stepsLocal = 0;
+    instructions = 0;
     isAnimating = false;
     preparedCaseMode = null;
     preparedScenario = null;

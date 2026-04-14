@@ -39,6 +39,7 @@ const theoryDict = {
         hashFuncBox: 'Note: real hash tables use much stronger hashing (bit mixing) especially for non-integer keys (strings, objects). Here the goal is to clearly show the role of <code>mod capacity</code>, collisions and probing, and why a resize requires a rehash.',
 
         amortizedP1: 'All three classical amortized-analysis methods show that repeated INSERT with occasional resize runs in amortized O(1).',
+        amortizedP2: 'In the simulation, we separate <strong>operations</strong> (one user INSERT/UPDATE request) from <strong>instructions</strong> (atomic internal work: probe check, write/update, move during rehash). The amortized coin argument in this section is used mainly for resize/rehash moves; probing is evaluated via expected average-case behavior under good hashing and bounded load factor.',
 
         tabAggregate:  'Aggregate Method',
         tabAccounting: 'Accounting Method',
@@ -72,11 +73,11 @@ const theoryDict = {
         opInsertBest: 'INSERT (best)',
         opInsertWorst: 'INSERT (single worst)',
 
-        noteInsert: 'Over any sequence of inserts with resizing by doubling and a constant load-factor threshold.',
+        noteInsert: 'Over any sequence of inserts with resizing by doubling and a constant load-factor threshold; probing cost is interpreted as expected average-case under good hashing.',
         noteInsertBest: 'Hashed slot is empty.',
         noteInsertWorst: 'Rare: insert crosses the load threshold and triggers resize + rehash (single operation O(n)).',
 
-        legendAmortized: '* Amortized O(1) means the average cost per INSERT over any N operations is bounded by a constant, even though a single INSERT can sometimes cost Θ(n).',
+        legendAmortized: '* Amortized O(1) means average cost per INSERT over any N operations is bounded by a constant (mainly via rare resize/rehash spikes), even though one INSERT can cost Θ(n). Expected probing remains a separate average-case assumption.',
 
         ctaText: 'Ready to see probing, resizing, and coin accounting in action? Open the interactive simulation.',
         ctaButton: '⚙️ Open Simulation',
@@ -118,6 +119,7 @@ const theoryDict = {
         hashFuncBox: 'Poznámka: reálné hash tabulky používají pro „zamíchání“ bitů výrazně silnější hash (zejména pro stringy/objekty). Zde je cílem jasně ukázat roli <code>mod kapacita</code>, kolize a probing, a proč resize nutně znamená rehash.',
 
         amortizedP1: 'Všechny tři klasické metody amortizované analýzy ukazují, že opakované INSERT s občasným resize běží v amortizovaném O(1).',
+        amortizedP2: 'V simulaci rozlišujeme <strong>operace</strong> (jeden uživatelský požadavek INSERT/UPDATE) a <strong>instrukce</strong> (atomická interní práce: kontrola slotu při probingu, zápis/UPDATE, přesun prvku při rehashi). Mincový amortizační argument v této sekci platí hlavně pro přesuny při resize/rehashi; probing vyhodnocujeme přes očekávaný průměrný případ při dobrém hashování a omezeném zaplnění.',
 
         tabAggregate:  'Agregační metoda',
         tabAccounting: 'Účetní metoda',
@@ -151,11 +153,11 @@ const theoryDict = {
         opInsertBest: 'INSERT (nejlepší)',
         opInsertWorst: 'INSERT (nejhorší 1×)',
 
-        noteInsert: 'Pro libovolnou sekvenci vložení při zdvojnásobování kapacity a konstantním limitu zaplnění.',
+        noteInsert: 'Pro libovolnou sekvenci vložení při zdvojnásobování kapacity a konstantním limitu zaplnění; cena probingu je interpretována jako očekávaný průměrný případ při dobrém hashování.',
         noteInsertBest: 'Slot určený hashem je prázdný.',
         noteInsertWorst: 'Vzácně: vložení překročí limit zaplnění a vyvolá resize + rehash (jedna operace O(n)).',
 
-        legendAmortized: '* Amortizované O(1) znamená, že průměrná cena na INSERT přes libovolných N operací je omezená konstantou, i když jednotlivý INSERT může občas stát Θ(n).',
+        legendAmortized: '* Amortizované O(1) znamená, že průměrná cena na INSERT přes libovolných N operací je omezená konstantou (hlavně díky rozložení vzácných resize/rehash skoků), i když jednotlivý INSERT může občas stát Θ(n). Očekávaná cena probingu je samostatný předpoklad průměrného případu.',
 
         ctaText: 'Chcete vidět probing, resize a mincovou účetní metodu v akci? Otevřete interaktivní simulaci.',
         ctaButton: '⚙️ Otevřít simulaci',
@@ -255,6 +257,8 @@ function applyLanguage() {
     if (hBox) hBox.innerHTML = d.hashFuncBox;
 
     document.getElementById('amortizedP1').innerHTML = d.amortizedP1;
+    const amortizedP2 = document.getElementById('amortizedP2');
+    if (amortizedP2) amortizedP2.innerHTML = d.amortizedP2;
 
     document.getElementById('tabAggregate').textContent = d.tabAggregate;
     document.getElementById('tabAccounting').textContent = d.tabAccounting;

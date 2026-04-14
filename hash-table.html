@@ -31,7 +31,25 @@
 
     <div id="trackers">
         <div id="creditCounter">Coins: 0</div>
-        <div id="stepCounter">Steps: 0</div>
+        <div class="metric-counters-group">
+            <div id="stepCounter">Operations: 0</div>
+            <div id="instructionCounter">Instructions: 0</div>
+            <button id="metricsHelpButton" class="metrics-help-button" type="button" onclick="openMetricsHelp()">What do metrics mean?</button>
+        </div>
+    </div>
+
+    <div id="metricsHelpModal" class="metrics-help-modal" aria-hidden="true">
+        <div class="metrics-help-dialog" role="dialog" aria-modal="true" aria-labelledby="metricsHelpTitle">
+            <button id="metricsHelpCloseX" class="metrics-help-close" type="button" onclick="closeMetricsHelp()" aria-label="Close">×</button>
+            <h3 id="metricsHelpTitle">Metrics explanation</h3>
+            <p id="metricsHelpLine1"></p>
+            <p id="metricsHelpLine2"></p>
+            <p id="metricsHelpLine3"></p>
+            <div class="metrics-help-actions">
+                <a id="metricsHelpTheoryLink" class="metrics-help-theory-link" href="hash-table-theory.html#sec-amortized" onclick="navigateToPage(event, 'hash-table-theory.html#sec-amortized')">Open theory</a>
+                <button id="metricsHelpCloseBtn" class="btn-secondary" type="button" onclick="closeMetricsHelp()">Close</button>
+            </div>
+        </div>
     </div>
 
     <main id="mainContent">

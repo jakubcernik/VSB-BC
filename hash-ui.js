@@ -24,7 +24,16 @@ const dict = {
         worst:            'Worst Case',
 
         coins:            'Coins',
+        operations:       'Operations',
         steps:            'Steps',
+        instructions:     'Instructions',
+        metricsHelpButton: 'What do metrics mean?',
+        metricsHelpTitle: 'Metrics explanation',
+        metricsHelpLine1: 'Operation means one INSERT/UPDATE request from the user.',
+        metricsHelpLine2: 'Instruction means one atomic internal action: one probe check, one write/update, or one moved element during rehash.',
+        metricsHelpLine3: 'Amortized argument here pays mainly for resize/rehash moves; probing is explained via expected average cost with good hashing and bounded load factor.',
+        metricsHelpTheoryLink: 'Open theory',
+        metricsHelpClose: 'Close',
         willAppear:       'will appear here.',
         footer:           '2026 by Jakub Cernik. Developed for educational purposes as a Bachelor Thesis.',
 
@@ -142,7 +151,16 @@ const dict = {
         worst:            'Nejhorší případ',
 
         coins:            'Mince',
+        operations:       'Operace',
         steps:            'Kroky',
+        instructions:     'Instrukce',
+        metricsHelpButton: 'Co znamenají metriky?',
+        metricsHelpTitle: 'Vysvětlení metrik',
+        metricsHelpLine1: 'Operace znamená jeden požadavek INSERT/UPDATE od uživatele.',
+        metricsHelpLine2: 'Instrukce znamená jednu atomickou interní akci: jednu kontrolu slotu (probe), jeden zápis/UPDATE nebo jeden přesun prvku při rehashi.',
+        metricsHelpLine3: 'Amortizace zde platí hlavně přesuny při resize/rehashi; probing je vysvětlen přes očekávanou průměrnou cenu při dobrém hashování a omezeném zaplnění.',
+        metricsHelpTheoryLink: 'Otevřít teorii',
+        metricsHelpClose: 'Zavřít',
         willAppear:       'se budou zobrazovat zde.',
         footer:           '2026 by Jakub Cernik. Vyvinuto pro vzdělávací účely jako bakalářská práce.',
 
@@ -317,6 +335,35 @@ function createLogEntry(type, title, details = null) {
 
 function updateInfoPanel(msg) { createLogEntry(LOG_TYPES.INFO, msg); }
 
+function openMetricsHelp() {
+    const modal = document.getElementById('metricsHelpModal');
+    if (!modal) return;
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+}
+
+function closeMetricsHelp() {
+    const modal = document.getElementById('metricsHelpModal');
+    if (!modal) return;
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+}
+
+function initializeMetricsHelpModal() {
+    const modal = document.getElementById('metricsHelpModal');
+    if (!modal) return;
+
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) closeMetricsHelp();
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && modal.classList.contains('open')) closeMetricsHelp();
+    });
+}
+
 // ─── Theme / Language / Navigation ────────────────────────────────────────────
 function reloadWithTransition(beforeReload) {
     const ov = document.getElementById('pageTransitionOverlay');
@@ -425,8 +472,32 @@ function applyLanguage() {
     updateLangToggleUI();
     applyTheme();
 
+    const stepCounter = document.getElementById('stepCounter');
+    if (stepCounter) stepCounter.textContent = `${d.operations || d.steps}: 0`;
+
+    const instructionCounter = document.getElementById('instructionCounter');
+    if (instructionCounter) instructionCounter.textContent = `${d.instructions}: 0`;
+
+    const metricsHelpButton = document.getElementById('metricsHelpButton');
+    if (metricsHelpButton) metricsHelpButton.textContent = d.metricsHelpButton || '';
+    const metricsHelpTitle = document.getElementById('metricsHelpTitle');
+    if (metricsHelpTitle) metricsHelpTitle.textContent = d.metricsHelpTitle || '';
+    const metricsHelpLine1 = document.getElementById('metricsHelpLine1');
+    if (metricsHelpLine1) metricsHelpLine1.textContent = d.metricsHelpLine1 || '';
+    const metricsHelpLine2 = document.getElementById('metricsHelpLine2');
+    if (metricsHelpLine2) metricsHelpLine2.textContent = d.metricsHelpLine2 || '';
+    const metricsHelpLine3 = document.getElementById('metricsHelpLine3');
+    if (metricsHelpLine3) metricsHelpLine3.textContent = d.metricsHelpLine3 || '';
+    const metricsHelpTheoryLink = document.getElementById('metricsHelpTheoryLink');
+    if (metricsHelpTheoryLink) metricsHelpTheoryLink.textContent = d.metricsHelpTheoryLink || '';
+    const metricsHelpCloseBtn = document.getElementById('metricsHelpCloseBtn');
+    if (metricsHelpCloseBtn) metricsHelpCloseBtn.textContent = d.metricsHelpClose || '';
+    const metricsHelpCloseX = document.getElementById('metricsHelpCloseX');
+    if (metricsHelpCloseX) metricsHelpCloseX.setAttribute('aria-label', d.metricsHelpClose || 'Close');
+
     // ensure counters use right labels
     updateStepCounter();
+    if (typeof updateInstructionCounter === 'function') updateInstructionCounter();
     updateCoinCounter();
     updateMeta();
     if (typeof updateCaseButtons === 'function') updateCaseButtons();
@@ -435,6 +506,7 @@ function applyLanguage() {
 // ─── Page init ────────────────────────────────────────────────────────────────
 window.addEventListener('load', () => {
     document.body.classList.add('page-loaded');
+    initializeMetricsHelpModal();
     applyLanguage();
 });
 
