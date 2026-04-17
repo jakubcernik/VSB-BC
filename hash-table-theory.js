@@ -62,11 +62,11 @@ const theoryDict = {
         accountingConclusion: 'Since each INSERT is charged a constant number of coins and we never borrow from the future, INSERT runs in amortized O(1). A single INSERT can still cost O(n) when it triggers resize + rehash.',
 
         potentialTitle: 'Potential Method',
-        potentialP1:    'Define a potential Φ that grows as the table gets fuller. One simple choice is proportional to the number of stored elements.',
-        potentialMath:  'Φ = c · size   (for a suitable constant c)',
-        potentialP2:    'A resize decreases the load factor dramatically, which releases potential and pays for the Θ(n) rehash work. With doubling, amortized INSERT stays O(1).',
+        potentialP1:    'Define a potential Φ that depends on both the number of elements and capacity (not only on size). A convenient linear choice is:',
+        potentialMath:  'Φ = 3 · size − capacity   (optionally shifted/clipped to keep Φ ≥ 0)',
+        potentialP2:    'As the table approaches the resize threshold, Φ grows. When resize doubles capacity, Φ drops by Θ(n), and this drop pays for the Θ(n) rehash work. Therefore amortized INSERT remains O(1).',
         potentialMath2:  'â = actual + ΔΦ = O(1)',
-        potentialConclusion: 'Potential method confirms the same result: amortized cost per INSERT is constant.',
+        potentialConclusion: 'Potential method confirms the same result: even with occasional expensive resize, amortized cost per INSERT is constant.',
 
         // Complexity summary (unified: best / amortized / single worst)
         opInsert: 'INSERT (amortized)',
@@ -142,11 +142,11 @@ const theoryDict = {
         accountingConclusion: 'Protože každý INSERT účtuje konstantní počet mincí a nikdy si nepůjčujeme z budoucnosti, INSERT běží v amortizovaném O(1). Jednotlivý INSERT ale může stát O(n), když zrovna vyvolá resize + rehash.',
 
         potentialTitle: 'Potenciálová metoda',
-        potentialP1:    'Zaveďme potenciál Φ, který roste, když se tabulka zaplňuje. Jednoduchá volba je proporcionalita k počtu uložených prvků.',
-        potentialMath:  'Φ = c · velikost   (pro vhodnou konstantu c)',
-        potentialP2:    'Resize výrazně sníží zaplnění, tím se uvolní potenciál a zaplatí Θ(n) rehash. Při zdvojnásobování zůstává amortizovaný INSERT jako O(1).',
+        potentialP1:    'Zaveďme potenciál Φ, který závisí na počtu prvků i kapacitě (ne jen na velikosti). Praktická lineární volba je:',
+        potentialMath:  'Φ = 3 · velikost − kapacita   (případně posunutá/oříznutá tak, aby Φ ≥ 0)',
+        potentialP2:    'Jak se tabulka blíží limitu zaplnění, Φ roste. Při resize (zdvojnásobení kapacity) Φ skokově klesne o Θ(n) a tento pokles zaplatí Θ(n) práci rehashe. Proto amortizovaný INSERT zůstává O(1).',
         potentialMath2:  'â = skutečná cena + ΔΦ = O(1)',
-        potentialConclusion: 'Potenciálová metoda potvrzuje stejný výsledek: amortizovaná cena INSERT je konstantní.',
+        potentialConclusion: 'Potenciálová metoda potvrzuje stejný výsledek: i přes občasný drahý resize je amortizovaná cena INSERT konstantní.',
 
         // Přehled složitostí (sjednoceno: nejlepší / amortizovaně / nejhorší 1×)
         opInsert: 'INSERT (amortizovaně)',
