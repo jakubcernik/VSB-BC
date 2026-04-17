@@ -30,7 +30,7 @@ const theoryDict = {
         cardWorstDesc:  'Primary single-operation worst case: insert triggers resize, so we must rehash and move Θ(n) stored elements.',
 
         resizeP1: 'When the table becomes too full (α > threshold), we allocate a new array of double capacity and re-insert all existing elements into the new table. This is called <strong>rehashing</strong>.',
-        resizeP2: 'In open addressing, rehashing is not a simple “copy the array”. The target index is computed as <code>h(key) mod capacity</code>. When the capacity changes, the modulo changes — so many keys get a different start slot. Therefore we must take each stored element and <strong>INSERT it again</strong> into the new array (including probing on collisions).',
+        resizeP2: 'In open addressing, rehashing is not a simple “copy the array”. The target index is computed as <code>h(key) mod capacity</code>. When the capacity changes, the modulo changes — so many keys get a different start slot. Therefore, we must take each stored element and <strong>INSERT it again</strong> into the new array (including probing on collisions).',
         resizeBox: 'Why is rehash Θ(n)? We must scan the old table and move each of the n stored elements at least once. With a constant load-factor threshold (e.g. 0.75), the expected number of probes per moved element stays small, so the total rehash work grows proportionally to n.',
 
         hashFuncTitle: 'Hash function used in this simulation',
