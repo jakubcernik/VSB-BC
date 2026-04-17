@@ -2,7 +2,7 @@
 
 #homeContainer {
     width: 100%;
-    max-width: 860px;
+    max-width: 920px;
     margin: 0 auto;
     padding: 48px 24px 110px;
 }
@@ -35,7 +35,7 @@
 #homeMain {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 22px;
 }
 
 /* ── Single algorithm card ───────────────────────────────────── */
@@ -44,11 +44,11 @@
     display: flex;
     align-items: flex-start;
     gap: 24px;
-    background: #ffffff;
+    background: linear-gradient(180deg, #ffffff 0%, #f9fcff 100%);
     border-radius: 16px;
     padding: 28px 28px 24px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    border: 2px solid transparent;
+    box-shadow: 0 8px 24px rgba(21, 59, 79, 0.11);
+    border: 1px solid #d6e3ed;
     text-decoration: none;
     color: inherit;
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
@@ -67,7 +67,7 @@
 /* Available cards are clickable */
 .algo-card.available:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 28px rgba(42, 122, 155, 0.18);
+    box-shadow: 0 12px 30px rgba(42, 122, 155, 0.2);
     border-color: #2a7a9b;
 }
 
@@ -184,13 +184,48 @@ body.dark-mode #homeTitle    { color: #64b5d6; }
 body.dark-mode #homeSubtitle { color: #aaa; }
 
 body.dark-mode .algo-card {
-    background: #2e2e2e;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(180deg, #2f373d 0%, #2a3137 100%);
+    border-color: #485963;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.32);
 }
 
 body.dark-mode .algo-card.available:hover {
     border-color: #64b5d6;
-    box-shadow: 0 8px 28px rgba(42, 122, 155, 0.3);
+    box-shadow: 0 12px 30px rgba(42, 122, 155, 0.33);
+}
+
+@media (max-width: 760px) {
+    #homeContainer {
+        padding: 28px 14px 108px;
+    }
+
+    #homeHeader {
+        margin-bottom: 30px;
+    }
+
+    #homeTitle {
+        font-size: 1.85rem;
+    }
+
+    .algo-card {
+        gap: 14px;
+        padding: 18px 16px;
+    }
+
+    .algo-card-icon {
+        width: 44px;
+        font-size: 2.1rem;
+        margin-top: 1px;
+    }
+
+    .algo-card-title {
+        font-size: 1.02rem;
+    }
+
+    .algo-card-desc {
+        font-size: 0.86rem;
+        line-height: 1.55;
+    }
 }
 
 body.dark-mode .algo-card-title      { color: #e0e0e0; }

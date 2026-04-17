@@ -204,17 +204,18 @@
     align-items: center;
     gap: 6px;
     padding: 10px 24px;
-    border: 2px dashed #f0ad00;
+    border: 1px dashed #e3a73a;
     border-radius: 12px;
-    background: #fffbea;
+    background: linear-gradient(180deg, #fffdf2 0%, #fff7de 100%);
     min-width: 160px;
     min-height: 60px;
-    transition: background 0.3s, border-color 0.3s;
+    box-shadow: 0 8px 18px rgba(187, 140, 36, 0.12);
+    transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
 
 #operationBank.bank-active {
     border-color: #e67e00;
-    background: #fff3c4;
+    background: linear-gradient(180deg, #fff5d4 0%, #ffe9b0 100%);
     box-shadow: 0 0 0 3px rgba(240, 173, 0, 0.25);
 }
 
@@ -235,12 +236,13 @@
 }
 
 body.dark-mode #operationBank {
-    background: #2a2200;
+    background: linear-gradient(180deg, #302708 0%, #2a2200 100%);
     border-color: #a07800;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.24);
 }
 
 body.dark-mode #operationBank.bank-active {
-    background: #332800;
+    background: linear-gradient(180deg, #3c2f06 0%, #332800 100%);
     border-color: #f0ad00;
 }
 
@@ -253,7 +255,7 @@ body.dark-mode #bankLabel {
     font-size: 1.2rem;
     font-weight: 700;
     color: #2a7a9b;
-    background: #e8f4fb;
+    background: linear-gradient(180deg, #eff8fe 0%, #e2f1fb 100%);
     padding: 6px 22px;
     border-radius: 20px;
     border: 1.5px solid #b0d8ee;
@@ -275,7 +277,7 @@ body.dark-mode .bit-frame.bit-zero {
 }
 
 body.dark-mode #decimalDisplay {
-    background: #1e3a4a;
+    background: linear-gradient(180deg, #244455 0%, #1e3a4a 100%);
     border-color: #3a7a9b;
     color: #7ecfef;
 }

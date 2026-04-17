@@ -12,10 +12,11 @@
     gap: 10px;
     flex-wrap: wrap;
     align-items: center;
-    background: rgba(42, 122, 155, 0.06);
-    border: 1px solid rgba(42, 122, 155, 0.18);
+    background: linear-gradient(180deg, #f8fbff 0%, #eef5fc 100%);
+    border: 1px solid #cfe0ea;
     border-radius: 12px;
     padding: 12px 14px;
+    box-shadow: 0 8px 18px rgba(21, 59, 79, 0.08);
 }
 
 #hashMeta .meta-item {
@@ -152,8 +153,8 @@ body.dark-mode #btnWorstInsertPrepared:hover {
 }
 
 .hash-slot {
-    border: 2px solid #ddd;
-    background: #fafafa;
+    border: 1px solid #d7e3ec;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
     border-radius: 12px;
     padding: 8px;
     position: relative;
@@ -161,7 +162,8 @@ body.dark-mode #btnWorstInsertPrepared:hover {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    box-shadow: 0 6px 14px rgba(20, 48, 62, 0.08);
+    transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 /* If the container is narrow, reduce columns earlier so we avoid horizontal scroll */
@@ -173,8 +175,26 @@ body.dark-mode #btnWorstInsertPrepared:hover {
 
 .hash-slot.slot-highlight {
     border-color: #2a7a9b;
-    background: rgba(42, 122, 155, 0.08);
+    background: linear-gradient(180deg, #eef7fd 0%, #e3f1fa 100%);
     transform: translateY(-1px);
+    box-shadow: 0 10px 18px rgba(42, 122, 155, 0.18);
+}
+
+body.dark-mode #hashMeta {
+    background: linear-gradient(180deg, #2f383f 0%, #2a3238 100%);
+    border-color: #485963;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.24);
+}
+
+body.dark-mode .hash-slot {
+    background: linear-gradient(180deg, #313941 0%, #2b3339 100%);
+    border-color: #4f606c;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.22);
+}
+
+body.dark-mode .hash-slot.slot-highlight {
+    background: linear-gradient(180deg, #294150 0%, #243846 100%);
+    box-shadow: 0 10px 18px rgba(76, 151, 184, 0.25);
 }
 
 .hash-slot .slot-header {
