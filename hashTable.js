@@ -113,7 +113,7 @@ function updateCoinCounter() {
 function updateStepCounter() {
     const d = dict[currentLang];
     const el = document.getElementById('stepCounter');
-    if (el) el.textContent = `${d.operations || d.steps}: ${steps}`;
+    if (el) el.textContent = `${d.steps}: ${steps}`;
 }
 
 function updateInstructionCounter() {

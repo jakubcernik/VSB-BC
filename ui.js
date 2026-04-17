@@ -85,20 +85,20 @@ const dict = {
         randomResume: 'Resume',
         randomSpeed: 'Speed:',
         coins: 'Coins',
-        operations: 'Operations',
+        operations: 'Steps',
         steps: 'Steps',
         instructions: 'Instructions',
         instructionBoundIdle: 'Instruction limit is shown after first operation.',
-        instructionBoundWithin: (instructionCount, operationCount, limit) => `Within limit: ${instructionCount}/${limit} instructions for ${operationCount} operations.`,
-        instructionBoundExceeded: (instructionCount, operationCount, limit) => `Limit exceeded: ${instructionCount}/${limit} instructions for ${operationCount} operations.`,
+        instructionBoundWithin: (instructionCount, operationCount, limit) => `Within limit: ${instructionCount}/${limit} instructions for ${operationCount} steps.`,
+        instructionBoundExceeded: (instructionCount, operationCount, limit) => `Limit exceeded: ${instructionCount}/${limit} instructions for ${operationCount} steps.`,
         metricsHelpButton: 'What do metrics mean?',
         metricsHelpTitle: 'Metrics explained',
-        metricsHelpLine1: 'Operation means one push_back request from the user.',
+        metricsHelpLine1: 'Step means one push_back request from the user.',
         metricsHelpLine2: 'Instruction means one atomic action that costs one coin (insert one item or copy one item).',
         metricsHelpLine3: 'In this simulation, instruction count should stay at most three times the operation count.',
         metricsHelpTheoryLink: 'Open theory section',
         metricsHelpClose: 'Close',
-        badgeOperation: 'OP',
+        badgeOperation: 'STEP',
         badgeInstruction: 'INS',
         willAppear: 'will appear here.',
         footer: '2026 by Jakub Cernik. Developed for educational purposes as a Bachelor Thesis.',
@@ -194,20 +194,20 @@ const dict = {
         randomResume: 'Pokračovat',
         randomSpeed: 'Rychlost:',
         coins: 'Mince',
-        operations: 'Operace',
+        operations: 'Kroky',
         steps: 'Kroky',
         instructions: 'Instrukce',
-        instructionBoundIdle: 'Limit instrukcí se zobrazí po první operaci.',
-        instructionBoundWithin: (instructionCount, operationCount, limit) => `V limitu: ${instructionCount}/${limit} instrukcí pro ${operationCount} operací.`,
-        instructionBoundExceeded: (instructionCount, operationCount, limit) => `Limit překročen: ${instructionCount}/${limit} instrukcí pro ${operationCount} operací.`,
+        instructionBoundIdle: 'Limit instrukcí se zobrazí po prvním kroku.',
+        instructionBoundWithin: (instructionCount, operationCount, limit) => `V limitu: ${instructionCount}/${limit} instrukcí pro ${operationCount} kroků.`,
+        instructionBoundExceeded: (instructionCount, operationCount, limit) => `Limit překročen: ${instructionCount}/${limit} instrukcí pro ${operationCount} kroků.`,
         metricsHelpButton: 'Co znamenají metriky?',
         metricsHelpTitle: 'Vysvětlení metrik',
-        metricsHelpLine1: 'Operace znamená jeden požadavek push_back od uživatele.',
+        metricsHelpLine1: 'Krok znamená jeden požadavek push_back od uživatele.',
         metricsHelpLine2: 'Instrukce znamená jednu atomickou akci za jednu minci (vložit prvek nebo zkopírovat prvek).',
-        metricsHelpLine3: 'V této simulaci by počet instrukcí měl být nejvýše trojnásobek počtu operací.',
+        metricsHelpLine3: 'V této simulaci by počet instrukcí měl být nejvýše trojnásobek počtu kroků.',
         metricsHelpTheoryLink: 'Otevřít část teorie',
         metricsHelpClose: 'Zavřít',
-        badgeOperation: 'OP',
+        badgeOperation: 'KROK',
         badgeInstruction: 'INS',
         willAppear: 'se budou zobrazovat zde.',
         footer: '2026 by Jakub Cernik. Vyvinuto pro vzdělávací účely jako bakalářská práce.',
@@ -396,7 +396,7 @@ function beginLogGroup(value, stepNum) {
     header.innerHTML = `
         <span class="log-group-icon">▶</span>
         <span class="log-group-title">${d.groupLabel ? d.groupLabel(value, stepNum) : d.logStep(stepNum) + ` — ${value}`}</span>
-        <span class="log-unit-badge operation">${d.badgeOperation || 'OP'}</span>
+        <span class="log-unit-badge operation">${d.badgeOperation || 'STEP'}</span>
     `;
 
     const body = document.createElement("div");
@@ -550,8 +550,7 @@ function applyLanguage()
 
     const stepCounter = document.getElementById('stepCounter');
     if (stepCounter) {
-        const operationsLabel = d.operations || d.steps;
-        stepCounter.textContent = `${operationsLabel}: 0`;
+        stepCounter.textContent = `${d.steps}: 0`;
     }
 
     const instructionCounter = document.getElementById('instructionCounter');

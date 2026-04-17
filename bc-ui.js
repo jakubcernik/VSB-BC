@@ -40,17 +40,17 @@ const dict = {
         bitLengthLabel:   'Bit length:',
         bitLengthHint:    'Default 8 bits is for clarity; you can change it.',
         coins:            'Coins',
-        operations:       'Operations',
+        operations:       'Steps',
         steps:            'Steps',
-        bitSteps:         'Bit flips',
+        instructions:     'Instructions',
         metricsHelpButton: 'What do metrics mean?',
         metricsHelpTitle: 'Metrics explanation',
-        metricsHelpLine1: 'Operations represent the number of INCREMENT requests (one press of the increment button).',
-        metricsHelpLine2: 'Bit flips represent the number of atomic bit changes 0↔1 (each costs 1 coin).',
-        metricsHelpLine3: 'Amortized analysis shows total bit flips stay linear in operations.',
+        metricsHelpLine1: 'Steps represent the number of INCREMENT requests (one press of the increment button).',
+        metricsHelpLine2: 'Instructions represent atomic bit changes 0↔1 (each costs 1 coin).',
+        metricsHelpLine3: 'Amortized analysis shows total instructions stay linear in steps.',
         metricsHelpTheoryLink: 'Open theory',
         metricsHelpClose: 'Close',
-        badgeOperation: 'OP',
+        badgeOperation: 'STEP',
         badgeInstruction: 'INS',
         bankLabel:        'Operation charge (2 coins)',
         willAppear:       'will appear here.',
@@ -130,17 +130,17 @@ const dict = {
         bitLengthLabel:   'Délka čítače:',
         bitLengthHint:    'Výchozích 8 bitů je pro názornost; délku lze změnit.',
         coins:            'Mince',
-        operations:       'Operace',
+        operations:       'Kroky',
         steps:            'Kroky',
-        bitSteps:         'Kroky bitů',
+        instructions:     'Instrukce',
         metricsHelpButton: 'Co znamenají metriky?',
         metricsHelpTitle: 'Vysvětlení metrik',
-        metricsHelpLine1: 'Operace představují počet požadavků na INCREMENT (jedno stisknutí tlačítka).',
-        metricsHelpLine2: 'Kroky bitů představují počet atomických přepnutí bitu 0↔1 (každé stojí 1 minci).',
-        metricsHelpLine3: 'Amortizovaná analýza ukazuje, že celkový počet přepnutí zůstává lineární vůči počtu operací.',
+        metricsHelpLine1: 'Kroky představují počet požadavků na INCREMENT (jedno stisknutí tlačítka).',
+        metricsHelpLine2: 'Instrukce představují počet atomických přepnutí bitu 0↔1 (každé stojí 1 minci).',
+        metricsHelpLine3: 'Amortizovaná analýza ukazuje, že celkový počet instrukcí zůstává lineární vůči počtu kroků.',
         metricsHelpTheoryLink: 'Otevřít teorii',
         metricsHelpClose: 'Zavřít',
-        badgeOperation: 'OP',
+        badgeOperation: 'KROK',
         badgeInstruction: 'INS',
         bankLabel:        'Poplatek za operaci (2 mince)',
         willAppear:       'se budou zobrazovat zde.',
@@ -221,7 +221,7 @@ function beginLogGroup(from, to) {
     header.innerHTML = `
         <span class="log-group-icon">▶</span>
         <span class="log-group-title">${d.groupLabel(from, to, steps)}</span>
-        <span class="log-unit-badge operation">${d.badgeOperation || 'OP'}</span>
+        <span class="log-unit-badge operation">${d.badgeOperation || 'STEP'}</span>
     `;
     const body = document.createElement('div');
     body.classList.add('log-group-body');
@@ -387,10 +387,10 @@ function applyLanguage() {
     document.getElementById('bitLengthLabel').textContent = d.bitLengthLabel;
     document.getElementById('bitLengthHint').textContent  = d.bitLengthHint;
 
-    document.getElementById('creditCounter').textContent = `${d.coins} 0`;
-    document.getElementById('stepCounter').textContent   = `${d.operations ?? d.steps}: 0`;
+    document.getElementById('creditCounter').textContent = `${d.coins}: 0`;
+    document.getElementById('stepCounter').textContent   = `${d.steps}: 0`;
     const instructionCounter = document.getElementById('instructionCounter');
-    if (instructionCounter) instructionCounter.textContent = `${d.bitSteps ?? d.steps}: 0`;
+    if (instructionCounter) instructionCounter.textContent = `${d.instructions}: 0`;
     const metricsHelpButton = document.getElementById('metricsHelpButton');
     if (metricsHelpButton) metricsHelpButton.textContent = d.metricsHelpButton || '';
     const metricsHelpTitle = document.getElementById('metricsHelpTitle');

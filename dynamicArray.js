@@ -165,8 +165,7 @@ function updateCredits()
     }
 
     if (stepCounterEl) {
-        const operationsLabel = d.operations || d.steps;
-        stepCounterEl.textContent = `${operationsLabel}: ${steps}`;
+        stepCounterEl.textContent = `${d.steps}: ${steps}`;
     }
 
     if (instructionCounterEl) {

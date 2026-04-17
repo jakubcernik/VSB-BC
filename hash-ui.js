@@ -24,17 +24,17 @@ const dict = {
         worst:            'Worst Case',
 
         coins:            'Coins',
-        operations:       'Operations',
+        operations:       'Steps',
         steps:            'Steps',
         instructions:     'Instructions',
         metricsHelpButton: 'What do metrics mean?',
         metricsHelpTitle: 'Metrics explanation',
-        metricsHelpLine1: 'Operation means one INSERT/UPDATE request from the user.',
+        metricsHelpLine1: 'Step means one INSERT/UPDATE request from the user.',
         metricsHelpLine2: 'Instruction means one atomic internal action: one probe check, one write/update, or one moved element during rehash.',
         metricsHelpLine3: 'Amortized argument here pays mainly for resize/rehash moves; probing is explained via expected average cost with good hashing and bounded load factor.',
         metricsHelpTheoryLink: 'Open theory',
         metricsHelpClose: 'Close',
-        badgeOperation: 'OP',
+        badgeOperation: 'STEP',
         badgeInstruction: 'INS',
         willAppear:       'will appear here.',
         footer:           '2026 by Jakub Cernik. Developed for educational purposes as a Bachelor Thesis.',
@@ -153,17 +153,17 @@ const dict = {
         worst:            'Nejhorší případ',
 
         coins:            'Mince',
-        operations:       'Operace',
+        operations:       'Kroky',
         steps:            'Kroky',
         instructions:     'Instrukce',
         metricsHelpButton: 'Co znamenají metriky?',
         metricsHelpTitle: 'Vysvětlení metrik',
-        metricsHelpLine1: 'Operace znamená jeden požadavek INSERT/UPDATE od uživatele.',
+        metricsHelpLine1: 'Krok znamená jeden požadavek INSERT/UPDATE od uživatele.',
         metricsHelpLine2: 'Instrukce znamená jednu atomickou interní akci: jednu kontrolu slotu (probe), jeden zápis/UPDATE nebo jeden přesun prvku při rehashi.',
         metricsHelpLine3: 'Amortizace zde platí hlavně přesuny při resize/rehashi; probing je vysvětlen přes očekávanou průměrnou cenu při dobrém hashování a omezeném zaplnění.',
         metricsHelpTheoryLink: 'Otevřít teorii',
         metricsHelpClose: 'Zavřít',
-        badgeOperation: 'OP',
+        badgeOperation: 'KROK',
         badgeInstruction: 'INS',
         willAppear:       'se budou zobrazovat zde.',
         footer:           '2026 by Jakub Cernik. Vyvinuto pro vzdělávací účely jako bakalářská práce.',
@@ -298,7 +298,7 @@ function beginLogGroup(key, value = null) {
     header.innerHTML = `
         <span class="log-group-icon">▶</span>
         <span class="log-group-title">${d.groupLabel(key, value, steps)}</span>
-        <span class="log-unit-badge operation">${d.badgeOperation || 'OP'}</span>
+        <span class="log-unit-badge operation">${d.badgeOperation || 'STEP'}</span>
     `;
     const body = document.createElement('div');
     body.classList.add('log-group-body');
@@ -483,7 +483,7 @@ function applyLanguage() {
     applyTheme();
 
     const stepCounter = document.getElementById('stepCounter');
-    if (stepCounter) stepCounter.textContent = `${d.operations || d.steps}: 0`;
+    if (stepCounter) stepCounter.textContent = `${d.steps}: 0`;
 
     const instructionCounter = document.getElementById('instructionCounter');
     if (instructionCounter) instructionCounter.textContent = `${d.instructions}: 0`;
