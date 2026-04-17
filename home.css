@@ -5,6 +5,22 @@
     max-width: 920px;
     margin: 0 auto;
     padding: 48px 24px 110px;
+    position: relative;
+    isolation: isolate;
+}
+
+#homeContainer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 18px;
+    pointer-events: none;
+    opacity: 0.18;
+    background-image:
+            radial-gradient(circle at 1px 1px, rgba(34, 82, 109, 0.22) 0.6px, transparent 0.7px);
+    background-size: 10px 10px;
+    mix-blend-mode: multiply;
+    z-index: -1;
 }
 
 /* ── Header ─────────────────────────────────────────────────── */
@@ -15,7 +31,7 @@
 }
 
 #homeTitle {
-    font-size: 2.2rem;
+    font-size: var(--fs-h1);
     font-weight: 700;
     color: #2a7a9b;
     margin-bottom: 12px;
@@ -23,7 +39,7 @@
 }
 
 #homeSubtitle {
-    font-size: 1rem;
+    font-size: var(--fs-body);
     color: #666;
     max-width: 520px;
     margin: 0 auto;
@@ -115,7 +131,7 @@
 }
 
 .algo-card-title {
-    font-size: 1.15rem;
+    font-size: var(--fs-h2);
     font-weight: 700;
     color: #1a1a1a;
     margin-bottom: 8px;
@@ -131,7 +147,7 @@
 }
 
 .algo-card-desc {
-    font-size: 0.9rem;
+    font-size: 0.92rem;
     color: #555;
     line-height: 1.65;
     margin-bottom: 14px;
@@ -187,6 +203,13 @@ body.dark-mode .algo-card {
     background: linear-gradient(180deg, #2f373d 0%, #2a3137 100%);
     border-color: #485963;
     box-shadow: 0 10px 26px rgba(0, 0, 0, 0.32);
+}
+
+body.dark-mode #homeContainer::before {
+    opacity: 0.14;
+    background-image:
+            radial-gradient(circle at 1px 1px, rgba(149, 196, 220, 0.23) 0.6px, transparent 0.7px);
+    mix-blend-mode: screen;
 }
 
 body.dark-mode .algo-card.available:hover {

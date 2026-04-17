@@ -14,6 +14,10 @@
     --text-primary: #2b3740;
     --shadow-soft: 0 10px 28px rgba(21, 59, 79, 0.12);
     --shadow-card: 0 6px 20px rgba(21, 59, 79, 0.1);
+    --fs-body: clamp(0.95rem, 0.25vw + 0.9rem, 1rem);
+    --fs-h1: clamp(1.5rem, 1.6vw + 1.05rem, 2.1rem);
+    --fs-h2: clamp(1.02rem, 0.5vw + 0.9rem, 1.22rem);
+    --fs-meta: clamp(0.78rem, 0.25vw + 0.72rem, 0.9rem);
 }
 
 body {
@@ -22,6 +26,8 @@ body {
                 radial-gradient(circle at 110% 8%, #ddeaf5 0%, transparent 34%),
                 linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 100%);
     color: var(--text-primary);
+    font-size: var(--fs-body);
+    line-height: 1.55;
     min-height: 100vh;
     margin: 0;
     display: flex;
@@ -152,7 +158,7 @@ body.page-loaded {
 }
 
 header h1 {
-    font-size: 2rem;
+    font-size: var(--fs-h1);
     font-weight: 600;
     color: #2a7a9b;
     margin-bottom: 20px;
@@ -457,6 +463,19 @@ button:hover {
     transition: transform 0.3s ease, background 0.3s ease;
 }
 
+#infoPanel::before {
+    content: "";
+    position: absolute;
+    top: 12px;
+    bottom: 12px;
+    left: 18px;
+    width: 2px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, #b8cddd 0%, #d5e3ee 100%);
+    opacity: 0.85;
+    pointer-events: none;
+}
+
 .coins {
     position: absolute;
     top: -30px;
@@ -732,7 +751,7 @@ body.modal-open {
 /* Log entry styles */
 .log-entry {
     margin-bottom: 8px;
-    padding: 9px 10px;
+    padding: 9px 10px 9px 18px;
     border-radius: 8px;
     border-left: 4px solid #ddd;
     background: white;
@@ -740,6 +759,20 @@ body.modal-open {
     animation: slideIn 0.3s ease;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    position: relative;
+}
+
+.log-entry::before {
+    content: "";
+    position: absolute;
+    left: -2px;
+    top: 16px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #95adbd;
+    border: 2px solid #f4f8fc;
+    box-shadow: 0 0 0 1px rgba(142, 166, 181, 0.35);
 }
 
 @keyframes slideIn {
@@ -783,6 +816,12 @@ body.modal-open {
     background: #f5f7f8;
 }
 
+.log-entry.insert::before { background: #4caf50; }
+.log-entry.resize::before { background: #ff9800; }
+.log-entry.copy::before { background: #2196f3; }
+.log-entry.borrow::before { background: #9c27b0; }
+.log-entry.warning::before { background: #f44336; }
+
 .log-header {
     display: flex;
     align-items: flex-start;
@@ -804,13 +843,13 @@ body.modal-open {
     word-wrap: break-word;
     overflow-wrap: break-word;
     line-height: 1.35;
-    font-size: 0.88rem;
+    font-size: 0.9rem;
     min-width: 0;
 }
 
 .log-step {
     color: #666;
-    font-size: 0.7rem;
+    font-size: var(--fs-meta);
     font-weight: normal;
     margin-left: auto;
     flex-shrink: 0;
@@ -847,9 +886,9 @@ body.modal-open {
 
 .log-details {
     margin-top: 4px;
-    padding-left: 24px;
+    padding-left: 22px;
     padding-right: 0;
-    font-size: 0.8rem;
+    font-size: 0.84rem;
     color: #555;
     line-height: 1.5;
     word-wrap: break-word;
@@ -1088,6 +1127,15 @@ body.dark-mode .log-group-title strong {
 body.dark-mode .log-entry {
     background: #333 !important;
     color: #e0e0e0 !important;
+}
+
+body.dark-mode #infoPanel::before {
+    background: linear-gradient(180deg, #395060 0%, #2f4352 100%);
+}
+
+body.dark-mode .log-entry::before {
+    border-color: #2a3339;
+    box-shadow: 0 0 0 1px rgba(86, 111, 128, 0.5);
 }
 
 body.dark-mode .log-entry.insert {

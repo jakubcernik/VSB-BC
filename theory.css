@@ -10,12 +10,28 @@
     max-width: 920px;
     margin: 0 auto;
     padding: 30px 30px 100px;   /* bottom pad clears fixed footer */
+    position: relative;
+    isolation: isolate;
+}
+
+#theoryContainer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 18px;
+    pointer-events: none;
+    opacity: 0.14;
+    background-image:
+            radial-gradient(circle at 1px 1px, rgba(34, 82, 109, 0.2) 0.6px, transparent 0.7px);
+    background-size: 10px 10px;
+    mix-blend-mode: multiply;
+    z-index: -1;
 }
 
 /* ── Header ─────────────────────────────────────────────────── */
 
 #theoryContainer header h1 {
-    font-size: 1.8rem;
+    font-size: var(--fs-h1);
     font-weight: 600;
     color: #2a7a9b;
     text-align: center;
@@ -86,7 +102,7 @@
     background: #2a7a9b;
     color: #ffffff;
     padding: 14px 20px;
-    font-size: 1.05rem;
+    font-size: var(--fs-h2);
     font-weight: 600;
     margin: 0;
 }
@@ -94,7 +110,7 @@
 .section-body {
     padding: 20px 24px;
     line-height: 1.82;
-    font-size: 0.98rem;
+    font-size: var(--fs-body);
     color: #333;
 }
 
@@ -322,7 +338,7 @@
 }
 
 .complexity-op {
-    font-size: 0.82rem;
+    font-size: var(--fs-meta);
     font-weight: 600;
     color: #444;
     margin-bottom: 6px;
@@ -339,7 +355,7 @@
 .worst-val     { color: #c62828; }
 
 .complexity-note {
-    font-size: 0.78rem;
+    font-size: var(--fs-meta);
     color: #888;
     line-height: 1.4;
 }
@@ -395,6 +411,13 @@
 
 body.dark-mode #theoryContainer header h1 {
     color: #64b5d6;
+}
+
+body.dark-mode #theoryContainer::before {
+    opacity: 0.12;
+    background-image:
+            radial-gradient(circle at 1px 1px, rgba(149, 196, 220, 0.22) 0.6px, transparent 0.7px);
+    mix-blend-mode: screen;
 }
 
 body.dark-mode #theoryNav a {
