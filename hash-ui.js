@@ -31,7 +31,7 @@ const dict = {
         metricsHelpTitle: 'Metrics explanation',
         metricsHelpLine1: 'Step means one INSERT/UPDATE request from the user.',
         metricsHelpLine2: 'Instruction means one atomic internal action: one probe check, one write/update, or one moved element during rehash.',
-        metricsHelpLine3: 'Amortized argument here pays mainly for resize/rehash moves; probing is explained via expected average cost with good hashing and bounded load factor.',
+        metricsHelpLine3: 'Read this as two separate ideas: amortization explains rare expensive resize/rehash steps, while probing is explained by expected average behavior (good hashing + bounded load factor).',
         metricsHelpTheoryLink: 'Open theory',
         metricsHelpClose: 'Close',
         badgeOperation: 'STEP',
@@ -77,17 +77,16 @@ const dict = {
         stepRunLabel:     '2) Insert prepared element',
         bestReady:        'Best Case prepared — table has plenty of free space, next insert hits an empty slot.',
         worstReady:       'Worst Case prepared — primary worst-case path is set: table is near the load-factor limit and next insert will trigger resize + rehash.',
-        bestReadyVariant: (v, total, key, value) => `Best Case variant ${v}/${total} prepared — next insert uses key=${key}, value=${value}.`,
-        worstReadyVariant: (v, total, key, value, kind, projected, threshold, willResize) =>
-            `Worst Case variant ${v}/${total} prepared (${kind}) — next insert uses key=${key}, value=${value}. ` +
-            `Projected load after insert: ${projected} (threshold ${threshold})${willResize ? ', so this insert will trigger resize + rehash (the primary single-operation worst case).' : ', so this run is a probing/update variant (didactic), not the primary asymptotic worst-case trigger.'}`,
+        bestReadyVariant: (v, total, key, value) => `Best Case is ready (variant ${v}/${total}). Next insert uses key=${key}, value=${value}.`,
+        worstReadyVariant: (v, total, key, value, projected, threshold, willResize) =>
+            `Worst Case is ready. Next insert uses key=${key}, value=${value}. ` +
+            `Projected load after insert is ${projected}, threshold is ${threshold}.` +
+            `${willResize ? ' The limit will be exceeded, so resize + rehash will run. This is the primary one-insert worst case.' : ' In this setup the limit is not exceeded yet.'}`,
         prepareFirstBest:  'First prepare a Best Case variant, then run the insert action.',
         prepareFirstWorst: 'First prepare a Worst Case variant, then run the insert action.',
-        worstKindProbe:    'adversarial probing input',
         worstKindResize:   'resize + rehash',
-        worstKindUpdate:   'update existing key',
-        bestInsertExplain: (probes, collisions, resized) => `Best Case explanation: first hashed slot was free, so insert finished immediately. Cost: O(1) (probes=${probes}, collisions=${collisions}, resize=${resized ? 'yes' : 'no'}).`,
-        worstInsertExplain: (kind, probes, collisions, resized, wasUpdate) => `Worst Case explanation (${kind}): the primary expensive case is resize/rehash, where many elements are moved${resized ? ', and this run included it' : ', while this run illustrates a probing/update-heavy path'}. Under good hashing with bounded load factor, probing is expected O(1) on average${wasUpdate ? '; this run ended as UPDATE of an existing key' : ''}. Observed: probes=${probes}, collisions=${collisions}.`,
+        bestInsertExplain: (probes, collisions, resized) => `Why this is Best Case: the first hashed slot was free, so insert finished immediately. Expected cost is O(1) (probes=${probes}, collisions=${collisions}, resize=${resized ? 'yes' : 'no'}).`,
+        worstInsertExplain: (probes, collisions, resized) => `Why this is Worst Case: the expensive part is resize + rehash, where many stored elements are moved${resized ? ', and it happened in this run' : ''}. Probing is a separate expected-average topic: with good hashing and bounded load, most inserts still need only a few probes. Measured in this run: probes=${probes}, collisions=${collisions}.`,
 
         // Meta
         metaSize:         'Size',
@@ -117,25 +116,25 @@ const dict = {
         hashStart:        (key, hash, cap, start) => `hash(<strong>${key}</strong>) = <span class="log-badge slot">${hash}</span>, start index = <span class="log-badge slot">${hash} mod ${cap} = ${start}</span>`,
 
         insertCharge:     (c) => `INSERT starts: received <span class="coin-text">${c} coins</span> (fixed amortized charge)`,
-        resizeCheck:      (projected, threshold) => `Before insert: projected load factor is <span class="log-badge slot">${projected}</span> (threshold ${threshold}).`,
-        resizeNeededNow:  (projected, threshold) => `Projected load ${projected} exceeds threshold ${threshold} — resize + rehash is required now. This is the primary single-operation worst-case trigger (O(n)) because many stored elements must be moved.`,
-        resizeNotNeeded:  (projected, threshold) => `Projected load ${projected} is within threshold ${threshold} — no resize before this insert, so the primary worst-case trigger is not active in this step; amortized reserve stays for future rehash.`,
+        resizeCheck:      (projected, threshold) => `Before insert: projected load is <span class="log-badge slot">${projected}</span>, threshold is ${threshold}.`,
+        resizeNeededNow:  (projected, threshold) => `Projected load ${projected} is above threshold ${threshold}. We must run resize + rehash now. This is the main one-insert worst case (O(n)) because many stored elements can be moved.`,
+        resizeNotNeeded:  (projected, threshold) => `Projected load ${projected} is still under threshold ${threshold}. No resize is needed before this insert; saved coins remain reserved for a future rehash.`,
         probeCheck:       (i) => `Probe slot <span class="log-badge slot">[${i}]</span>`,
         probeNext:        (i) => `Next slot to try: <span class="log-badge slot">[${i}]</span>`,
-        probeCollision:   (i, key) => `Collision at <span class="log-badge slot">[${i}]</span> (occupied by key <strong>${key}</strong>) — continue probing to preserve correctness of open addressing. On adversarial inputs probing can be longer; with good hashing and bounded load factor it is expected O(1) on average.`,
+        probeCollision:   (i, key) => `Collision at <span class="log-badge slot">[${i}]</span> (key <strong>${key}</strong>). Continue probing to the next slot.`,
         updateFound:      (i) => `Key already exists in <span class="log-badge slot">[${i}]</span> — performing <strong>UPDATE</strong> (no new element is inserted)`,
-        updateCostExplain:(i) => `UPDATE keeps table size unchanged. Cost: value overwrite in <span class="log-badge slot">[${i}]</span> is O(1); extra work can come from probing before this slot is found, while average-case probing remains expected O(1) under good hashing and bounded load factor.`,
+        updateCostExplain:(i) => `UPDATE does not change table size. The overwrite in <span class="log-badge slot">[${i}]</span> is O(1); extra work only comes from probes needed to reach this slot. With good hashing and bounded load, average probing is expected O(1).`,
         updateBorrowCoin: (i) => `Slot <span class="log-badge slot">[${i}]</span>: temporarily use the <span class="coin-text">saved coin</span> to pay for UPDATE`,
         updateDone:       (i) => `Updated value in <span class="log-badge slot">[${i}]</span> — spent <span class="coin-text">1 coin</span>`,
         updateReturnCoin: (i) => `Returned <span class="coin-text">1 coin</span> back onto <span class="log-badge slot">[${i}]</span> (reserve stays for future rehash)`,
         emptySlotFound:   (i) => `Found first empty slot at <span class="log-badge slot">[${i}]</span> — insert stops here because linear probing always writes into the first available position.`,
         placeElement:     (i) => `Placed element into <span class="log-badge slot">[${i}]</span> — spent <span class="coin-text">1 coin</span>`,
         saveForRehash:    (i) => `Saved <span class="coin-text">1 coin</span> on <span class="log-badge slot">[${i}]</span> for future rehash`,
-        insertSummary:    (sizeNow, capNow, loadNow) => `Insert finished — size=${sizeNow}, capacity=${capNow}, load factor=${loadNow}`,
+        insertSummary:    (sizeNow, capNow, loadNow) => `Insert finished. New state: size=${sizeNow}, capacity=${capNow}, load=${loadNow}.`,
 
         resizeTitle:      (oldC, newC) => `Resize needed — rehash <span class="log-badge capacity">${oldC} → ${newC}</span>`,
         resizeWhy:        () => `Each stored element has 1 saved coin. During rehash, each element spends its coin to pay for its move.`,
-        rehashStats:      (oldC, newC, size, oldLoad, newLoad) => `Rehash stats: size = <span class="log-badge slot">${size}</span>, load factor <span class="log-badge slot">${oldLoad}</span> → <span class="log-badge slot">${newLoad}</span> (capacity <span class="log-badge capacity">${oldC} → ${newC}</span>)`,
+        rehashStats:      (oldC, newC, size, oldLoad, newLoad) => `Rehash overview: size <span class="log-badge slot">${size}</span>, load <span class="log-badge slot">${oldLoad}</span> → <span class="log-badge slot">${newLoad}</span>, capacity <span class="log-badge capacity">${oldC} → ${newC}</span>.`,
         moveElement:      (from, to) => `Move from <span class="log-badge slot">[${from}]</span> → <span class="log-badge slot">[${to}]</span> (spent <span class="coin-text">1 saved coin</span>)`,
         moveElementDetails:(key, oldStart, newStart, probes) => `key <span class="log-badge slot">${key}</span>: start <span class="log-badge slot">${oldStart}</span> → <span class="log-badge slot">${newStart}</span>, probes during re-insert: <span class="log-badge slot">${probes}</span>`,
         rehashSummary:    (moved, totalProbes, maxProbes) => `Rehash summary: moved <strong>${moved}</strong> element${moved !== 1 ? 's' : ''}, total probes <span class="log-badge slot">${totalProbes}</span>, max probes for one element <span class="log-badge slot">${maxProbes}</span>`,
@@ -160,7 +159,7 @@ const dict = {
         metricsHelpTitle: 'Vysvětlení metrik',
         metricsHelpLine1: 'Krok znamená jeden požadavek INSERT/UPDATE od uživatele.',
         metricsHelpLine2: 'Instrukce znamená jednu atomickou interní akci: jednu kontrolu slotu (probe), jeden zápis/UPDATE nebo jeden přesun prvku při rehashi.',
-        metricsHelpLine3: 'Amortizace zde platí hlavně přesuny při resize/rehashi; probing je vysvětlen přes očekávanou průměrnou cenu při dobrém hashování a omezeném zaplnění.',
+        metricsHelpLine3: 'Ber to jako dvě oddělené myšlenky: amortizace vysvětluje vzácné drahé kroky resize/rehash, zatímco probing vysvětlujeme očekávaným průměrným chováním (dobré hashování + omezené zaplnění).',
         metricsHelpTheoryLink: 'Otevřít teorii',
         metricsHelpClose: 'Zavřít',
         badgeOperation: 'KROK',
@@ -206,17 +205,16 @@ const dict = {
         stepRunLabel:     '2) Vložit připravený prvek',
         bestReady:        'Nejlepší případ připraven — tabulka má dost volného místa, další insert trefí prázdný slot.',
         worstReady:       'Nejhorší případ připraven — nastaven hlavní worst-case průchod: tabulka je blízko limitu zaplnění a další insert vyvolá resize + rehash.',
-        bestReadyVariant: (v, total, key, value) => `Připravena varianta Best Case ${v}/${total} — další vložení použije klíč=${key}, hodnota=${value}.`,
-        worstReadyVariant: (v, total, key, value, kind, projected, threshold, willResize) =>
-            `Připravena varianta Worst Case ${v}/${total} (${kind}) — další vložení použije klíč=${key}, hodnota=${value}. ` +
-            `Očekávané zaplnění po vložení: ${projected} (limit ${threshold})${willResize ? ', takže tento insert vyvolá resize + rehash (hlavní nejhorší případ jedné operace).' : ', takže tento běh je spíše probing/update varianta (didaktická), ne hlavní asymptotický trigger nejhoršího případu.'}`,
+        bestReadyVariant: (v, total, key, value) => `Best Case je připraven (varianta ${v}/${total}). Další vložení použije klíč=${key}, hodnota=${value}.`,
+        worstReadyVariant: (v, total, key, value, projected, threshold, willResize) =>
+            `Worst Case je připraven. Další vložení použije klíč=${key}, hodnota=${value}. ` +
+            `Očekávané zaplnění po vložení je ${projected}, limit je ${threshold}.` +
+            `${willResize ? ' Limit bude překročen, proto se spustí resize + rehash. To je hlavní nejhorší případ jedné operace.' : ' V tomto nastavení ještě limit překročen nebude.'}`,
         prepareFirstBest:  'Nejprve připravte variantu Best Case a potom spusťte vložení.',
         prepareFirstWorst: 'Nejprve připravte variantu Worst Case a potom spusťte vložení.',
-        worstKindProbe:    'nepříznivý vstup pro probing',
         worstKindResize:   'resize + rehash',
-        worstKindUpdate:   'update existujícího klíče',
-        bestInsertExplain: (probes, collisions, resized) => `Vysvětlení Best Case: první hashovaný slot byl volný, takže vložení skončilo hned. Cena: O(1) (probes=${probes}, kolize=${collisions}, resize=${resized ? 'ano' : 'ne'}).`,
-        worstInsertExplain: (kind, probes, collisions, resized, wasUpdate) => `Vysvětlení Worst Case (${kind}): hlavní drahý případ je resize/rehash, kdy se přesouvá mnoho prvků${resized ? ', a v tomto běhu k němu došlo' : ', zatímco tento běh ukazuje cestu s více probingem/update'}. Při dobrém hashování a omezeném zaplnění má probing v průměru očekávaně O(1)${wasUpdate ? '; tento běh skončil jako UPDATE existujícího klíče' : ''}. Naměřeno: probes=${probes}, kolize=${collisions}.`,
+        bestInsertExplain: (probes, collisions, resized) => `Proč je to Best Case: první hashovaný slot byl volný, takže vložení skončilo hned. Očekávaná cena je O(1) (probes=${probes}, kolize=${collisions}, resize=${resized ? 'ano' : 'ne'}).`,
+        worstInsertExplain: (probes, collisions, resized) => `Proč je to Worst Case: nejdražší část je resize + rehash, kdy se přesouvá mnoho uložených prvků${resized ? ', a v tomto běhu k tomu došlo' : ''}. Probing je samostatné téma průměrného případu: při dobrém hashování a omezeném zaplnění má většina vložení jen pár probe kroků. Naměřeno v tomto běhu: probes=${probes}, kolize=${collisions}.`,
 
         // Meta
         metaSize:         'Velikost',
@@ -246,25 +244,25 @@ const dict = {
         hashStart:        (key, hash, cap, start) => `hash(<strong>${key}</strong>) = <span class="log-badge slot">${hash}</span>, startovní index = <span class="log-badge slot">${hash} mod ${cap} = ${start}</span>`,
 
         insertCharge:     (c) => `INSERT začíná: přijaty <span class="coin-text">${c} mince</span> (pevný amortizovaný poplatek)`,
-        resizeCheck:      (projected, threshold) => `Před vložením: očekávané zaplnění je <span class="log-badge slot">${projected}</span> (limit ${threshold}).`,
-        resizeNeededNow:  (projected, threshold) => `Očekávané zaplnění ${projected} překračuje limit ${threshold} — je potřeba resize + rehash. Jde o hlavní trigger nejhoršího případu jedné operace (O(n)), protože je nutné přesunout mnoho uložených prvků.`,
-        resizeNotNeeded:  (projected, threshold) => `Očekávané zaplnění ${projected} je v limitu ${threshold} — před tímto vložením není resize potřeba, takže hlavní trigger nejhoršího případu se v tomto kroku neaktivuje; amortizovaná rezerva zůstává na budoucí rehash.`,
+        resizeCheck:      (projected, threshold) => `Před vložením: očekávané zaplnění je <span class="log-badge slot">${projected}</span>, limit je ${threshold}.`,
+        resizeNeededNow:  (projected, threshold) => `Očekávané zaplnění ${projected} je nad limitem ${threshold}. Teď musíme spustit resize + rehash. To je hlavní nejhorší případ jedné operace (O(n)), protože se může přesouvat mnoho uložených prvků.`,
+        resizeNotNeeded:  (projected, threshold) => `Očekávané zaplnění ${projected} je zatím pod limitem ${threshold}. Před tímto vložením není resize potřeba; ušetřené mince zůstávají jako rezerva na budoucí rehash.`,
         probeCheck:       (i) => `Kontroluji slot <span class="log-badge slot">[${i}]</span>`,
         probeNext:        (i) => `Další slot: <span class="log-badge slot">[${i}]</span>`,
-        probeCollision:   (i, key) => `Kolize ve <span class="log-badge slot">[${i}]</span> (je tam klíč <strong>${key}</strong>) — pokračuji probingem dál, aby bylo zachováno správné chování otevřeného adresování. Na nepříznivých vstupech může být probing delší; při dobrém hashování a omezeném zaplnění je v průměru očekávaně O(1).`,
+        probeCollision:   (i, key) => `Kolize ve <span class="log-badge slot">[${i}]</span> (klíč <strong>${key}</strong>). Pokračuji probingem na další slot.`,
         updateFound:      (i) => `Klíč už existuje ve <span class="log-badge slot">[${i}]</span> — provádím <strong>UPDATE</strong> (nevkládá se nový prvek)`,
-        updateCostExplain:(i) => `UPDATE nemění velikost tabulky. Cena: samotný přepis hodnoty ve <span class="log-badge slot">[${i}]</span> je O(1); dodatečná práce může vzniknout probingem před nalezením tohoto slotu, zatímco v průměrném případě zůstává probing při dobrém hashování a omezeném zaplnění očekávaně O(1).`,
+        updateCostExplain:(i) => `UPDATE nemění velikost tabulky. Samotný přepis hodnoty ve <span class="log-badge slot">[${i}]</span> je O(1); dodatečná práce vzniká jen probingem potřebným k nalezení tohoto slotu. V průměru (při dobrém hashování a omezeném zaplnění) je probing očekávaně O(1).`,
         updateBorrowCoin: (i) => `Slot <span class="log-badge slot">[${i}]</span>: dočasně používám <span class="coin-text">ušetřenou minci</span> na zaplacení UPDATE`,
         updateDone:       (i) => `Hodnota aktualizována ve <span class="log-badge slot">[${i}]</span> — utracena <span class="coin-text">1 mince</span>`,
         updateReturnCoin: (i) => `Vracím <span class="coin-text">1 minci</span> zpět na <span class="log-badge slot">[${i}]</span> (rezerva zůstává pro budoucí rehash)`,
         emptySlotFound:   (i) => `Nalezen první prázdný slot <span class="log-badge slot">[${i}]</span> — vložení končí zde, protože lineární probing zapisuje do první volné pozice.`,
         placeElement:     (i) => `Uloženo do <span class="log-badge slot">[${i}]</span> — utracena <span class="coin-text">1 mince</span>`,
         saveForRehash:    (i) => `Uložena <span class="coin-text">1 mince</span> na <span class="log-badge slot">[${i}]</span> pro budoucí rehash`,
-        insertSummary:    (sizeNow, capNow, loadNow) => `Vložení dokončeno — velikost=${sizeNow}, kapacita=${capNow}, zaplnění=${loadNow}`,
+        insertSummary:    (sizeNow, capNow, loadNow) => `Vložení dokončeno. Nový stav: velikost=${sizeNow}, kapacita=${capNow}, zaplnění=${loadNow}.`,
 
         resizeTitle:      (oldC, newC) => `Potřeba resize — rehash <span class="log-badge capacity">${oldC} → ${newC}</span>`,
         resizeWhy:        () => `Každý uložený prvek má 1 ušetřenou minci. Při rehashi ji utratí za svůj přesun.`,
-        rehashStats:      (oldC, newC, size, oldLoad, newLoad) => `Statistiky rehashe: velikost = <span class="log-badge slot">${size}</span>, zaplnění <span class="log-badge slot">${oldLoad}</span> → <span class="log-badge slot">${newLoad}</span> (kapacita <span class="log-badge capacity">${oldC} → ${newC}</span>)`,
+        rehashStats:      (oldC, newC, size, oldLoad, newLoad) => `Přehled rehashe: velikost <span class="log-badge slot">${size}</span>, zaplnění <span class="log-badge slot">${oldLoad}</span> → <span class="log-badge slot">${newLoad}</span>, kapacita <span class="log-badge capacity">${oldC} → ${newC}</span>.`,
         moveElement:      (from, to) => `Přesun <span class="log-badge slot">[${from}]</span> → <span class="log-badge slot">[${to}]</span> (utracena <span class="coin-text">1 ušetřená mince</span>)`,
         moveElementDetails:(key, oldStart, newStart, probes) => `klíč <span class="log-badge slot">${key}</span>: start <span class="log-badge slot">${oldStart}</span> → <span class="log-badge slot">${newStart}</span>, probing při vložení: <span class="log-badge slot">${probes}</span>`,
         rehashSummary:    (moved, totalProbes, maxProbes) => `Souhrn rehashe: přesunuto <strong>${moved}</strong> ${moved === 1 ? 'prvek' : (moved >= 2 && moved <= 4 ? 'prvky' : 'prvků')}, probing celkem <span class="log-badge slot">${totalProbes}</span>, maximum u jednoho prvku <span class="log-badge slot">${maxProbes}</span>`,
@@ -464,7 +462,12 @@ function applyLanguage() {
     document.getElementById('worstCaseTitle').textContent = d.worstCaseTitle;
     document.getElementById('worstCaseDesc').innerHTML    = d.worstCaseDesc;
     document.getElementById('btnPrepareWorst').textContent = d.btnPrepareWorst;
-    document.getElementById('btnWorstNextVariant').textContent = d.btnNextVariant;
+    const worstNextVariantBtn = document.getElementById('btnWorstNextVariant');
+    if (worstNextVariantBtn) {
+        worstNextVariantBtn.textContent = d.btnNextVariant;
+        worstNextVariantBtn.style.display = 'none';
+        worstNextVariantBtn.disabled = true;
+    }
     document.getElementById('btnWorstInsertPrepared').textContent = d.btnInsertPrepared;
     document.getElementById('worstStepPrepareLabel').textContent = d.stepPrepareLabel;
     document.getElementById('worstStepRunLabel').textContent = d.stepRunLabel;

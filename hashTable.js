@@ -50,16 +50,6 @@ function getWorstVariants() {
             entries: [{ key: 0, value: 10 }, { key: 8, value: 20 }, { key: 16, value: 30 }, { key: 24, value: 40 }, { key: 32, value: 50 }, { key: 40, value: 60 }],
             insert: { key: 48, value: 70 },
         },
-        {
-            kindKey: 'worstKindProbe',
-            entries: [{ key: 0, value: 10 }, { key: 8, value: 20 }, { key: 16, value: 30 }, { key: 24, value: 40 }, { key: 32, value: 50 }],
-            insert: { key: 40, value: 60 },
-        },
-        {
-            kindKey: 'worstKindUpdate',
-            entries: [{ key: 0, value: 10 }, { key: 8, value: 20 }, { key: 16, value: 30 }, { key: 24, value: 40 }, { key: 32, value: 50 }],
-            insert: { key: 32, value: 999 },
-        },
     ];
 }
 
@@ -523,10 +513,8 @@ function prepareBestCase(nextVariant = false) {
 
 function prepareWorstCase(nextVariant = false) {
     const variants = getWorstVariants();
-    worstVariantIndex = nextVariant
-        ? (worstVariantIndex + 1) % variants.length
-        : 0;
-    const scenario = variants[worstVariantIndex];
+    worstVariantIndex = 0;
+    const scenario = variants[0];
 
     resetHashTable();
     applyPreparedEntries(scenario.entries);
@@ -535,17 +523,15 @@ function prepareWorstCase(nextVariant = false) {
     renderTable();
 
     const d = dict[currentLang];
-    const kindLabel = d[scenario.kindKey] || scenario.kindKey;
     const projectedLoad = ((size + 1) / capacity).toFixed(2);
     const threshold = LOAD_THRESHOLD.toFixed(2);
     const willResize = ((size + 1) / capacity) > LOAD_THRESHOLD;
     updateInfoPanel(
         d.worstReadyVariant(
-            worstVariantIndex + 1,
+            1,
             variants.length,
             scenario.insert.key,
             scenario.insert.value,
-            kindLabel,
             projectedLoad,
             threshold,
             willResize
@@ -569,10 +555,9 @@ async function runPreparedCaseInsert(mode) {
     if (mode === 'best') {
         createLogEntry(LOG_TYPES.INFO, d.bestInsertExplain(stats.probes, stats.collisions, stats.resized));
     } else {
-        const kindLabel = d[preparedScenario.kindKey] || preparedScenario.kindKey;
         createLogEntry(
             LOG_TYPES.INFO,
-            d.worstInsertExplain(kindLabel, stats.probes, stats.collisions, stats.resized, stats.wasUpdate)
+            d.worstInsertExplain(stats.probes, stats.collisions, stats.resized)
         );
     }
 
