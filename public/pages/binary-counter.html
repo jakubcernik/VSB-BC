@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Binary Counter Simulation</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="binary-counter.css">
+    <link rel="stylesheet" href="../assets/css/base.css">
+    <link rel="stylesheet" href="../assets/css/binary-counter.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -14,7 +14,7 @@
     <header>
         <h1 id="pageTitle">Amortized complexity — Binary Counter</h1>
         <nav id="pageNav">
-            <a href="index.html" id="pageNavHome" onclick="navigateToPage(event, 'index.html')">🏠 <span id="pageNavHomeLabel">Home</span></a>
+            <a href="../index.html" id="pageNavHome" onclick="navigateToPage(event, '../index.html')">🏠 <span id="pageNavHomeLabel">Home</span></a>
             <span class="page-nav-divider">|</span>
             <span id="pageNavSimActive">⚙️ <span id="pageNavSimLabel">Simulation</span></span>
             <span class="page-nav-divider">|</span>
@@ -141,24 +141,24 @@
     <div id="infoPanel">Steps will appear here</div>
 </div>
 
-<script src="input-validation.js"></script>
-<script src="bc-ui.js"></script>
-<script src="binaryCounter.js"></script>
+<script src="../assets/js/common/input-validation.js"></script>
+<script src="../assets/js/binary-counter/binary-counter-ui.js"></script>
+<script src="../assets/js/binary-counter/binary-counter.js"></script>
 
 <footer>
     <p id="footerText"></p>
     <div class="footer-controls">
         <div class="toggle-pill" id="langToggle" onclick="toggleLanguage()" title="Změnit jazyk / Change language">
             <div class="toggle-option" id="langOptCZ">
-                <img src="sources/czech-republic.png" alt="CZ">
+                <img src="../assets/img/czech-republic.png" alt="CZ">
             </div>
             <div class="toggle-option" id="langOptEN">
-                <img src="sources/united-kingdom.png" alt="EN">
+                <img src="../assets/img/united-kingdom.png" alt="EN">
             </div>
         </div>
         <div class="toggle-pill" id="themeToggle" onclick="toggleTheme()" title="Přepnout téma / Switch theme">
-            <div class="toggle-option" id="themeOptLight"><img src="sources/light-mode.png" alt="Light"></div>
-            <div class="toggle-option" id="themeOptDark"><img src="sources/night-mode.png" alt="Dark"></div>
+            <div class="toggle-option" id="themeOptLight"><img src="../assets/img/light-mode.png" alt="Light"></div>
+            <div class="toggle-option" id="themeOptDark"><img src="../assets/img/night-mode.png" alt="Dark"></div>
         </div>
     </div>
 </footer>

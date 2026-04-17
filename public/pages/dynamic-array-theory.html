@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amortized Complexity — Hash Table</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="theory.css">
+    <title>Theory — Amortized Complexity</title>
+    <link rel="stylesheet" href="../assets/css/base.css">
+    <link rel="stylesheet" href="../assets/css/theory.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -14,14 +14,14 @@
 <div id="theoryContainer">
 
     <header>
-        <h1 id="theoryMainTitle">Amortized Complexity — Hash Table</h1>
+        <h1 id="theoryMainTitle">Amortized Complexity — Dynamic Array</h1>
     </header>
 
     <!-- Page navigation -->
     <nav id="theoryNav">
-        <a href="index.html" id="navHome" onclick="navigateTo(event, 'index.html')">🏠 <span id="navHomeLabel">Home</span></a>
+        <a href="../index.html" id="navHome" onclick="navigateTo(event, '../index.html')">🏠 <span id="navHomeLabel">Home</span></a>
         <span class="nav-divider">|</span>
-        <a href="hash-table.html" id="navSimulation" onclick="navigateTo(event, 'hash-table.html')">⚙️ <span id="navSimLabel">Simulation</span></a>
+        <a href="dynamic-array.html" id="navSimulation" onclick="navigateTo(event, 'dynamic-array.html')">⚙️ <span id="navSimLabel">Simulation</span></a>
         <span class="nav-divider">|</span>
         <span id="navTheoryActive">📖 <span id="navTheoryLabel">Theory</span></span>
     </nav>
@@ -30,7 +30,7 @@
 
         <!-- 1. Introduction -->
         <section class="theory-section" id="sec-intro">
-            <h2 class="section-title" id="titleIntro">1. What is a Hash Table?</h2>
+            <h2 class="section-title" id="titleIntro">1. What is a Dynamic Array?</h2>
             <div class="section-body">
                 <p id="introP1"></p>
                 <p id="introP2"></p>
@@ -38,12 +38,11 @@
             </div>
         </section>
 
-        <!-- 2. INSERT -->
-        <section class="theory-section" id="sec-insert">
-            <h2 class="section-title" id="titleInsert">2. INSERT with Open Addressing</h2>
+        <!-- 2. push_back operation -->
+        <section class="theory-section" id="sec-pushback">
+            <h2 class="section-title" id="titlePushback">2. The push_back Operation</h2>
             <div class="section-body">
-                <p id="insertP1"></p>
-                <p id="insertP2"></p>
+                <p id="pushbackP1"></p>
                 <div class="two-col">
                     <div class="case-card best" id="cardBest">
                         <div class="case-icon">✅</div>
@@ -52,41 +51,36 @@
                     </div>
                     <div class="case-card worst" id="cardWorst">
                         <div class="case-icon">⚠️</div>
-                        <h3 id="cardWorstTitle">Worst Case — O(n)</h3>
+                        <h3 id="cardWorstTitle">Worst Case — O(N)</h3>
                         <p id="cardWorstDesc"></p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 3. Resize -->
-        <section class="theory-section" id="sec-resize">
-            <h2 class="section-title" id="titleResize">3. Resizing and Rehashing</h2>
+        <!-- 3. Naive analysis -->
+        <section class="theory-section" id="sec-naive">
+            <h2 class="section-title" id="titleNaive">3. Why Naive Analysis Gives a Wrong Picture</h2>
             <div class="section-body">
-                <p id="resizeP1"></p>
-                <p id="resizeP2"></p>
-                <div class="info-box" id="resizeBox"></div>
-
-                <h3 class="subsection-title" id="hashFuncTitle" style="margin-top: 18px;">Hash function used in this simulation</h3>
-                <p id="hashFuncP1">To keep the simulation easy to follow, keys are integers and the hash is intentionally simple: <code>hashKey(k) = (k &gt;&gt;&gt; 0)</code> (conversion to an unsigned 32-bit integer).</p>
-                <p id="hashFuncP2">The start slot is then computed as <code>startIndex = hashKey(k) mod capacity</code>. If the start slot is occupied by a different key, we use <strong>linear probing</strong>: check the next slot, then the next, wrapping around.</p>
-                <div class="info-box" id="hashFuncBox">Note: real hash tables use much stronger hashing (bit mixing) especially for non-integer keys (strings, objects). Here the goal is to clearly show the role of <code>mod capacity</code>, collisions and probing, and why a resize requires a rehash.</div>
+                <p id="naiveP1"></p>
+                <p id="naiveP2"></p>
             </div>
         </section>
 
-        <!-- 4. Amortized -->
+        <!-- 4. Amortized analysis -->
         <section class="theory-section" id="sec-amortized">
             <h2 class="section-title" id="titleAmortized">4. Amortized Analysis</h2>
             <div class="section-body">
                 <p id="amortizedP1"></p>
-                <p id="amortizedP2"></p>
 
+                <!-- Method tabs -->
                 <div class="method-tabs">
                     <button class="method-tab active" onclick="showMethod('aggregate')" id="tabAggregate">Aggregate Method</button>
                     <button class="method-tab" onclick="showMethod('accounting')" id="tabAccounting">Accounting Method</button>
                     <button class="method-tab" onclick="showMethod('potential')" id="tabPotential">Potential Method</button>
                 </div>
 
+                <!-- Aggregate -->
                 <div class="method-content active" id="method-aggregate">
                     <h3 id="aggregateTitle">Aggregate Method</h3>
                     <p id="aggregateP1"></p>
@@ -96,6 +90,7 @@
                     <p id="aggregateConclusion"></p>
                 </div>
 
+                <!-- Accounting -->
                 <div class="method-content" id="method-accounting">
                     <h3 id="accountingTitle">Accounting Method</h3>
                     <p id="accountingP1"></p>
@@ -112,15 +107,12 @@
                             <div class="demo-coins">🏦</div>
                             <p id="coinStep3"></p>
                         </div>
-                        <div class="coin-step">
-                            <div class="demo-coins">⧉</div>
-                            <p id="coinStep4"></p>
-                        </div>
                     </div>
                     <div class="math-block" id="accountingMath"></div>
                     <p id="accountingConclusion"></p>
                 </div>
 
+                <!-- Potential -->
                 <div class="method-content" id="method-potential">
                     <h3 id="potentialTitle">Potential Method</h3>
                     <p id="potentialP1"></p>
@@ -132,63 +124,102 @@
             </div>
         </section>
 
-        <!-- 5. Summary -->
+        <!-- 5. Growth factor -->
+        <section class="theory-section" id="sec-growth">
+            <h2 class="section-title" id="titleGrowth">5. Growth Factor</h2>
+            <div class="section-body">
+                <p id="growthP1"></p>
+                <div class="growth-table-wrapper">
+                    <table class="growth-table">
+                        <thead>
+                            <tr>
+                                <th id="thFactor">Growth factor α</th>
+                                <th id="thAmortized">Amortized cost</th>
+                                <th id="thMemory">Memory overhead</th>
+                                <th id="thExample">Used in</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>α = 1.5</td>
+                                <td>O(1)</td>
+                                <td id="tdLow">Low</td>
+                                <td>MSVC, Rust Vec</td>
+                            </tr>
+                            <tr class="highlight-row">
+                                <td>α = 2</td>
+                                <td>O(1)</td>
+                                <td id="tdMedium">Medium</td>
+                                <td>GCC libstdc++, this demo</td>
+                            </tr>
+                            <tr>
+                                <td>α = 3</td>
+                                <td>O(1)</td>
+                                <td id="tdHigh">High</td>
+                                <td>—</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p id="growthP2"></p>
+            </div>
+        </section>
+
+        <!-- 6. Complexity summary -->
         <section class="theory-section" id="sec-summary">
-            <h2 class="section-title" id="titleSummary">5. Complexity Summary</h2>
+            <h2 class="section-title" id="titleSummary">6. Complexity Summary</h2>
             <div class="section-body">
                 <div class="complexity-grid">
                     <div class="complexity-card">
-                        <div class="complexity-op" id="opInsert">INSERT (amortized)</div>
+                        <div class="complexity-op" id="opPushback">push_back</div>
                         <div class="complexity-val amortized-val">O(1)*</div>
-                        <div class="complexity-note" id="noteInsert"></div>
+                        <div class="complexity-note" id="notePushback"></div>
                     </div>
                     <div class="complexity-card">
-                        <div class="complexity-op" id="opInsertBest">INSERT (best)</div>
+                        <div class="complexity-op" id="opPushbackBest">push_back (best)</div>
                         <div class="complexity-val best-val">O(1)</div>
-                        <div class="complexity-note" id="noteInsertBest"></div>
+                        <div class="complexity-note" id="notePushbackBest"></div>
                     </div>
                     <div class="complexity-card">
-                        <div class="complexity-op" id="opInsertWorst">INSERT (single worst)</div>
-                        <div class="complexity-val worst-val">O(n)</div>
-                        <div class="complexity-note" id="noteInsertWorst"></div>
+                        <div class="complexity-op" id="opPushbackWorst">push_back (single worst)</div>
+                        <div class="complexity-val worst-val">O(N)</div>
+                        <div class="complexity-note" id="notePushbackWorst"></div>
                     </div>
                 </div>
-
                 <p class="legend" id="legendAmortized"></p>
             </div>
         </section>
 
-        <!-- 6. Go to simulation -->
+        <!-- 7. Go to simulation -->
         <section class="theory-section cta-section" id="sec-cta">
             <div class="cta-box">
                 <p id="ctaText"></p>
-                <a href="hash-table.html" onclick="navigateTo(event, 'hash-table.html')" class="cta-button" id="ctaButton">⚙️ Open Simulation</a>
+                <a href="dynamic-array.html" onclick="navigateTo(event, 'dynamic-array.html')" class="cta-button" id="ctaButton">⚙️ Open Simulation</a>
             </div>
         </section>
 
     </main>
-
-    <footer>
-        <p id="footerText"></p>
-        <div class="footer-controls">
-            <div class="toggle-pill" id="langToggle" onclick="toggleLanguage()" title="Změnit jazyk / Change language">
-                <div class="toggle-option" id="langOptCZ">
-                    <img src="sources/czech-republic.png" alt="CZ">
-                </div>
-                <div class="toggle-option" id="langOptEN">
-                    <img src="sources/united-kingdom.png" alt="EN">
-                </div>
-            </div>
-            <div class="toggle-pill" id="themeToggle" onclick="toggleTheme()" title="Přepnout téma / Switch theme">
-                <div class="toggle-option" id="themeOptLight"><img src="sources/light-mode.png" alt="Light"></div>
-                <div class="toggle-option" id="themeOptDark"><img src="sources/night-mode.png" alt="Dark"></div>
-            </div>
-        </div>
-    </footer>
-
 </div>
 
-<script src="hash-table-theory.js"></script>
+<footer>
+    <p id="footerText"></p>
+    <div class="footer-controls">
+        <div class="toggle-pill" id="langToggle" onclick="toggleLanguage()" title="Změnit jazyk / Change language">
+            <div class="toggle-option" id="langOptCZ">
+                <img src="../assets/img/czech-republic.png" alt="CZ">
+            </div>
+            <div class="toggle-option" id="langOptEN">
+                <img src="../assets/img/united-kingdom.png" alt="EN">
+            </div>
+        </div>
+        <div class="toggle-pill" id="themeToggle" onclick="toggleTheme()" title="Přepnout téma / Switch theme">
+            <div class="toggle-option" id="themeOptLight"><img src="../assets/img/light-mode.png" alt="Light"></div>
+            <div class="toggle-option" id="themeOptDark"><img src="../assets/img/night-mode.png" alt="Dark"></div>
+        </div>
+    </div>
+</footer>
+
+<script src="../assets/js/dynamic-array/dynamic-array-theory.js"></script>
 </body>
 </html>
 
