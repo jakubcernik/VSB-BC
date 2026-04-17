@@ -32,10 +32,8 @@ body {
     margin: 0;
     display: flex;
     justify-content: center;
-    /* Do NOT vertically center whole app – on shorter viewports it forces content
-       to fight with the fixed footer and can look like overlaps. */
     align-items: flex-start;
-    padding: 18px 12px 120px; /* bottom padding = room for fixed footer */
+    padding: 18px 12px 120px;
     overflow-x: hidden;
     position: relative;
     opacity: 0;
@@ -85,15 +83,6 @@ body.page-loaded {
     justify-content: flex-start;
 }
 
-/* ─── Responsive main layout (simulation pages) ───────────────────────────── */
-/*
-   Pages share structure:
-     #container > header + #navigation + #trackers + main#mainContent + #infoPanel + footer
-
-   IMPORTANT: avoid using sticky log panel with fixed height, because it can overlap
-   visualizations (e.g., hash-table slots) on smaller viewports.
-*/
-
 #mainContent {
     display: flex;
     flex-direction: column;
@@ -101,7 +90,6 @@ body.page-loaded {
     align-items: center;
 }
 
-/* ─── Desktop: just give the card more room, keep single-column flow ───────── */
 @media (min-width: 1100px) {
     #container {
         max-width: 1040px;
@@ -1004,10 +992,6 @@ body.modal-open {
     color: #d32f2f;
 }
 
-body:not(.dark-mode) #infoPanel div {
-    /* Remove old styles */
-}
-
 footer {
     background: rgba(248, 251, 255, 0.86);
     backdrop-filter: blur(10px);
@@ -1546,7 +1530,7 @@ body.dark-mode .modern-controls .btn-ghost {
     color: #c6d7e0;
 }
 
-/* ── Page navigation (Simulation ↔ Theory) ─────────────────── */
+/* Page navigation */
 
 #pageNav {
     display: flex;

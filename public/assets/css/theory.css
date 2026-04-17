@@ -1,15 +1,10 @@
-/* ═══════════════════════════════════════════════════════════════
-   theory.css  —  styles for the Theory page
-   Shares: body, footer, .toggle-pill, dark-mode from style.css
-   ═══════════════════════════════════════════════════════════════ */
-
 /* ── Layout ─────────────────────────────────────────────────── */
 
 #theoryContainer {
     width: 100%;
     max-width: 920px;
     margin: 0 auto;
-    padding: 30px 30px 100px;   /* bottom pad clears fixed footer */
+    padding: 30px 30px 100px;
     position: relative;
     isolation: isolate;
 }
@@ -368,7 +363,7 @@
     margin-top: 4px;
 }
 
-/* ── CTA section ────────────────────────────────────────────── */
+/* ── Call To Action section ────────────────────────────────────────────── */
 
 .cta-section {
     box-shadow: none;
