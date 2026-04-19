@@ -1,3 +1,51 @@
 \chapter{Základní problematika}
 
-Tato kapitola bude doplněna.
+Tato kapitola shrnuje teoretická východiska potřebná pro návrh a implementaci výukové komponenty.
+
+\section{Základní pojmy analýzy algoritmů}
+Definujte časovou složitost, asymptotické notace a rozdíl mezi nejlepším, průměrným a nejhorším případem.
+
+\section{Amortizovaná složitost}
+Vysvětlete princip amortizované analýzy a odlište jej od klasické průměrné složitosti založené na pravděpodobnosti.
+
+\subsection{Agregační metoda}
+Popište výpočet celkových nákladů posloupnosti operací a odvození amortizované ceny jedné operace.
+
+\subsection{Účetní metoda}
+Vysvětlete myšlenku ukládání rezervy u levných operací a jejího čerpání při drahých operacích.
+
+\subsection{Potenciálová metoda}
+Uveďte význam potenciálové funkce a vztah mezi skutečnou a amortizovanou cenou operace.
+
+\section{Binární čítač}
+Představte datovou strukturu binárního čítače a její vhodnost pro amortizovanou analýzu.
+
+\subsection{Princip operace increment}
+Popište překlápění bitů při inkrementaci a jak se mění cena jednotlivých kroků.
+
+\subsection{Analýza amortizované složitosti}
+Odvoďte, proč má operace increment amortizovanou složitost konstantní.
+
+\section{Dynamické pole}
+Vysvětlete princip ukládání prvků do pole s měnící se kapacitou.
+
+\subsection{Operace vložení a změna kapacity}
+Popište běžné vložení prvku a případ rozšíření pole s kopírováním dat.
+
+\subsection{Analýza amortizované složitosti}
+Odvoďte, proč je \texttt{push\_back} amortizovaně v čase \(O(1)\).
+
+\section{Hash tabulka}
+Popište základní princip hashování, kolizí a faktor zaplnění tabulky.
+
+\subsection{Vkládání prvků a řešení kolizí}
+Stručně vysvětlete zvolený způsob řešení kolizí použitý ve vaší aplikaci.
+
+\subsection{Resize a rehash}
+Popište, kdy dochází ke zvětšení tabulky a proč je tato operace občas nákladná.
+
+\subsection{Analýza amortizované složitosti}
+Vysvětlete amortizovaný pohled na dlouhou posloupnost operací vkládání.
+
+\section{Shrnutí teoretických východisek}
+Krátce shrňte klíčové poznatky kapitoly a propojte je s návrhovou částí práce.
