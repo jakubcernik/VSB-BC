@@ -1,6 +1,4 @@
-/* bc-ui.js – UI helpers & i18n for the Binary Counter page.
-   Mirrors the structure of ui.js (for vector) but is completely self-contained.
-*/
+/* UI helpers and i18n for the Binary Counter page. */
 
 let currentLang = localStorage.getItem('lang') || 'cz';
 
@@ -266,6 +264,34 @@ function createLogEntry(type, title, details = null, meta = null) {
 
 function updateInfoPanel(msg) { createLogEntry(LOG_TYPES.INFO, msg); }
 
+function setText(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+}
+
+function setHtml(id, html) {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+}
+
+function setPlaceholder(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.placeholder = value;
+}
+
+function applyMetricsHelpLanguage(d) {
+    setText('metricsHelpButton', d.metricsHelpButton || '');
+    setText('metricsHelpTitle', d.metricsHelpTitle || '');
+    setText('metricsHelpLine1', d.metricsHelpLine1 || '');
+    setText('metricsHelpLine2', d.metricsHelpLine2 || '');
+    setText('metricsHelpLine3', d.metricsHelpLine3 || '');
+    setText('metricsHelpTheoryLink', d.metricsHelpTheoryLink || '');
+    setText('metricsHelpCloseBtn', d.metricsHelpClose || '');
+
+    const closeX = document.getElementById('metricsHelpCloseX');
+    if (closeX) closeX.setAttribute('aria-label', d.metricsHelpClose || 'Close');
+}
+
 // ─── Theme / Language / Navigation ────────────────────────────────────────────
 function reloadWithTransition(beforeReload) {
     const ov = document.getElementById('pageTransitionOverlay');
@@ -347,69 +373,53 @@ function applyLanguage() {
     const d = dict[currentLang];
 
     document.title = d.pageTitle;
-    document.getElementById('pageTitle').textContent        = d.pageTitle;
-    document.getElementById('pageNavHomeLabel').textContent = d.pageNavHome;
-    document.getElementById('pageNavSimLabel').textContent  = d.pageNavSim;
-    document.getElementById('pageNavTheoryLabel').textContent = d.pageNavTheory;
+    setText('pageTitle', d.pageTitle);
+    setText('pageNavHomeLabel', d.pageNavHome);
+    setText('pageNavSimLabel', d.pageNavSim);
+    setText('pageNavTheoryLabel', d.pageNavTheory);
 
-    document.getElementById('manualTab').textContent   = d.manual;
-    document.getElementById('randomTab').textContent   = d.random;
-    document.getElementById('bestTab').textContent     = d.best;
-    document.getElementById('worstTab').textContent    = d.worst;
+    setText('manualTab', d.manual);
+    setText('randomTab', d.random);
+    setText('bestTab', d.best);
+    setText('worstTab', d.worst);
 
-    document.getElementById('btnIncrement').textContent  = d.btnIncrement;
-    document.getElementById('btnReset').textContent      = d.btnReset;
+    setText('btnIncrement', d.btnIncrement);
+    setText('btnReset', d.btnReset);
 
-    document.getElementById('randomModeTitle').textContent = d.randomModeTitle;
-    document.getElementById('randomModeDesc').textContent = d.randomModeDesc;
-    document.getElementById('randomMinTrailingLabel').textContent = d.randomMinTrailingLabel;
-    document.getElementById('randomMaxTrailingLabel').textContent = d.randomMaxTrailingLabel;
-    document.getElementById('randomMinTrailing').placeholder = d.randomMinTrailingPH;
-    document.getElementById('randomMaxTrailing').placeholder = d.randomMaxTrailingPH;
-    document.getElementById('btnGenRandom').textContent = d.btnGenRandom;
+    setText('randomModeTitle', d.randomModeTitle);
+    setText('randomModeDesc', d.randomModeDesc);
+    setText('randomMinTrailingLabel', d.randomMinTrailingLabel);
+    setText('randomMaxTrailingLabel', d.randomMaxTrailingLabel);
+    setPlaceholder('randomMinTrailing', d.randomMinTrailingPH);
+    setPlaceholder('randomMaxTrailing', d.randomMaxTrailingPH);
+    setText('btnGenRandom', d.btnGenRandom);
 
-    document.getElementById('bestCaseTitle').textContent  = d.bestCaseTitle;
-    document.getElementById('bestCaseDesc').innerHTML     = d.bestCaseDesc;
-    document.getElementById('btnRunBest').textContent     = d.btnPrepareVariant;
-    document.getElementById('btnRunBestAlt').textContent  = d.btnNextVariant;
-    document.getElementById('btnBestIncrement').textContent = d.btnIncrementPrepared;
-    document.getElementById('bestStepPrepareLabel').textContent = d.stepPrepareLabel;
-    document.getElementById('bestStepRunLabel').textContent = d.stepRunLabel;
+    setText('bestCaseTitle', d.bestCaseTitle);
+    setHtml('bestCaseDesc', d.bestCaseDesc);
+    setText('btnRunBest', d.btnPrepareVariant);
+    setText('btnRunBestAlt', d.btnNextVariant);
+    setText('btnBestIncrement', d.btnIncrementPrepared);
+    setText('bestStepPrepareLabel', d.stepPrepareLabel);
+    setText('bestStepRunLabel', d.stepRunLabel);
 
-    document.getElementById('worstCaseTitle').textContent = d.worstCaseTitle;
-    document.getElementById('worstCaseDesc').innerHTML    = d.worstCaseDesc;
-    document.getElementById('btnRunWorst').textContent    = d.btnPrepareVariant;
-    document.getElementById('btnRunWorstAlt').textContent = d.btnNextVariant;
-    document.getElementById('btnWorstIncrement').textContent = d.btnIncrementPrepared;
-    document.getElementById('worstStepPrepareLabel').textContent = d.stepPrepareLabel;
-    document.getElementById('worstStepRunLabel').textContent = d.stepRunLabel;
+    setText('worstCaseTitle', d.worstCaseTitle);
+    setHtml('worstCaseDesc', d.worstCaseDesc);
+    setText('btnRunWorst', d.btnPrepareVariant);
+    setText('btnRunWorstAlt', d.btnNextVariant);
+    setText('btnWorstIncrement', d.btnIncrementPrepared);
+    setText('worstStepPrepareLabel', d.stepPrepareLabel);
+    setText('worstStepRunLabel', d.stepRunLabel);
 
-    document.getElementById('bitLengthLabel').textContent = d.bitLengthLabel;
-    document.getElementById('bitLengthHint').textContent  = d.bitLengthHint;
+    setText('bitLengthLabel', d.bitLengthLabel);
+    setText('bitLengthHint', d.bitLengthHint);
 
-    document.getElementById('creditCounter').textContent = `${d.coins}: 0`;
-    document.getElementById('stepCounter').textContent   = `${d.steps}: 0`;
+    setText('creditCounter', `${d.coins}: 0`);
+    setText('stepCounter', `${d.steps}: 0`);
     const instructionCounter = document.getElementById('instructionCounter');
     if (instructionCounter) instructionCounter.textContent = `${d.instructions}: 0`;
-    const metricsHelpButton = document.getElementById('metricsHelpButton');
-    if (metricsHelpButton) metricsHelpButton.textContent = d.metricsHelpButton || '';
-    const metricsHelpTitle = document.getElementById('metricsHelpTitle');
-    if (metricsHelpTitle) metricsHelpTitle.textContent = d.metricsHelpTitle || '';
-    const metricsHelpLine1 = document.getElementById('metricsHelpLine1');
-    if (metricsHelpLine1) metricsHelpLine1.textContent = d.metricsHelpLine1 || '';
-    const metricsHelpLine2 = document.getElementById('metricsHelpLine2');
-    if (metricsHelpLine2) metricsHelpLine2.textContent = d.metricsHelpLine2 || '';
-    const metricsHelpLine3 = document.getElementById('metricsHelpLine3');
-    if (metricsHelpLine3) metricsHelpLine3.textContent = d.metricsHelpLine3 || '';
-    const metricsHelpTheoryLink = document.getElementById('metricsHelpTheoryLink');
-    if (metricsHelpTheoryLink) metricsHelpTheoryLink.textContent = d.metricsHelpTheoryLink || '';
-    const metricsHelpCloseBtn = document.getElementById('metricsHelpCloseBtn');
-    if (metricsHelpCloseBtn) metricsHelpCloseBtn.textContent = d.metricsHelpClose || '';
-    const metricsHelpCloseX = document.getElementById('metricsHelpCloseX');
-    if (metricsHelpCloseX) metricsHelpCloseX.setAttribute('aria-label', d.metricsHelpClose || 'Close');
-     const bankLabelEl = document.getElementById('bankLabel');
-     if (bankLabelEl) bankLabelEl.textContent = d.bankLabel;
-    document.getElementById('footerText').textContent    = d.footer;
+    applyMetricsHelpLanguage(d);
+    setText('bankLabel', d.bankLabel);
+    setText('footerText', d.footer);
 
     const panel = document.getElementById('infoPanel');
     panel.innerHTML = '';
@@ -427,8 +437,8 @@ function applyLanguage() {
 // ─── Boot ──────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
     initializeMetricsHelpModal();
-     applyTheme();
-     applyLanguage();
+    applyTheme();
+    applyLanguage();
 });
 
 window.addEventListener('load', () => {

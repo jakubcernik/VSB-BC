@@ -214,92 +214,97 @@ function showMethod(method) {
     if (el) el.classList.add('active');
 }
 
+function setText(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+}
+
+function setHtml(id, html) {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+}
+
 function applyLanguage() {
     const d = theoryDict[currentLang];
 
     document.title = d.pageTitle;
-    document.getElementById('theoryMainTitle').textContent = d.mainTitle;
-    document.getElementById('navHomeLabel').textContent = d.navHome;
-    document.getElementById('navSimLabel').textContent = d.navSimulation;
-    document.getElementById('navTheoryLabel').textContent = d.navTheory;
-    document.getElementById('footerText').textContent = d.footer;
+    setText('theoryMainTitle', d.mainTitle);
+    setText('navHomeLabel', d.navHome);
+    setText('navSimLabel', d.navSimulation);
+    setText('navTheoryLabel', d.navTheory);
+    setText('footerText', d.footer);
 
 
-    document.getElementById('titleIntro').textContent = d.titleIntro;
-    document.getElementById('titleInsert').textContent = d.titleInsert;
-    document.getElementById('titleResize').textContent = d.titleResize;
-    document.getElementById('titleAmortized').textContent = d.titleAmortized;
-    document.getElementById('titleSummary').textContent = d.titleSummary;
+    setText('titleIntro', d.titleIntro);
+    setText('titleInsert', d.titleInsert);
+    setText('titleResize', d.titleResize);
+    setText('titleAmortized', d.titleAmortized);
+    setText('titleSummary', d.titleSummary);
 
-    document.getElementById('introP1').innerHTML = d.introP1;
-    document.getElementById('introP2').innerHTML = d.introP2;
-    document.getElementById('introBox').innerHTML = d.introBox;
+    setHtml('introP1', d.introP1);
+    setHtml('introP2', d.introP2);
+    setHtml('introBox', d.introBox);
 
-    document.getElementById('insertP1').innerHTML = d.insertP1;
-    document.getElementById('insertP2').innerHTML = d.insertP2;
-    document.getElementById('cardBestTitle').textContent = d.cardBestTitle;
-    document.getElementById('cardBestDesc').innerHTML = d.cardBestDesc;
-    document.getElementById('cardWorstTitle').textContent = d.cardWorstTitle;
-    document.getElementById('cardWorstDesc').innerHTML = d.cardWorstDesc;
+    setHtml('insertP1', d.insertP1);
+    setHtml('insertP2', d.insertP2);
+    setText('cardBestTitle', d.cardBestTitle);
+    setHtml('cardBestDesc', d.cardBestDesc);
+    setText('cardWorstTitle', d.cardWorstTitle);
+    setHtml('cardWorstDesc', d.cardWorstDesc);
 
-    document.getElementById('resizeP1').innerHTML = d.resizeP1;
-    document.getElementById('resizeP2').innerHTML = d.resizeP2;
-    document.getElementById('resizeBox').innerHTML = d.resizeBox;
+    setHtml('resizeP1', d.resizeP1);
+    setHtml('resizeP2', d.resizeP2);
+    setHtml('resizeBox', d.resizeBox);
 
     // Hash function subsection (part of the resize/rehash section)
-    const hTitle = document.getElementById('hashFuncTitle');
-    if (hTitle) hTitle.textContent = d.hashFuncTitle;
-    const hP1 = document.getElementById('hashFuncP1');
-    if (hP1) hP1.innerHTML = d.hashFuncP1;
-    const hP2 = document.getElementById('hashFuncP2');
-    if (hP2) hP2.innerHTML = d.hashFuncP2;
-    const hBox = document.getElementById('hashFuncBox');
-    if (hBox) hBox.innerHTML = d.hashFuncBox;
+    setText('hashFuncTitle', d.hashFuncTitle);
+    setHtml('hashFuncP1', d.hashFuncP1);
+    setHtml('hashFuncP2', d.hashFuncP2);
+    setHtml('hashFuncBox', d.hashFuncBox);
 
-    document.getElementById('amortizedP1').innerHTML = d.amortizedP1;
-    const amortizedP2 = document.getElementById('amortizedP2');
-    if (amortizedP2) amortizedP2.innerHTML = d.amortizedP2;
+    setHtml('amortizedP1', d.amortizedP1);
+    setHtml('amortizedP2', d.amortizedP2);
 
-    document.getElementById('tabAggregate').textContent = d.tabAggregate;
-    document.getElementById('tabAccounting').textContent = d.tabAccounting;
-    document.getElementById('tabPotential').textContent = d.tabPotential;
+    setText('tabAggregate', d.tabAggregate);
+    setText('tabAccounting', d.tabAccounting);
+    setText('tabPotential', d.tabPotential);
 
-    document.getElementById('aggregateTitle').textContent = d.aggregateTitle;
-    document.getElementById('aggregateP1').innerHTML = d.aggregateP1;
-    document.getElementById('aggregateMath').textContent = d.aggregateMath;
-    document.getElementById('aggregateP2').innerHTML = d.aggregateP2;
-    document.getElementById('aggregateMath2').textContent = d.aggregateMath2;
-    document.getElementById('aggregateConclusion').innerHTML = d.aggregateConclusion;
+    setText('aggregateTitle', d.aggregateTitle);
+    setHtml('aggregateP1', d.aggregateP1);
+    setText('aggregateMath', d.aggregateMath);
+    setHtml('aggregateP2', d.aggregateP2);
+    setText('aggregateMath2', d.aggregateMath2);
+    setHtml('aggregateConclusion', d.aggregateConclusion);
 
-    document.getElementById('accountingTitle').textContent = d.accountingTitle;
-    document.getElementById('accountingP1').innerHTML = d.accountingP1;
-    document.getElementById('coinStep1').innerHTML = d.coinStep1;
-    document.getElementById('coinStep2').innerHTML = d.coinStep2;
-    document.getElementById('coinStep3').innerHTML = d.coinStep3;
-    document.getElementById('coinStep4').innerHTML = d.coinStep4;
-    document.getElementById('accountingMath').innerHTML = d.accountingMath;
-    document.getElementById('accountingConclusion').innerHTML = d.accountingConclusion;
+    setText('accountingTitle', d.accountingTitle);
+    setHtml('accountingP1', d.accountingP1);
+    setHtml('coinStep1', d.coinStep1);
+    setHtml('coinStep2', d.coinStep2);
+    setHtml('coinStep3', d.coinStep3);
+    setHtml('coinStep4', d.coinStep4);
+    setHtml('accountingMath', d.accountingMath);
+    setHtml('accountingConclusion', d.accountingConclusion);
 
-    document.getElementById('potentialTitle').textContent = d.potentialTitle;
-    document.getElementById('potentialP1').innerHTML = d.potentialP1;
-    document.getElementById('potentialMath').textContent = d.potentialMath;
-    document.getElementById('potentialP2').innerHTML = d.potentialP2;
-    document.getElementById('potentialMath2').textContent = d.potentialMath2;
-    document.getElementById('potentialConclusion').innerHTML = d.potentialConclusion;
+    setText('potentialTitle', d.potentialTitle);
+    setHtml('potentialP1', d.potentialP1);
+    setText('potentialMath', d.potentialMath);
+    setHtml('potentialP2', d.potentialP2);
+    setText('potentialMath2', d.potentialMath2);
+    setHtml('potentialConclusion', d.potentialConclusion);
 
 
-    document.getElementById('opInsert').textContent      = d.opInsert;
-    document.getElementById('opInsertBest').textContent  = d.opInsertBest;
-    document.getElementById('opInsertWorst').textContent = d.opInsertWorst;
+    setText('opInsert', d.opInsert);
+    setText('opInsertBest', d.opInsertBest);
+    setText('opInsertWorst', d.opInsertWorst);
 
-    document.getElementById('noteInsert').textContent     = d.noteInsert;
-    document.getElementById('noteInsertBest').textContent = d.noteInsertBest;
-    document.getElementById('noteInsertWorst').textContent = d.noteInsertWorst;
+    setText('noteInsert', d.noteInsert);
+    setText('noteInsertBest', d.noteInsertBest);
+    setText('noteInsertWorst', d.noteInsertWorst);
 
-    document.getElementById('legendAmortized').textContent = d.legendAmortized;
+    setText('legendAmortized', d.legendAmortized);
 
-    document.getElementById('ctaText').textContent = d.ctaText;
-    document.getElementById('ctaButton').textContent = d.ctaButton;
+    setText('ctaText', d.ctaText);
+    setText('ctaButton', d.ctaButton);
 
     updateLangToggleUI();
     applyTheme();

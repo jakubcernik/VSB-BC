@@ -239,103 +239,113 @@ function showMethod(id) {
     event.currentTarget.classList.add('active');
 }
 
+function setText(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+}
+
+function setHtml(id, html) {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+}
+
 // ─── Apply language ────────────────────────────────────────────────────────────
 function applyLanguage() {
     const d = theoryDict[currentLang];
 
     document.title = d.pageTitle;
-    document.getElementById('theoryMainTitle').innerHTML  = d.mainTitle;
-    document.getElementById('footerText').textContent     = d.footer;
-    document.getElementById('navHomeLabel').textContent   = d.navHome;
-    document.getElementById('navSimLabel').textContent    = d.navSimulation;
-    document.getElementById('navTheoryLabel').textContent = d.navTheory;
+    setHtml('theoryMainTitle', d.mainTitle);
+    setText('footerText', d.footer);
+    setText('navHomeLabel', d.navHome);
+    setText('navSimLabel', d.navSimulation);
+    setText('navTheoryLabel', d.navTheory);
 
     // Section titles
-    document.getElementById('titleIntro').textContent     = d.titleIntro;
-    document.getElementById('titleIncrement').textContent = d.titleIncrement;
-    document.getElementById('titleNaive').textContent     = d.titleNaive;
-    document.getElementById('titleAmortized').textContent = d.titleAmortized;
-    document.getElementById('titleTable').textContent     = d.titleTable;
-    document.getElementById('titleSummary').textContent   = d.titleSummary;
+    setText('titleIntro', d.titleIntro);
+    setText('titleIncrement', d.titleIncrement);
+    setText('titleNaive', d.titleNaive);
+    setText('titleAmortized', d.titleAmortized);
+    setText('titleTable', d.titleTable);
+    setText('titleSummary', d.titleSummary);
 
     // Intro
-    document.getElementById('introP1').innerHTML  = d.introP1;
-    document.getElementById('introP2').innerHTML  = d.introP2;
-    document.getElementById('introBox').innerHTML = d.introBox;
+    setHtml('introP1', d.introP1);
+    setHtml('introP2', d.introP2);
+    setHtml('introBox', d.introBox);
 
     // INCREMENT
-    document.getElementById('incrementP1').innerHTML      = d.incrementP1;
-    document.getElementById('cardBestTitle').textContent  = d.cardBestTitle;
-    document.getElementById('cardBestDesc').textContent   = d.cardBestDesc;
-    document.getElementById('cardWorstTitle').textContent = d.cardWorstTitle;
-    document.getElementById('cardWorstDesc').textContent  = d.cardWorstDesc;
+    setHtml('incrementP1', d.incrementP1);
+    setText('cardBestTitle', d.cardBestTitle);
+    setText('cardBestDesc', d.cardBestDesc);
+    setText('cardWorstTitle', d.cardWorstTitle);
+    setText('cardWorstDesc', d.cardWorstDesc);
 
     // Naive
-    document.getElementById('naiveP1').innerHTML = d.naiveP1;
-    document.getElementById('naiveP2').innerHTML = d.naiveP2;
+    setHtml('naiveP1', d.naiveP1);
+    setHtml('naiveP2', d.naiveP2);
 
     // Amortized
-    document.getElementById('amortizedP1').textContent  = d.amortizedP1;
-    document.getElementById('tabAggregate').textContent  = d.tabAggregate;
-    document.getElementById('tabAccounting').textContent = d.tabAccounting;
-    document.getElementById('tabPotential').textContent  = d.tabPotential;
+    setText('amortizedP1', d.amortizedP1);
+    setText('tabAggregate', d.tabAggregate);
+    setText('tabAccounting', d.tabAccounting);
+    setText('tabPotential', d.tabPotential);
 
     // Aggregate
-    document.getElementById('aggregateTitle').textContent    = d.aggregateTitle;
-    document.getElementById('aggregateP1').textContent       = d.aggregateP1;
-    document.getElementById('aggregateMath').textContent     = d.aggregateMath;
-    document.getElementById('aggregateP2').textContent       = d.aggregateP2;
-    document.getElementById('aggregateMath2').textContent    = d.aggregateMath2;
-    document.getElementById('aggregateConclusion').innerHTML = d.aggregateConclusion;
+    setText('aggregateTitle', d.aggregateTitle);
+    setText('aggregateP1', d.aggregateP1);
+    setText('aggregateMath', d.aggregateMath);
+    setText('aggregateP2', d.aggregateP2);
+    setText('aggregateMath2', d.aggregateMath2);
+    setHtml('aggregateConclusion', d.aggregateConclusion);
 
     // Accounting
-    document.getElementById('accountingTitle').textContent    = d.accountingTitle;
-    document.getElementById('accountingP1').innerHTML         = d.accountingP1;
-    document.getElementById('coinStep1').innerHTML            = d.coinStep1;
-    document.getElementById('coinStep2').innerHTML            = d.coinStep2;
-    document.getElementById('coinStep3').innerHTML            = d.coinStep3;
-    document.getElementById('coinStep4').innerHTML            = d.coinStep4;
-    document.getElementById('accountingMath').textContent     = d.accountingMath;
-    document.getElementById('accountingConclusion').innerHTML = d.accountingConclusion;
+    setText('accountingTitle', d.accountingTitle);
+    setHtml('accountingP1', d.accountingP1);
+    setHtml('coinStep1', d.coinStep1);
+    setHtml('coinStep2', d.coinStep2);
+    setHtml('coinStep3', d.coinStep3);
+    setHtml('coinStep4', d.coinStep4);
+    setText('accountingMath', d.accountingMath);
+    setHtml('accountingConclusion', d.accountingConclusion);
 
     // Potential
-    document.getElementById('potentialTitle').textContent     = d.potentialTitle;
-    document.getElementById('potentialP1').innerHTML          = d.potentialP1;
-    document.getElementById('potentialMath').textContent      = d.potentialMath;
-    document.getElementById('potentialP2').innerHTML          = d.potentialP2;
-    document.getElementById('potentialMath2').textContent     = d.potentialMath2;
-    document.getElementById('potentialConclusion').innerHTML  = d.potentialConclusion;
+    setText('potentialTitle', d.potentialTitle);
+    setHtml('potentialP1', d.potentialP1);
+    setText('potentialMath', d.potentialMath);
+    setHtml('potentialP2', d.potentialP2);
+    setText('potentialMath2', d.potentialMath2);
+    setHtml('potentialConclusion', d.potentialConclusion);
 
     // Table
-    document.getElementById('tableP1').innerHTML      = d.tableP1;
-    document.getElementById('thBit').textContent      = d.thBit;
-    document.getElementById('thWeight').textContent   = d.thWeight;
-    document.getElementById('thFreq').textContent     = d.thFreq;
-    document.getElementById('thContrib').textContent  = d.thContrib;
-    document.getElementById('tdFreq0').textContent    = d.tdFreq0;
-    document.getElementById('tdContrib0').textContent = d.tdContrib0;
-    document.getElementById('tdFreq1').textContent    = d.tdFreq1;
-    document.getElementById('tdContrib1').textContent = d.tdContrib1;
-    document.getElementById('tdFreq2').textContent    = d.tdFreq2;
-    document.getElementById('tdContrib2').textContent = d.tdContrib2;
-    document.getElementById('tdBitK').textContent     = d.tdBitK;
-    document.getElementById('tdWeightK').textContent  = d.tdWeightK;
-    document.getElementById('tdFreqK').textContent    = d.tdFreqK;
-    document.getElementById('tdContribK').textContent = d.tdContribK;
-    document.getElementById('tableP2').innerHTML      = d.tableP2;
+    setHtml('tableP1', d.tableP1);
+    setText('thBit', d.thBit);
+    setText('thWeight', d.thWeight);
+    setText('thFreq', d.thFreq);
+    setText('thContrib', d.thContrib);
+    setText('tdFreq0', d.tdFreq0);
+    setText('tdContrib0', d.tdContrib0);
+    setText('tdFreq1', d.tdFreq1);
+    setText('tdContrib1', d.tdContrib1);
+    setText('tdFreq2', d.tdFreq2);
+    setText('tdContrib2', d.tdContrib2);
+    setText('tdBitK', d.tdBitK);
+    setText('tdWeightK', d.tdWeightK);
+    setText('tdFreqK', d.tdFreqK);
+    setText('tdContribK', d.tdContribK);
+    setHtml('tableP2', d.tableP2);
 
     // Summary
-    document.getElementById('opIncrement').textContent       = d.opIncrement;
-    document.getElementById('opIncrementBest').textContent   = d.opIncrementBest;
-    document.getElementById('opIncrementWorst').textContent  = d.opIncrementWorst;
-    document.getElementById('noteIncrement').textContent     = d.noteIncrement;
-    document.getElementById('noteIncrementBest').textContent = d.noteIncrementBest;
-    document.getElementById('noteIncrementWorst').textContent = d.noteIncrementWorst;
-    document.getElementById('legendAmortized').innerHTML      = d.legendAmortized;
+    setText('opIncrement', d.opIncrement);
+    setText('opIncrementBest', d.opIncrementBest);
+    setText('opIncrementWorst', d.opIncrementWorst);
+    setText('noteIncrement', d.noteIncrement);
+    setText('noteIncrementBest', d.noteIncrementBest);
+    setText('noteIncrementWorst', d.noteIncrementWorst);
+    setHtml('legendAmortized', d.legendAmortized);
 
     // CTA
-    document.getElementById('ctaText').textContent   = d.ctaText;
-    document.getElementById('ctaButton').textContent = d.ctaButton;
+    setText('ctaText', d.ctaText);
+    setText('ctaButton', d.ctaButton);
 
     updateLangToggleUI();
 }

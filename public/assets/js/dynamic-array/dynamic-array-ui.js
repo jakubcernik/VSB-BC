@@ -484,52 +484,70 @@ function updateInfoPanelWithDetails(mainMessage, details, meta = null)
     createLogEntry(type, mainMessage, details, meta);
 }
 
+function setText(id, text)
+{
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+}
+
+function setHtml(id, html)
+{
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+}
+
+function setPlaceholder(id, value)
+{
+    const el = document.getElementById(id);
+    if (el) el.placeholder = value;
+}
+
 function applyLanguage()
 {
     const d = dict[currentLang];
 
-    document.getElementById('manualTab').textContent = d.manual;
-    document.getElementById('randomTab').textContent = d.random;
-    document.getElementById('bestTab').textContent = d.best;
-    document.getElementById('worstTab').textContent = d.worst;
+    setText('manualTab', d.manual);
+    setText('randomTab', d.random);
+    setText('bestTab', d.best);
+    setText('worstTab', d.worst);
 
     if (d.bestCase) {
-        document.getElementById('bestCaseTitle').textContent = d.bestCase.title;
-        document.getElementById('bestCaseDesc').innerHTML = d.bestCase.desc;
-        document.getElementById('btnRunBest').textContent = d.bestCase.btn;
+        setText('bestCaseTitle', d.bestCase.title);
+        setHtml('bestCaseDesc', d.bestCase.desc);
+        setText('btnRunBest', d.bestCase.btn);
         const nextBest = document.getElementById('btnNextBest');
         if (nextBest && d.bestCase.btnAlt) nextBest.textContent = d.bestCase.btnAlt;
-        document.getElementById('bestInput').placeholder = d.enterNumber;
+        setPlaceholder('bestInput', d.enterNumber);
         document.querySelector('#bestCaseInputGroup button').textContent = d.bestCase.insert;
     }
 
     if (d.worstCase) {
-        document.getElementById('worstCaseTitle').textContent = d.worstCase.title;
-        document.getElementById('worstCaseDesc').innerHTML = d.worstCase.desc;
-        document.getElementById('btnRunWorst').textContent = d.worstCase.btn;
+        setText('worstCaseTitle', d.worstCase.title);
+        setHtml('worstCaseDesc', d.worstCase.desc);
+        setText('btnRunWorst', d.worstCase.btn);
         const nextWorst = document.getElementById('btnNextWorst');
         if (nextWorst && d.worstCase.btnAlt) nextWorst.textContent = d.worstCase.btnAlt;
-        document.getElementById('worstInput').placeholder = d.enterNumber;
+        setPlaceholder('worstInput', d.enterNumber);
         document.querySelector('#worstCaseInputGroup button').textContent = d.worstCase.insert;
     }
 
-    document.getElementById('manualInput').placeholder = d.enterNumber;
-    document.getElementById('manualStepTitle').textContent = d.manualStepTitle;
-    document.getElementById('stepHelpSummary').textContent = d.stepHelpLabel;
-    document.getElementById('stepHelpText').innerHTML = `${d.stepHelpSmall}<br>${d.stepHelpBig}`;
-    document.getElementById('btnSmallStep').textContent = d.smallStep;
-    document.getElementById('btnBigStep').textContent = d.bigStep;
+    setPlaceholder('manualInput', d.enterNumber);
+    setText('manualStepTitle', d.manualStepTitle);
+    setText('stepHelpSummary', d.stepHelpLabel);
+    setHtml('stepHelpText', `${d.stepHelpSmall}<br>${d.stepHelpBig}`);
+    setText('btnSmallStep', d.smallStep);
+    setText('btnBigStep', d.bigStep);
 
     document.querySelector('label[for="randomCount"]').textContent = d.randomCountLabel;
     document.querySelector('label[for="randomMin"]').textContent   = d.randomMinLabel;
     document.querySelector('label[for="randomMax"]').textContent   = d.randomMaxLabel;
-    document.getElementById('randomCount').placeholder = d.randomCountPlaceholder;
-    document.getElementById('randomMin').placeholder   = d.randomMinPlaceholder;
-    document.getElementById('randomMax').placeholder   = d.randomMaxPlaceholder;
-    document.getElementById('randomParamsTitle').textContent = d.randomParamsTitle;
-    document.getElementById('randomRunTitle').textContent = d.randomRunTitle;
-    document.getElementById('randomSpeedTitle').textContent = d.randomSpeedTitle;
-    document.getElementById('btnRandomStart').textContent = d.generateRandom;
+    setPlaceholder('randomCount', d.randomCountPlaceholder);
+    setPlaceholder('randomMin', d.randomMinPlaceholder);
+    setPlaceholder('randomMax', d.randomMaxPlaceholder);
+    setText('randomParamsTitle', d.randomParamsTitle);
+    setText('randomRunTitle', d.randomRunTitle);
+    setText('randomSpeedTitle', d.randomSpeedTitle);
+    setText('btnRandomStart', d.generateRandom);
 
     const randomPause = document.getElementById('btnRandomPause');
     if (randomPause) {
@@ -537,13 +555,13 @@ function applyLanguage()
         randomPause.textContent = state === 'resume' ? d.randomResume : d.randomPause;
     }
 
-    document.getElementById('randomSpeedLabel').textContent = d.randomSpeed;
+    setText('randomSpeedLabel', d.randomSpeed);
     updateRandomSpeedValue();
 
     document.querySelector('header h1').textContent = d.pageTitle;
-    document.getElementById('pageNavHomeLabel').textContent   = d.pageNavHome;
-    document.getElementById('pageNavSimLabel').textContent    = d.pageNavSim;
-    document.getElementById('pageNavTheoryLabel').textContent = d.pageNavTheory;
+    setText('pageNavHomeLabel', d.pageNavHome);
+    setText('pageNavSimLabel', d.pageNavSim);
+    setText('pageNavTheoryLabel', d.pageNavTheory);
 
     const creditCounter = document.getElementById('creditCounter');
     if (creditCounter) creditCounter.textContent = `${d.coins}: 0`;
@@ -587,7 +605,7 @@ function applyLanguage()
         window.renderVectorTrackers();
     }
 
-    document.getElementById('footerText').textContent = d.footer;
+    setText('footerText', d.footer);
 
     const infoPanel = document.getElementById("infoPanel");
     infoPanel.innerHTML = "";

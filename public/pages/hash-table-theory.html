@@ -67,7 +67,7 @@
                 <p id="resizeP2"></p>
                 <div class="info-box" id="resizeBox"></div>
 
-                <h3 class="subsection-title" id="hashFuncTitle" style="margin-top: 18px;">Hash function used in this simulation</h3>
+                <h3 class="subsection-title subsection-title-spaced" id="hashFuncTitle">Hash function used in this simulation</h3>
                 <p id="hashFuncP1">To keep the simulation easy to follow, keys are integers and the hash is intentionally simple: <code>hashKey(k) = (k &gt;&gt;&gt; 0)</code> (conversion to an unsigned 32-bit integer).</p>
                 <p id="hashFuncP2">The start slot is then computed as <code>startIndex = hashKey(k) mod capacity</code>. If the start slot is occupied by a different key, we use <strong>linear probing</strong>: check the next slot, then the next, wrapping around.</p>
                 <div class="info-box" id="hashFuncBox">Note: real hash tables use much stronger hashing (bit mixing) especially for non-integer keys (strings, objects). Here the goal is to clearly show the role of <code>mod capacity</code>, collisions and probing, and why a resize requires a rehash.</div>

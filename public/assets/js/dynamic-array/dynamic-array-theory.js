@@ -234,96 +234,106 @@ function showMethod(id) {
     event.currentTarget.classList.add('active');
 }
 
+function setText(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+}
+
+function setHtml(id, html) {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+}
+
 // ─── Apply language ───────────────────────────────────────────────────────────
 
 function applyLanguage() {
     const d = theoryDict[currentLang];
 
-    document.title                                        = d.pageTitle;
-    document.getElementById('theoryMainTitle').innerHTML  = d.mainTitle;
-    document.getElementById('footerText').textContent     = d.footer;
-    document.getElementById('navHomeLabel').textContent   = d.navHome;
-    document.getElementById('navSimLabel').textContent    = d.navSimulation;
-    document.getElementById('navTheoryLabel').textContent = d.navTheory;
+    document.title = d.pageTitle;
+    setHtml('theoryMainTitle', d.mainTitle);
+    setText('footerText', d.footer);
+    setText('navHomeLabel', d.navHome);
+    setText('navSimLabel', d.navSimulation);
+    setText('navTheoryLabel', d.navTheory);
 
     // Section titles
-    document.getElementById('titleIntro').textContent     = d.titleIntro;
-    document.getElementById('titlePushback').textContent  = d.titlePushback;
-    document.getElementById('titleNaive').textContent     = d.titleNaive;
-    document.getElementById('titleAmortized').textContent = d.titleAmortized;
-    document.getElementById('titleGrowth').textContent    = d.titleGrowth;
-    document.getElementById('titleSummary').textContent   = d.titleSummary;
+    setText('titleIntro', d.titleIntro);
+    setText('titlePushback', d.titlePushback);
+    setText('titleNaive', d.titleNaive);
+    setText('titleAmortized', d.titleAmortized);
+    setText('titleGrowth', d.titleGrowth);
+    setText('titleSummary', d.titleSummary);
 
     // Intro
-    document.getElementById('introP1').innerHTML = d.introP1;
-    document.getElementById('introP2').innerHTML = d.introP2;
-    document.getElementById('introBox').innerHTML = d.introBox;
+    setHtml('introP1', d.introP1);
+    setHtml('introP2', d.introP2);
+    setHtml('introBox', d.introBox);
 
     // push_back
-    document.getElementById('pushbackP1').innerHTML     = d.pushbackP1;
-    document.getElementById('cardBestTitle').textContent  = d.cardBestTitle;
-    document.getElementById('cardBestDesc').textContent   = d.cardBestDesc;
-    document.getElementById('cardWorstTitle').textContent = d.cardWorstTitle;
-    document.getElementById('cardWorstDesc').textContent  = d.cardWorstDesc;
+    setHtml('pushbackP1', d.pushbackP1);
+    setText('cardBestTitle', d.cardBestTitle);
+    setText('cardBestDesc', d.cardBestDesc);
+    setText('cardWorstTitle', d.cardWorstTitle);
+    setText('cardWorstDesc', d.cardWorstDesc);
 
     // Naive
-    document.getElementById('naiveP1').innerHTML = d.naiveP1;
-    document.getElementById('naiveP2').innerHTML = d.naiveP2;
+    setHtml('naiveP1', d.naiveP1);
+    setHtml('naiveP2', d.naiveP2);
 
     // Amortized general
-    document.getElementById('amortizedP1').textContent = d.amortizedP1;
-    document.getElementById('tabAggregate').textContent  = d.tabAggregate;
-    document.getElementById('tabAccounting').textContent = d.tabAccounting;
-    document.getElementById('tabPotential').textContent  = d.tabPotential;
+    setText('amortizedP1', d.amortizedP1);
+    setText('tabAggregate', d.tabAggregate);
+    setText('tabAccounting', d.tabAccounting);
+    setText('tabPotential', d.tabPotential);
 
     // Aggregate
-    document.getElementById('aggregateTitle').textContent      = d.aggregateTitle;
-    document.getElementById('aggregateP1').textContent         = d.aggregateP1;
-    document.getElementById('aggregateMath').textContent       = d.aggregateMath;
-    document.getElementById('aggregateP2').textContent         = d.aggregateP2;
-    document.getElementById('aggregateMath2').textContent      = d.aggregateMath2;
-    document.getElementById('aggregateConclusion').innerHTML   = d.aggregateConclusion;
+    setText('aggregateTitle', d.aggregateTitle);
+    setText('aggregateP1', d.aggregateP1);
+    setText('aggregateMath', d.aggregateMath);
+    setText('aggregateP2', d.aggregateP2);
+    setText('aggregateMath2', d.aggregateMath2);
+    setHtml('aggregateConclusion', d.aggregateConclusion);
 
     // Accounting
-    document.getElementById('accountingTitle').textContent     = d.accountingTitle;
-    document.getElementById('accountingP1').innerHTML          = d.accountingP1;
-    document.getElementById('coinStep1').innerHTML             = d.coinStep1;
-    document.getElementById('coinStep2').innerHTML             = d.coinStep2;
-    document.getElementById('coinStep3').innerHTML             = d.coinStep3;
-    document.getElementById('accountingMath').textContent      = d.accountingMath;
-    document.getElementById('accountingConclusion').innerHTML  = d.accountingConclusion;
+    setText('accountingTitle', d.accountingTitle);
+    setHtml('accountingP1', d.accountingP1);
+    setHtml('coinStep1', d.coinStep1);
+    setHtml('coinStep2', d.coinStep2);
+    setHtml('coinStep3', d.coinStep3);
+    setText('accountingMath', d.accountingMath);
+    setHtml('accountingConclusion', d.accountingConclusion);
 
     // Potential
-    document.getElementById('potentialTitle').textContent      = d.potentialTitle;
-    document.getElementById('potentialP1').innerHTML           = d.potentialP1;
-    document.getElementById('potentialMath').textContent       = d.potentialMath;
-    document.getElementById('potentialP2').textContent         = d.potentialP2;
-    document.getElementById('potentialMath2').textContent      = d.potentialMath2;
-    document.getElementById('potentialConclusion').innerHTML   = d.potentialConclusion;
+    setText('potentialTitle', d.potentialTitle);
+    setHtml('potentialP1', d.potentialP1);
+    setText('potentialMath', d.potentialMath);
+    setText('potentialP2', d.potentialP2);
+    setText('potentialMath2', d.potentialMath2);
+    setHtml('potentialConclusion', d.potentialConclusion);
 
     // Growth table
-    document.getElementById('growthP1').innerHTML  = d.growthP1;
-    document.getElementById('thFactor').textContent   = d.thFactor;
-    document.getElementById('thAmortized').textContent = d.thAmortized;
-    document.getElementById('thMemory').textContent    = d.thMemory;
-    document.getElementById('thExample').textContent   = d.thExample;
-    document.getElementById('tdLow').textContent    = d.tdLow;
-    document.getElementById('tdMedium').textContent  = d.tdMedium;
-    document.getElementById('tdHigh').textContent   = d.tdHigh;
-    document.getElementById('growthP2').innerHTML   = d.growthP2;
+    setHtml('growthP1', d.growthP1);
+    setText('thFactor', d.thFactor);
+    setText('thAmortized', d.thAmortized);
+    setText('thMemory', d.thMemory);
+    setText('thExample', d.thExample);
+    setText('tdLow', d.tdLow);
+    setText('tdMedium', d.tdMedium);
+    setText('tdHigh', d.tdHigh);
+    setHtml('growthP2', d.growthP2);
 
     // Complexity grid (unified across algorithms: best / amortized / single worst)
-    document.getElementById('opPushback').textContent        = d.opPushback;
-    document.getElementById('opPushbackBest').textContent    = d.opPushbackBest;
-    document.getElementById('opPushbackWorst').textContent   = d.opPushbackWorst;
-    document.getElementById('notePushback').textContent      = d.notePushback;
-    document.getElementById('notePushbackBest').textContent  = d.notePushbackBest;
-    document.getElementById('notePushbackWorst').textContent = d.notePushbackWorst;
-    document.getElementById('legendAmortized').innerHTML     = d.legendAmortized;
+    setText('opPushback', d.opPushback);
+    setText('opPushbackBest', d.opPushbackBest);
+    setText('opPushbackWorst', d.opPushbackWorst);
+    setText('notePushback', d.notePushback);
+    setText('notePushbackBest', d.notePushbackBest);
+    setText('notePushbackWorst', d.notePushbackWorst);
+    setHtml('legendAmortized', d.legendAmortized);
 
     // CTA
-    document.getElementById('ctaText').textContent    = d.ctaText;
-    document.getElementById('ctaButton').textContent  = d.ctaButton;
+    setText('ctaText', d.ctaText);
+    setText('ctaButton', d.ctaButton);
 
     updateLangToggleUI();
 }

@@ -1,21 +1,9 @@
-/* hashTable.js – simulation logic for the Hash Table page.
+/* Hash table simulation logic.
  *
- * We simulate a classic key→value hash table implemented using:
- *   - open addressing with linear probing
- *   - resizing (capacity doubled) when load factor exceeds a threshold
- *
- * Accounting method (coin argument) used in this demo:
- *   We show amortized O(1) cost of INSERT with respect to RESIZE/REHASH.
- *   Every INSERT is charged a fixed amortized fee of 2 coins:
- *     1 coin pays for the actual placement (the "write"),
- *     1 coin is saved on the stored element to pay for moving it during a future rehash.
- *
- * During RESIZE/REHASH, each moved element spends its saved coin to pay for exactly one move.
- *
- * Important note (academic precision):
- *   Linear probing may require checking many slots in the worst case. This demo logs probing
- *   steps as visual work, but the coin argument here is meant to explain how the Θ(n) rehash
- *   work is amortized over prior inserts (not to deterministically pay for all collision patterns).
+ * Model used by the demo:
+ * - open addressing with linear probing
+ * - resize (doubling) when load threshold is exceeded
+ * - 2-coin accounting for INSERT: one pays the write, one is saved for future rehash move
  */
 
 // ─── State ────────────────────────────────────────────────────────────────────
@@ -27,7 +15,6 @@ let capacity = INITIAL_CAPACITY;
 let size = 0; // number of live entries
 let table = []; // { key, value } | null
 let coinsOnSlot = []; // saved coin per occupied slot (0/1)
-let stepsLocal = 0; // internal step count, mirrored to global `steps` from hash-ui.js
 let instructions = 0; // atomic internal work units (probe/write/move)
 let isAnimating = false;
 let preparedCaseMode = null;
@@ -88,6 +75,10 @@ function randInt(min, max) {
 
 function randKeyInt(min, max) {
     return randInt(min, max);
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 function totalSavedCoins() {
@@ -288,7 +279,7 @@ async function resizeAndRehash(newCapacity) {
             d.moveElementDetails(entry.key, oldStart, newStart, probes),
             { unit: 'instruction' }
         );
-        await new Promise(r => setTimeout(r, getDelay(350)));
+        await sleep(getDelay(350));
     }
 
     createLogEntry(LOG_TYPES.SUCCESS, d.resizeDone(moved), d.rehashSummary(moved, totalProbes, maxProbes));
@@ -336,7 +327,7 @@ async function insertKV(keyInt, value) {
         instructions++; // one probe check instruction
         renderTable(i);
         createLogEntry(LOG_TYPES.PROBE, d.probeCheck(i), null, { unit: 'instruction' });
-        await new Promise(r => setTimeout(r, getDelay(250)));
+        await sleep(getDelay(250));
 
         // If the key already exists, a standard hash table performs UPDATE.
         if (table[i] && table[i].key === keyInt) {
@@ -344,14 +335,14 @@ async function insertKV(keyInt, value) {
             // (Coin model) UPDATE costs 1 step. We pay it using the coin saved on this element.
             createLogEntry(LOG_TYPES.INFO, d.updateFound(i));
             createLogEntry(LOG_TYPES.INFO, d.updateCostExplain(i));
-            await new Promise(r => setTimeout(r, getDelay(180)));
+            await sleep(getDelay(180));
 
             if (coinsOnSlot[i] > 0) {
                 coinsOnSlot[i] -= 1;
                 bank += 1;
                 renderTable(i);
                 createLogEntry(LOG_TYPES.INFO, d.updateBorrowCoin(i));
-                await new Promise(r => setTimeout(r, getDelay(160)));
+                await sleep(getDelay(160));
             }
 
             // do the update
@@ -359,14 +350,14 @@ async function insertKV(keyInt, value) {
             instructions++; // one write/update instruction
             if (bank > 0) bank -= 1;
             createLogEntry(LOG_TYPES.SUCCESS, d.updateDone(i), null, { unit: 'instruction' });
-            await new Promise(r => setTimeout(r, getDelay(160)));
+            await sleep(getDelay(160));
 
             // return the coin back to the element so invariants for rehash stay intact
             if (coinsOnSlot[i] === 0) {
                 coinsOnSlot[i] = 1;
                 renderTable(i);
                 createLogEntry(LOG_TYPES.INFO, d.updateReturnCoin(i));
-                await new Promise(r => setTimeout(r, getDelay(140)));
+                await sleep(getDelay(140));
             }
 
             placedAt = i;
@@ -381,12 +372,12 @@ async function insertKV(keyInt, value) {
             // (Note) We do NOT attempt to maintain a strict “coins pay every probe” invariant here.
             // The saved coin model is used to explain amortized resize/rehash.
             createLogEntry(LOG_TYPES.WARNING, d.probeCollision(i, table[i].key));
-            await new Promise(r => setTimeout(r, getDelay(200)));
+            await sleep(getDelay(200));
 
             const next = (i + 1) % capacity;
             renderTable(next);
             createLogEntry(LOG_TYPES.PROBE, d.probeNext(next));
-            await new Promise(r => setTimeout(r, getDelay(180)));
+            await sleep(getDelay(180));
             continue;
         }
 
@@ -489,7 +480,7 @@ async function generateRandom() {
         const k = randKeyInt(keyMin, keyMax);
         const v = randInt(0, 99);
         await insertKV(k, v);
-        await new Promise(r => setTimeout(r, getDelay(200)));
+        await sleep(getDelay(200));
     }
 }
 
@@ -513,8 +504,10 @@ function prepareBestCase(nextVariant = false) {
 
 function prepareWorstCase(nextVariant = false) {
     const variants = getWorstVariants();
-    worstVariantIndex = 0;
-    const scenario = variants[0];
+    worstVariantIndex = nextVariant
+        ? (worstVariantIndex + 1) % variants.length
+        : 0;
+    const scenario = variants[worstVariantIndex];
 
     resetHashTable();
     applyPreparedEntries(scenario.entries);
@@ -528,7 +521,7 @@ function prepareWorstCase(nextVariant = false) {
     const willResize = ((size + 1) / capacity) > LOAD_THRESHOLD;
     updateInfoPanel(
         d.worstReadyVariant(
-            1,
+            worstVariantIndex + 1,
             variants.length,
             scenario.insert.key,
             scenario.insert.value,
@@ -573,7 +566,6 @@ function resetHashTable() {
     table = new Array(capacity).fill(null);
     coinsOnSlot = new Array(capacity).fill(0);
     steps = 0;
-    stepsLocal = 0;
     instructions = 0;
     isAnimating = false;
     preparedCaseMode = null;

@@ -1,27 +1,18 @@
-/* binaryCounter.js – simulation logic for the Binary Counter page.
+/* Binary counter simulation logic.
  *
- * Accounting method (Banker's / Coin argument):
- *   Each INCREMENT is charged a fixed amortized fee of exactly 2 coins.
- *   These 2 coins arrive at the START of the operation.
+ * Accounting model used in the animation:
+ * - Every INCREMENT receives a fixed amortized charge of 2 coins.
+ * - One coin pays the single 0->1 flip, one coin is saved on that bit.
+ * - Carry flips 1->0 are paid by coins already saved on flipped 1-bits.
  *
- *   How the 2 coins are spent:
- *   - Flip 0→1 (exactly once per INCREMENT): costs 1 coin (from the 2 received).
- *                                             1 coin is SAVED on that bit position.
- *   - Flip 1→0 during carry propagation:     each such flip is paid by the
- *                                             SAVED coin already sitting on that bit.
- *                                             No new coins are needed!
- *
- *   Invariant: every bit that is currently 1 has exactly 1 coin saved on it.
- *   Because carry propagation only touches 1-bits, and each 1-bit already has
- *   its coin, we can NEVER go into debt – no matter how many bits carry.
- *
- *   Therefore: total work for n increments ≤ 2n  →  O(1) amortized per increment.
+ * Invariant: each bit set to 1 has exactly one saved coin.
  */
 
 // ─── State ────────────────────────────────────────────────────────────────────
 const DEFAULT_BITS = 8;
 const MIN_BITS = 4;
 const MAX_BITS = 12;
+const INCREMENT_CHARGE = 2;
 
 let numBits = DEFAULT_BITS;  // Display width (default 8-bit for clarity)
 let bits        = new Array(numBits).fill(0);   // bits[0] = LSB
@@ -43,6 +34,10 @@ function reinitializeCounterState() {
     coinsOnBit = new Array(numBits).fill(0);
     bank = 0;
     totalCoinsEarned = 0;
+    resetCounters();
+}
+
+function resetCounters() {
     steps = 0;
     totalBitSteps = 0;
 }
@@ -203,7 +198,7 @@ function bitsToDecimal() {
     return bits.reduce((sum, b, i) => sum + b * Math.pow(2, i), 0);
 }
 
-// ─── Animated coin update for a single bit position ───────────────────────────
+// ─── Animated coin updates ────────────────────────────────────────────────────
 async function animateCoins(bitIndex, targetCount) {
     const coinsDiv = document.getElementById(`bit-coins-${bitIndex}`);
     if (!coinsDiv) return;
@@ -294,7 +289,7 @@ async function moveCoinFromBankToBit(bitIndex) {
     flying.style.transitionDuration = `${duration}ms`;
     document.body.appendChild(flying);
 
-    // Mince fyzicky opustí bank hned, aby bylo vidět, odkud letí.
+    // Remove source coin first so the animation visibly starts in the bank.
     await spendCoinFromBank('instant');
 
     const dx = (to.left + (to.width / 2) - (from.left + from.width / 2));
@@ -307,7 +302,7 @@ async function moveCoinFromBankToBit(bitIndex) {
     await sleep(duration);
     flying.remove();
 
-    // Cílová mince se objeví přesně po doletu.
+    // Create the final coin only after the fly animation finishes.
     const landedCoin = document.createElement('div');
     landedCoin.classList.add('bit-coin');
     targetDiv.appendChild(landedCoin);
@@ -320,7 +315,7 @@ async function increment() {
     const d = dict[currentLang];
     const valueBefore = bitsToDecimal();
 
-    // Overflow guard (255 → reset for 8-bit)
+    // Reset on max value to keep the demo cyclic for the selected bit width.
     if (valueBefore >= maxCounterValue()) {
         resetCounter();
         return;
@@ -333,11 +328,10 @@ async function increment() {
     const valueAfter = valueBefore + 1;
     beginLogGroup(valueBefore, valueAfter);
 
-    // ── KROK 1: Přijmeme 2 mince – zobrazí se fyzicky v banku ────────────────
-    // Pevný poplatek za každý INCREMENT, vždy přesně 2.
-    totalCoinsEarned += 2;
-    bank = 2;
-    renderBank(2);
+    // 1) Receive fixed amortized charge into operation bank.
+    totalCoinsEarned += INCREMENT_CHARGE;
+    bank = INCREMENT_CHARGE;
+    renderBank(INCREMENT_CHARGE);
     createLogEntry(LOG_TYPES.INSERT, d.allocCoins());
     updateCoinCounter();
     await sleep(getDelay(400));
@@ -345,7 +339,7 @@ async function increment() {
     let flipCount = 0;
     let pos = 0;
 
-    // ── KROK 2: Carry propagace – 1-bity platí ze SVÝCH mincí, banka se nedotýká
+    // 2) Carry propagation: 1->0 flips are paid by coins saved on those bits.
     while (pos < numBits && bits[pos] === 1) {
         const frame = document.getElementById(`bit-frame-${pos}`);
         if (frame) frame.classList.add('active-bit');
@@ -357,7 +351,7 @@ async function increment() {
         updateCoinCounter();
 
         await animateBitFlip(pos, 0);
-        await animateCoins(pos, 0);   // mince zmizí z bitu (utracena za flip)
+        await animateCoins(pos, 0);
 
         if (frame) frame.classList.remove('active-bit');
 
@@ -368,12 +362,12 @@ async function increment() {
         await sleep(getDelay(200));
     }
 
-    // ── KROK 3: Flip 0→1 – 1 mince z banku zaplatí flip, 1 mince přeletí na bit
+    // 3) First zero bit flips to one: one bank coin pays, one is saved on that bit.
     if (pos < numBits) {
         const frame = document.getElementById(`bit-frame-${pos}`);
         if (frame) frame.classList.add('active-bit');
 
-        // Utracení mince i flip proběhnou zároveň (lépe čitelné časování).
+        // Spend + flip together so timing stays visually clear.
         bank -= 1;
         createLogEntry(LOG_TYPES.COPY, d.spendSelf(pos), null, { unit: 'instruction' });
         await Promise.all([
@@ -381,14 +375,14 @@ async function increment() {
             animateBitFlip(pos, 1),
         ]);
 
-        // Přesuneme 1 minci z banku na bit (rezerva pro budoucí flip 1→0)
+        // Save one coin on the bit for its future 1->0 carry flip.
         bank -= 1;
         bits[pos] = 1;
         coinsOnBit[pos] = 1;
         updateCoinCounter();
 
         createLogEntry(LOG_TYPES.SUCCESS, d.saveCoin(pos));
-        await moveCoinFromBankToBit(pos);  // mince "přeletí" z banku na bit
+        await moveCoinFromBankToBit(pos);
 
         if (frame) frame.classList.remove('active-bit');
 
@@ -397,7 +391,7 @@ async function increment() {
         updateInstructionCounter();
     }
 
-    // Banka je nyní přesně prázdná (0 mincí)
+    // Operation bank must be empty after each increment.
     renderBank(0);
 
     document.getElementById('decimalDisplay').textContent = `${d.value}: ${bitsToDecimal()}`;
@@ -430,7 +424,7 @@ function resetCounter() {
     updateCaseButtons();
 }
 
-// ─── Random mode ──────────────────────────────────────────────────────────────
+// ─── Random mode ─────────────────────────────────────────────────────────────
 async function generateRandom() {
     if (isAnimating) return;
     const d = dict[currentLang];
@@ -483,9 +477,9 @@ async function generateRandom() {
     createLogEntry(LOG_TYPES.SUCCESS, d.randomDone());
 }
 
-// ─── Best Case ────────────────────────────────────────────────────────────────
+// ─── Best case ────────────────────────────────────────────────────────────────
 async function prepareBestCase(nextVariant = false) {
-    // Best case means LSB=0. We cycle through multiple even values for variety.
+    // Best case means LSB = 0; cycle through several even values.
     resetCounter();
     const variants = getBestVariants();
     bestVariantIndex = nextVariant
@@ -495,12 +489,11 @@ async function prepareBestCase(nextVariant = false) {
 
     for (let i = 0; i < numBits; i++) {
         bits[i] = (target >> i) & 1;
-        coinsOnBit[i] = bits[i]; // each 1-bit has 1 saved coin
+        coinsOnBit[i] = bits[i];
     }
     bank = 0;
-    totalCoinsEarned = savedCoinsTotal(); // coins on bits = "already earned & saved" from past ops
-    steps = 0;
-    totalBitSteps = 0;
+    totalCoinsEarned = savedCoinsTotal();
+    resetCounters();
     updateCoinCounter();
     updateStepCounter();
     updateInstructionCounter();
@@ -514,9 +507,9 @@ async function prepareBestCase(nextVariant = false) {
     updateCaseButtons();
 }
 
-// ─── Worst Case ───────────────────────────────────────────────────────────────
+// ─── Worst case ───────────────────────────────────────────────────────────────
 async function prepareWorstCase(nextVariant = false) {
-    // Worst-side variants by carry depth (k trailing ones). k=numBits is true worst case.
+    // Variants differ by carry depth (k trailing ones); k=numBits is full worst case.
     resetCounter();
     const variants = getWorstVariants();
     worstVariantIndex = nextVariant
@@ -526,12 +519,11 @@ async function prepareWorstCase(nextVariant = false) {
 
     for (let i = 0; i < numBits; i++) {
         bits[i] = i < k ? 1 : 0;
-        coinsOnBit[i] = bits[i]; // each 1-bit has 1 saved coin
+        coinsOnBit[i] = bits[i];
     }
     bank = 0;
     totalCoinsEarned = savedCoinsTotal();
-    steps = 0;
-    totalBitSteps = 0;
+    resetCounters();
     updateCoinCounter();
     updateStepCounter();
     updateInstructionCounter();
@@ -570,7 +562,7 @@ async function incrementPreparedCase(mode) {
         createLogEntry(LOG_TYPES.INFO, d.worstStepExplain(trailingOnes, flips, trailingOnes === numBits));
     }
 
-    // Prepared scenario is consumed by this one-step action.
+    // Prepared scenario is single-use by design.
     preparedCaseMode = null;
     updateCaseButtons();
 }

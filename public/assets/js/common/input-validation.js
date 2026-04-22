@@ -32,6 +32,12 @@
         return { ok: true, value: n };
     }
 
+    function isOutOfRange(value, min, max) {
+        if (min !== null && value < min) return true;
+        if (max !== null && value > max) return true;
+        return false;
+    }
+
     /**
      * @returns {{ok:true,value:number}|{ok:false,reason:string,details?:any}}
      */
@@ -47,8 +53,9 @@
         if (!parsed.ok) return { ok: false, reason: 'NOT_INT' };
 
         const value = parsed.value;
-        if (min !== null && value < min) return { ok: false, reason: 'OUT_OF_RANGE', details: { min, max } };
-        if (max !== null && value > max) return { ok: false, reason: 'OUT_OF_RANGE', details: { min, max } };
+        if (isOutOfRange(value, min, max)) {
+            return { ok: false, reason: 'OUT_OF_RANGE', details: { min, max } };
+        }
 
         return { ok: true, value };
     }

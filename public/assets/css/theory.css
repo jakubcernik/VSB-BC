@@ -122,6 +122,17 @@
     color: #2a7a9b;
 }
 
+.subsection-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2a7a9b;
+    margin: 0 0 10px;
+}
+
+.subsection-title-spaced {
+    margin-top: 18px;
+}
+
 /* ── Info box ────────────────────────────────────────────────── */
 
 .info-box {
@@ -174,8 +185,13 @@
     margin-bottom: 8px;
 }
 
-.case-card.best  h3 { color: #2e7d32; }
-.case-card.worst h3 { color: #e65100; }
+.case-card.best h3 {
+    color: #2e7d32;
+}
+
+.case-card.worst h3 {
+    color: #e65100;
+}
 
 .case-card p {
     font-size: 0.88rem;
@@ -447,21 +463,39 @@ body.dark-mode .section-body code {
     color: #80d4f0;
 }
 
+body.dark-mode .subsection-title {
+    color: #8fc6dc;
+}
+
 body.dark-mode .info-box {
     background: #1a3020;
     border-left-color: #4caf50;
     color: #a5d6a7;
 }
 
-body.dark-mode .case-card.best  { background: #1a3020; border-color: #4caf50; }
-body.dark-mode .case-card.worst { background: #3a2010; border-color: #ff9800; }
-body.dark-mode .case-card p     { color: #aaa; }
+body.dark-mode .case-card.best {
+    background: #1a3020;
+    border-color: #4caf50;
+}
+
+body.dark-mode .case-card.worst {
+    background: #3a2010;
+    border-color: #ff9800;
+}
+
+body.dark-mode .case-card p {
+    color: #aaa;
+}
 
 body.dark-mode .method-tab {
     background: #3a3a3a;
     color: #80d4f0;
 }
-body.dark-mode .method-tab:hover { background: #444; }
+
+body.dark-mode .method-tab:hover {
+    background: #444;
+}
+
 body.dark-mode .method-tab.active {
     background: #2a7a9b;
     color: #fff;
@@ -477,15 +511,25 @@ body.dark-mode .coin-step {
     background: #2e2810;
     border-color: #b8860b;
 }
-body.dark-mode .coin-step p { color: #bbb; }
+
+body.dark-mode .coin-step p {
+    color: #bbb;
+}
 
 body.dark-mode .growth-table th,
 body.dark-mode .growth-table td {
     border-color: #3a4a54;
     color: #ddd;
 }
-body.dark-mode .growth-table thead th  { background: #1a5570; }
-body.dark-mode .growth-table tbody tr:nth-child(even) { background: #2a2a2a; }
+
+body.dark-mode .growth-table thead th {
+    background: #1a5570;
+}
+
+body.dark-mode .growth-table tbody tr:nth-child(even) {
+    background: #2a2a2a;
+}
+
 body.dark-mode .growth-table .highlight-row {
     background: #2e2810 !important;
     color: #ffe082;
@@ -494,6 +538,23 @@ body.dark-mode .growth-table .highlight-row {
 body.dark-mode .complexity-card {
     background: linear-gradient(180deg, #2a3238 0%, #252c31 100%);
     border-color: #3a4a54;
+}
+
+body.dark-mode .complexity-op {
+    color: #ccc;
+}
+
+body.dark-mode .complexity-note {
+    color: #777;
+}
+
+body.dark-mode .legend {
+    color: #999;
+    border-left-color: #f0ad4e;
+}
+
+body.dark-mode .cta-box {
+    background: linear-gradient(135deg, #1a5570 0%, #0e3347 100%);
 }
 
 @media (max-width: 760px) {
@@ -527,10 +588,4 @@ body.dark-mode .complexity-card {
         padding: 12px;
     }
 }
-body.dark-mode .complexity-op   { color: #ccc; }
-body.dark-mode .complexity-note { color: #777; }
-
-body.dark-mode .legend { color: #999; border-left-color: #f0ad4e; }
-
-body.dark-mode .cta-box { background: linear-gradient(135deg, #1a5570 0%, #0e3347 100%); }
 

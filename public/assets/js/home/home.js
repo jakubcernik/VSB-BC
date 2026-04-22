@@ -82,24 +82,34 @@ function navigateHome(event, url) {
     setTimeout(() => { window.location.href = url; }, 350);
 }
 
+function setText(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+}
+
+function setHtml(id, html) {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+}
+
 // ─── Apply language ───────────────────────────────────────────────────────────
 
 function applyLanguage() {
     const d = homeDict[currentLang];
 
     document.title = d.pageTitle;
-    document.getElementById('homeTitle').textContent    = d.title;
-    document.getElementById('homeSubtitle').textContent = d.subtitle;
-    document.getElementById('footerText').textContent   = d.footer;
+    setText('homeTitle', d.title);
+    setText('homeSubtitle', d.subtitle);
+    setText('footerText', d.footer);
 
     // Cards: tags/chips were removed from the Home page UI.
 
-    document.getElementById('algoTitle1').innerHTML = `${d.algoTitle1}`;
-    document.getElementById('algoDesc1').textContent  = d.algoDesc1;
-    document.getElementById('algoTitle2').textContent = d.algoTitle2;
-    document.getElementById('algoDesc2').textContent  = d.algoDesc2;
-    document.getElementById('algoTitle3').textContent = d.algoTitle3;
-    document.getElementById('algoDesc3').textContent  = d.algoDesc3;
+    setHtml('algoTitle1', d.algoTitle1);
+    setText('algoDesc1', d.algoDesc1);
+    setText('algoTitle2', d.algoTitle2);
+    setText('algoDesc2', d.algoDesc2);
+    setText('algoTitle3', d.algoTitle3);
+    setText('algoDesc3', d.algoDesc3);
 
     updateLangToggleUI();
 }

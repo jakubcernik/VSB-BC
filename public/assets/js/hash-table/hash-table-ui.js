@@ -1,6 +1,4 @@
-/* hash-ui.js – UI helpers & i18n for the Hash Table page.
-   Self-contained, mirrors ui.js / bc-ui.js style.
-*/
+/* UI helpers and i18n for the Hash Table page. */
 
 let currentLang = localStorage.getItem('lang') || 'cz';
 
@@ -343,6 +341,16 @@ function createLogEntry(type, title, details = null, meta = null) {
 
 function updateInfoPanel(msg, meta = null) { createLogEntry(LOG_TYPES.INFO, msg, null, meta); }
 
+function setText(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+}
+
+function setHtml(id, html) {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+}
+
 function openMetricsHelp() {
     const modal = document.getElementById('metricsHelpModal');
     if (!modal) return;
@@ -424,53 +432,53 @@ function applyLanguage() {
     const d = dict[currentLang];
 
     document.title = d.pageTitle;
-    document.getElementById('pageTitle').textContent        = d.pageTitle;
-    document.getElementById('pageNavHomeLabel').textContent = d.pageNavHome;
-    document.getElementById('pageNavSimLabel').textContent  = d.pageNavSim;
-    document.getElementById('pageNavTheoryLabel').textContent = d.pageNavTheory;
+    setText('pageTitle', d.pageTitle);
+    setText('pageNavHomeLabel', d.pageNavHome);
+    setText('pageNavSimLabel', d.pageNavSim);
+    setText('pageNavTheoryLabel', d.pageNavTheory);
 
-    document.getElementById('manualTab').textContent = d.manual;
-    document.getElementById('randomTab').textContent = d.random;
-    document.getElementById('bestTab').textContent   = d.best;
-    document.getElementById('worstTab').textContent  = d.worst;
+    setText('manualTab', d.manual);
+    setText('randomTab', d.random);
+    setText('bestTab', d.best);
+    setText('worstTab', d.worst);
 
-    document.getElementById('manualModeTitle').textContent = d.manualTitle;
-    document.getElementById('keyLabel').textContent = d.keyLabel;
-    document.getElementById('valueLabel').textContent = d.valueLabel;
+    setText('manualModeTitle', d.manualTitle);
+    setText('keyLabel', d.keyLabel);
+    setText('valueLabel', d.valueLabel);
     document.getElementById('keyInput').placeholder = d.keyPH;
     document.getElementById('valueInput').placeholder = d.valuePH;
-    document.getElementById('btnInsert').textContent = d.btnInsert;
-    document.getElementById('btnReset').textContent  = d.btnReset;
+    setText('btnInsert', d.btnInsert);
+    setText('btnReset', d.btnReset);
 
-    document.getElementById('randomModeTitle').textContent = d.randomModeTitle;
-    document.getElementById('randomCountLabel').textContent = d.randomCountLabel;
+    setText('randomModeTitle', d.randomModeTitle);
+    setText('randomCountLabel', d.randomCountLabel);
     document.getElementById('randomCount').placeholder = d.randomCountPH;
-    document.getElementById('randomKeyMinLabel').textContent = d.randomKeyMinLabel;
+    setText('randomKeyMinLabel', d.randomKeyMinLabel);
     document.getElementById('randomKeyMin').placeholder = d.randomKeyMinPH;
-    document.getElementById('randomKeyMaxLabel').textContent = d.randomKeyMaxLabel;
+    setText('randomKeyMaxLabel', d.randomKeyMaxLabel);
     document.getElementById('randomKeyMax').placeholder = d.randomKeyMaxPH;
-    document.getElementById('btnGenRandom').textContent = d.btnGenRandom;
+    setText('btnGenRandom', d.btnGenRandom);
 
-    document.getElementById('bestCaseTitle').textContent = d.bestCaseTitle;
-    document.getElementById('bestCaseDesc').innerHTML    = d.bestCaseDesc;
-    document.getElementById('btnPrepareBest').textContent = d.btnPrepareBest;
-    document.getElementById('btnBestNextVariant').textContent = d.btnNextVariant;
-    document.getElementById('btnBestInsertPrepared').textContent = d.btnInsertPrepared;
-    document.getElementById('bestStepPrepareLabel').textContent = d.stepPrepareLabel;
-    document.getElementById('bestStepRunLabel').textContent = d.stepRunLabel;
+    setText('bestCaseTitle', d.bestCaseTitle);
+    setHtml('bestCaseDesc', d.bestCaseDesc);
+    setText('btnPrepareBest', d.btnPrepareBest);
+    setText('btnBestNextVariant', d.btnNextVariant);
+    setText('btnBestInsertPrepared', d.btnInsertPrepared);
+    setText('bestStepPrepareLabel', d.stepPrepareLabel);
+    setText('bestStepRunLabel', d.stepRunLabel);
 
-    document.getElementById('worstCaseTitle').textContent = d.worstCaseTitle;
-    document.getElementById('worstCaseDesc').innerHTML    = d.worstCaseDesc;
-    document.getElementById('btnPrepareWorst').textContent = d.btnPrepareWorst;
+    setText('worstCaseTitle', d.worstCaseTitle);
+    setHtml('worstCaseDesc', d.worstCaseDesc);
+    setText('btnPrepareWorst', d.btnPrepareWorst);
     const worstNextVariantBtn = document.getElementById('btnWorstNextVariant');
     if (worstNextVariantBtn) {
         worstNextVariantBtn.textContent = d.btnNextVariant;
         worstNextVariantBtn.style.display = 'none';
         worstNextVariantBtn.disabled = true;
     }
-    document.getElementById('btnWorstInsertPrepared').textContent = d.btnInsertPrepared;
-    document.getElementById('worstStepPrepareLabel').textContent = d.stepPrepareLabel;
-    document.getElementById('worstStepRunLabel').textContent = d.stepRunLabel;
+    setText('btnWorstInsertPrepared', d.btnInsertPrepared);
+    setText('worstStepPrepareLabel', d.stepPrepareLabel);
+    setText('worstStepRunLabel', d.stepRunLabel);
 
     const helpIcon = document.getElementById('metaThresholdHelp');
     const helpText = document.getElementById('metaThresholdHelpText');
@@ -480,7 +488,7 @@ function applyLanguage() {
     }
     if (helpText) helpText.textContent = d.metaThresholdHelp;
 
-    document.getElementById('footerText').textContent = d.footer;
+    setText('footerText', d.footer);
 
     updateLangToggleUI();
     applyTheme();

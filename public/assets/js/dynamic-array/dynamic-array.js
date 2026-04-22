@@ -29,6 +29,20 @@ function isStrictIntegerString(value)
     return /^-?\d+$/.test((value || '').trim());
 }
 
+function sleep(ms)
+{
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function reportValidation(result, dictForLang)
+{
+    InputValidation.reportValidationError(result.reason, {
+        dict: dictForLang,
+        details: result.details,
+        report: (msg) => updateInfoPanel(msg),
+    });
+}
+
 function hasValidRandomInputs()
 {
     const countEl = document.getElementById('randomCount');
@@ -109,7 +123,7 @@ async function flyCoin(fromEl, toEl, animate = true) {
     coin.style.transform = `translate(${dx}px, ${dy}px) scale(0.6)`;
     coin.style.opacity = '0.2';
 
-    await new Promise(r => setTimeout(r, getDelay(420)));
+    await sleep(getDelay(420));
     coin.remove();
 }
 
@@ -280,7 +294,7 @@ async function animateCoinUpdate(frameIndex, coinsNeeded, animate = true)
             const coin = document.createElement("div");
             coin.classList.add("coin", "adding");
             frame.appendChild(coin);
-            await new Promise(resolve => setTimeout(resolve, getDelay(300)));
+            await sleep(getDelay(300));
             coin.classList.remove("adding");
         }
     }
@@ -291,7 +305,7 @@ async function animateCoinUpdate(frameIndex, coinsNeeded, animate = true)
             const coin = frame.lastChild;
             if (!coin) break;
             coin.classList.add("removing");
-            await new Promise(resolve => setTimeout(resolve, getDelay(300)));
+            await sleep(getDelay(300));
             coin.remove();
         }
     }
@@ -303,11 +317,7 @@ async function addElement()
 
     const valueRes = InputValidation.readInt('manualInput', { required: true });
     if (!valueRes.ok) {
-        InputValidation.reportValidationError(valueRes.reason, {
-            dict: d,
-            details: valueRes.details,
-            report: (msg) => updateInfoPanel(msg),
-        });
+        reportValidation(valueRes, d);
         return;
     }
 
@@ -432,7 +442,7 @@ function enqueueInsertOperation(value, options = {})
             );
             visualizeArray();
             if (animate) {
-                await new Promise(resolve => setTimeout(resolve, getDelay(400)));
+                await sleep(getDelay(400));
             }
             updateInfoPanel(d.resizeNewSlots(oldCapacity, capacity));
         }));
@@ -470,7 +480,7 @@ function enqueueInsertOperation(value, options = {})
         visualizeArray();
         updateInfoPanel(d.atomicInsertStep(value, slotIndex));
         if (animate) {
-            await new Promise(resolve => setTimeout(resolve, getDelay(400)));
+            await sleep(getDelay(400));
         }
     }));
 
@@ -543,11 +553,7 @@ function ensureManualOperationQueued()
     const d = dict[currentLang];
     const valueRes = InputValidation.readInt('manualInput', { required: true });
     if (!valueRes.ok) {
-        InputValidation.reportValidationError(valueRes.reason, {
-            dict: d,
-            details: valueRes.details,
-            report: (msg) => updateInfoPanel(msg),
-        });
+        reportValidation(valueRes, d);
         syncControlStates();
         return false;
     }
@@ -575,21 +581,13 @@ async function generateRandomArray()
 
     const countRes = InputValidation.readInt('randomCount', { required: true, min: 1 });
     if (!countRes.ok) {
-        InputValidation.reportValidationError(countRes.reason, {
-            dict: d,
-            details: countRes.details,
-            report: (msg) => updateInfoPanel(msg),
-        });
+        reportValidation(countRes, d);
         return;
     }
 
     const rangeRes = InputValidation.readIntMinMax('randomMin', 'randomMax', { required: true });
     if (!rangeRes.ok) {
-        InputValidation.reportValidationError(rangeRes.reason, {
-            dict: d,
-            details: rangeRes.details,
-            report: (msg) => updateInfoPanel(msg),
-        });
+        reportValidation(rangeRes, d);
         return;
     }
 
@@ -737,11 +735,7 @@ async function finishBestCase()
 
     const valueRes = InputValidation.readInt('bestInput', { required: true });
     if (!valueRes.ok) {
-        InputValidation.reportValidationError(valueRes.reason, {
-            dict: d,
-            details: valueRes.details,
-            report: (msg) => updateInfoPanel(msg),
-        });
+        reportValidation(valueRes, d);
         return;
     }
 
@@ -799,11 +793,7 @@ async function finishWorstCase()
 
     const valueRes = InputValidation.readInt('worstInput', { required: true });
     if (!valueRes.ok) {
-        InputValidation.reportValidationError(valueRes.reason, {
-            dict: d,
-            details: valueRes.details,
-            report: (msg) => updateInfoPanel(msg),
-        });
+        reportValidation(valueRes, d);
         return;
     }
 
