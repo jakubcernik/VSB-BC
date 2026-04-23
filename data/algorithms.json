@@ -1,0 +1,56 @@
+{
+  "algorithms": [
+    {
+      "id": "dynamic-array",
+      "route": "/dynamic-array",
+      "icon": "📦",
+      "cssFiles": [],
+      "jsFiles": [
+        "assets/js/common/input-validation.js",
+        "assets/js/dynamic-array/dynamic-array-ui.js",
+        "assets/js/dynamic-array/dynamic-array.js"
+      ],
+      "theoryJsFile": "assets/js/dynamic-array/dynamic-array-theory.js",
+      "pageTitle": "Dynamic Array — Amortized Complexity",
+      "theoryTitle": "Theory — Dynamic Array",
+      "params": {
+        "initialCapacity": 1,
+        "randomCountDefault": 10
+      }
+    },
+    {
+      "id": "binary-counter",
+      "route": "/binary-counter",
+      "icon": "🔢",
+      "cssFiles": ["assets/css/binary-counter.css"],
+      "jsFiles": [
+        "assets/js/common/input-validation.js",
+        "assets/js/binary-counter/binary-counter-ui.js",
+        "assets/js/binary-counter/binary-counter.js"
+      ],
+      "theoryJsFile": "assets/js/binary-counter/binary-counter-theory.js",
+      "pageTitle": "Binary Counter — Amortized Complexity",
+      "theoryTitle": "Theory — Binary Counter",
+      "params": {
+        "defaultBits": 8
+      }
+    },
+    {
+      "id": "hash-table",
+      "route": "/hash-table",
+      "icon": "#",
+      "cssFiles": ["assets/css/hash-table.css"],
+      "jsFiles": [
+        "assets/js/common/input-validation.js",
+        "assets/js/hash-table/hash-table-ui.js",
+        "assets/js/hash-table/hash-table.js"
+      ],
+      "theoryJsFile": "assets/js/hash-table/hash-table-theory.js",
+      "pageTitle": "Hash Table — Amortized Complexity",
+      "theoryTitle": "Theory — Hash Table",
+      "params": {
+        "loadThreshold": 0.75
+      }
+    }
+  ]
+}

@@ -1,12 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amortized complexity — Hash Table</title>
-    <link rel="stylesheet" href="../assets/css/base.css">
-    <link rel="stylesheet" href="../assets/css/hash-table.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <%- include('partials/head', { title: algo.pageTitle, extraCss: algo.cssFiles }) %>
 </head>
 <body>
 <div id="pageTransitionOverlay"></div>
@@ -14,11 +9,11 @@
     <header>
         <h1 id="pageTitle">Amortized complexity — Hash Table</h1>
         <nav id="pageNav">
-            <a href="../index.html" id="pageNavHome" onclick="navigateToPage(event, '../index.html')">🏠 <span id="pageNavHomeLabel">Home</span></a>
+            <a href="/" id="pageNavHome" onclick="navigateToPage(event, '/')">🏠 <span id="pageNavHomeLabel">Home</span></a>
             <span class="page-nav-divider">|</span>
             <span id="pageNavSimActive">⚙️ <span id="pageNavSimLabel">Simulation</span></span>
             <span class="page-nav-divider">|</span>
-            <a href="hash-table-theory.html" id="pageNavTheory" onclick="navigateToPage(event, 'hash-table-theory.html')">📖 <span id="pageNavTheoryLabel">Theory</span></a>
+            <a href="<%= algo.route %>/theory" id="pageNavTheory" onclick="navigateToPage(event, '<%= algo.route %>/theory')">📖 <span id="pageNavTheoryLabel">Theory</span></a>
         </nav>
     </header>
 
@@ -46,7 +41,7 @@
             <p id="metricsHelpLine2"></p>
             <p id="metricsHelpLine3"></p>
             <div class="metrics-help-actions">
-                <a id="metricsHelpTheoryLink" class="metrics-help-theory-link" href="hash-table-theory.html#sec-amortized" onclick="navigateToPage(event, 'hash-table-theory.html#sec-amortized')">Open theory</a>
+                <a id="metricsHelpTheoryLink" class="metrics-help-theory-link" href="<%= algo.route %>/theory#sec-amortized" onclick="navigateToPage(event, '<%= algo.route %>/theory#sec-amortized')">Open theory</a>
                 <button id="metricsHelpCloseBtn" class="btn-secondary" type="button" onclick="closeMetricsHelp()">Close</button>
             </div>
         </div>
@@ -118,7 +113,7 @@
                 <div class="meta-item" id="metaCapacity">Capacity: 8</div>
                 <div class="meta-item" id="metaLoad">Load factor: 0.00</div>
                 <div class="meta-item meta-threshold-item" id="metaThreshold">
-                    <span id="metaThresholdLabel">Resize threshold</span>: <span id="metaThresholdValue">0.75</span>
+                    <span id="metaThresholdLabel">Resize threshold</span>: <span id="metaThresholdValue"><%= algo.params.loadThreshold %></span>
                     <span class="help-tooltip" id="metaThresholdHelp" tabindex="0" role="button" aria-label="Help">?
                         <span class="help-tooltip-text" id="metaThresholdHelpText">When (size + 1) / capacity exceeds this value, resize + rehash is triggered.</span>
                     </span>
@@ -136,23 +131,22 @@
         <div class="footer-controls">
             <div class="toggle-pill" id="langToggle" onclick="toggleLanguage()" title="Změnit jazyk / Change language">
                 <div class="toggle-option" id="langOptCZ">
-                    <img src="../assets/img/czech-republic.png" alt="CZ">
+                    <img src="/assets/img/czech-republic.png" alt="CZ">
                 </div>
                 <div class="toggle-option" id="langOptEN">
-                    <img src="../assets/img/united-kingdom.png" alt="EN">
+                    <img src="/assets/img/united-kingdom.png" alt="EN">
                 </div>
             </div>
             <div class="toggle-pill" id="themeToggle" onclick="toggleTheme()" title="Přepnout téma / Switch theme">
-                <div class="toggle-option" id="themeOptLight"><img src="../assets/img/light-mode.png" alt="Light"></div>
-                <div class="toggle-option" id="themeOptDark"><img src="../assets/img/night-mode.png" alt="Dark"></div>
+                <div class="toggle-option" id="themeOptLight"><img src="/assets/img/light-mode.png" alt="Light"></div>
+                <div class="toggle-option" id="themeOptDark"><img src="/assets/img/night-mode.png" alt="Dark"></div>
             </div>
         </div>
     </footer>
 </div>
 
-<script src="../assets/js/common/input-validation.js"></script>
-<script src="../assets/js/hash-table/hash-table-ui.js"></script>
-<script src="../assets/js/hash-table/hash-table.js"></script>
+<% algo.jsFiles.forEach(function(f) { %>
+<script src="/<%= f %>"></script>
+<% }); %>
 </body>
 </html>
-

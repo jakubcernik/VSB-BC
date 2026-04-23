@@ -1,12 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Binary Counter Simulation</title>
-    <link rel="stylesheet" href="../assets/css/base.css">
-    <link rel="stylesheet" href="../assets/css/binary-counter.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <%- include('partials/head', { title: algo.pageTitle, extraCss: algo.cssFiles }) %>
 </head>
 <body>
 <div id="pageTransitionOverlay"></div>
@@ -14,11 +9,11 @@
     <header>
         <h1 id="pageTitle">Amortized complexity — Binary Counter</h1>
         <nav id="pageNav">
-            <a href="../index.html" id="pageNavHome" onclick="navigateToPage(event, '../index.html')">🏠 <span id="pageNavHomeLabel">Home</span></a>
+            <a href="/" id="pageNavHome" onclick="navigateToPage(event, '/')">🏠 <span id="pageNavHomeLabel">Home</span></a>
             <span class="page-nav-divider">|</span>
             <span id="pageNavSimActive">⚙️ <span id="pageNavSimLabel">Simulation</span></span>
             <span class="page-nav-divider">|</span>
-            <a href="binary-counter-theory.html" id="pageNavTheory" onclick="navigateToPage(event, 'binary-counter-theory.html')">📖 <span id="pageNavTheoryLabel">Theory</span></a>
+            <a href="<%= algo.route %>/theory" id="pageNavTheory" onclick="navigateToPage(event, '<%= algo.route %>/theory')">📖 <span id="pageNavTheoryLabel">Theory</span></a>
         </nav>
     </header>
 
@@ -48,7 +43,7 @@
             <p id="metricsHelpLine2"></p>
             <p id="metricsHelpLine3"></p>
             <div class="metrics-help-actions">
-                <a id="metricsHelpTheoryLink" class="metrics-help-theory-link" href="binary-counter-theory.html#method-accounting" onclick="navigateToPage(event, 'binary-counter-theory.html#method-accounting')">Open theory</a>
+                <a id="metricsHelpTheoryLink" class="metrics-help-theory-link" href="<%= algo.route %>/theory#method-accounting" onclick="navigateToPage(event, '<%= algo.route %>/theory#method-accounting')">Open theory</a>
                 <button id="metricsHelpCloseBtn" class="btn-secondary" type="button" onclick="closeMetricsHelp()">Close</button>
             </div>
         </div>
@@ -59,7 +54,7 @@
         <select id="bitLengthSelect" onchange="setBitLengthFromUI()">
             <option value="4">4</option>
             <option value="6">6</option>
-            <option value="8" selected>8</option>
+            <option value="8"<%= algo.params.defaultBits === 8 ? ' selected' : '' %>>8</option>
             <option value="10">10</option>
             <option value="12">12</option>
         </select>
@@ -125,13 +120,10 @@
 
         <!-- Binary counter visualization -->
         <div id="counterVisualization">
-
-            <!-- Operation bank: 2 coins received at the start of each INCREMENT -->
             <div id="operationBank">
                 <div id="bankLabel">Poplatek za operaci</div>
                 <div id="bankCoins"></div>
             </div>
-
             <div id="bitsRow"></div>
             <div id="decimalDisplay">Value: 0</div>
         </div>
@@ -141,27 +133,10 @@
     <div id="infoPanel">Steps will appear here</div>
 </div>
 
-<script src="../assets/js/common/input-validation.js"></script>
-<script src="../assets/js/binary-counter/binary-counter-ui.js"></script>
-<script src="../assets/js/binary-counter/binary-counter.js"></script>
+<% algo.jsFiles.forEach(function(f) { %>
+<script src="/<%= f %>"></script>
+<% }); %>
 
-<footer>
-    <p id="footerText"></p>
-    <div class="footer-controls">
-        <div class="toggle-pill" id="langToggle" onclick="toggleLanguage()" title="Změnit jazyk / Change language">
-            <div class="toggle-option" id="langOptCZ">
-                <img src="../assets/img/czech-republic.png" alt="CZ">
-            </div>
-            <div class="toggle-option" id="langOptEN">
-                <img src="../assets/img/united-kingdom.png" alt="EN">
-            </div>
-        </div>
-        <div class="toggle-pill" id="themeToggle" onclick="toggleTheme()" title="Přepnout téma / Switch theme">
-            <div class="toggle-option" id="themeOptLight"><img src="../assets/img/light-mode.png" alt="Light"></div>
-            <div class="toggle-option" id="themeOptDark"><img src="../assets/img/night-mode.png" alt="Dark"></div>
-        </div>
-    </div>
-</footer>
+<%- include('partials/footer') %>
 </body>
 </html>
-

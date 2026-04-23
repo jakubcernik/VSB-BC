@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head', { title: 'Algorithm Visualizer', extraCss: ['assets/css/home.css'] }) %>
+</head>
+<body>
+<div id="pageTransitionOverlay"></div>
+
+<div id="homeContainer">
+
+    <header id="homeHeader">
+        <h1 id="homeTitle">Algorithm Visualizer</h1>
+        <p id="homeSubtitle">Pick an algorithm to explore its theory and interactive simulation.</p>
+    </header>
+
+    <main id="homeMain">
+        <% algorithms.forEach(function(algo, i) { %>
+        <a class="algo-card available" href="<%= algo.route %>" onclick="navigateHome(event, '<%= algo.route %>')">
+            <div class="algo-card-icon"><%= algo.icon %></div>
+            <div class="algo-card-body">
+                <h2 class="algo-card-title" id="algoTitle<%= i + 1 %>"></h2>
+                <p class="algo-card-desc" id="algoDesc<%= i + 1 %>"></p>
+            </div>
+        </a>
+        <% }); %>
+    </main>
+</div>
+
+<%- include('partials/footer') %>
+
+<script src="/assets/js/home/home.js"></script>
+</body>
+</html>

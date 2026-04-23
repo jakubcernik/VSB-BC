@@ -1,12 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Theory — Amortized Complexity</title>
-    <link rel="stylesheet" href="../assets/css/base.css">
-    <link rel="stylesheet" href="../assets/css/theory.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <%- include('partials/head', { title: algo.theoryTitle, extraCss: ['assets/css/theory.css'] }) %>
 </head>
 <body>
 <div id="pageTransitionOverlay"></div>
@@ -19,9 +14,9 @@
 
     <!-- Page navigation -->
     <nav id="theoryNav">
-        <a href="../index.html" id="navHome" onclick="navigateTo(event, '../index.html')">🏠 <span id="navHomeLabel">Home</span></a>
+        <a href="/" id="navHome" onclick="navigateTo(event, '/')">🏠 <span id="navHomeLabel">Home</span></a>
         <span class="nav-divider">|</span>
-        <a href="dynamic-array.html" id="navSimulation" onclick="navigateTo(event, 'dynamic-array.html')">⚙️ <span id="navSimLabel">Simulation</span></a>
+        <a href="<%= algo.route %>" id="navSimulation" onclick="navigateTo(event, '<%= algo.route %>')">⚙️ <span id="navSimLabel">Simulation</span></a>
         <span class="nav-divider">|</span>
         <span id="navTheoryActive">📖 <span id="navTheoryLabel">Theory</span></span>
     </nav>
@@ -194,32 +189,15 @@
         <section class="theory-section cta-section" id="sec-cta">
             <div class="cta-box">
                 <p id="ctaText"></p>
-                <a href="dynamic-array.html" onclick="navigateTo(event, 'dynamic-array.html')" class="cta-button" id="ctaButton">⚙️ Open Simulation</a>
+                <a href="<%= algo.route %>" onclick="navigateTo(event, '<%= algo.route %>')" class="cta-button" id="ctaButton">⚙️ Open Simulation</a>
             </div>
         </section>
 
     </main>
 </div>
 
-<footer>
-    <p id="footerText"></p>
-    <div class="footer-controls">
-        <div class="toggle-pill" id="langToggle" onclick="toggleLanguage()" title="Změnit jazyk / Change language">
-            <div class="toggle-option" id="langOptCZ">
-                <img src="../assets/img/czech-republic.png" alt="CZ">
-            </div>
-            <div class="toggle-option" id="langOptEN">
-                <img src="../assets/img/united-kingdom.png" alt="EN">
-            </div>
-        </div>
-        <div class="toggle-pill" id="themeToggle" onclick="toggleTheme()" title="Přepnout téma / Switch theme">
-            <div class="toggle-option" id="themeOptLight"><img src="../assets/img/light-mode.png" alt="Light"></div>
-            <div class="toggle-option" id="themeOptDark"><img src="../assets/img/night-mode.png" alt="Dark"></div>
-        </div>
-    </div>
-</footer>
+<%- include('partials/footer') %>
 
-<script src="../assets/js/dynamic-array/dynamic-array-theory.js"></script>
+<script src="/<%= algo.theoryJsFile %>"></script>
 </body>
 </html>
-
