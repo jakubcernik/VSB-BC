@@ -1,128 +1,115 @@
-/* input-validation.js – shared, strict input validation helpers.
-   Designed to be used across all simulations (vector / binary counter / hash table).
+// Sdílený modul pro všechny tři simulace.
+// Každá validační funkce vrací { ok: true, value } nebo { ok: false, reason }.
 
-   Philosophy:
-   - strict parsing (no parseInt("12abc") → 12)
-   - consistent rules (required, integer-only, min/max, min<=max)
-   - UI decides how to report errors (infoPanel, alert, etc.) via callback
-*/
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
-/** @param {string|HTMLElement} elOrId */
-function resolveEl(elOrId) {
-    if (!elOrId) return null;
-    if (typeof elOrId === 'string') return document.getElementById(elOrId);
-    return elOrId;
+function getInputValue(id) {
+    const el = document.getElementById(id);
+    return el ? String(el.value).trim() : '';
 }
 
-function getTrimmedValue(elOrId) {
-    const el = resolveEl(elOrId);
-    if (!el) return '';
-    var val = el.value;
-    if (val === null || val === undefined) val = '';
-    return String(val).trim();
-}
-
-function strictParseInt(str) {
-    // Accept: optional leading +/-, then digits
-    if (typeof str !== 'string') return { ok: false };
-    if (!/^[+-]?\d+$/.test(str)) return { ok: false };
+function parseStrictInt(str) {
+    if (!/^[+-]?\d+$/.test(str)) return null;
     const n = Number(str);
-    if (!Number.isFinite(n) || !Number.isInteger(n)) return { ok: false };
-    return { ok: true, value: n };
+    return Number.isInteger(n) ? n : null;
 }
 
-function isOutOfRange(value, min, max) {
-    if (min !== null && value < min) return true;
-    if (max !== null && value > max) return true;
-    return false;
-}
+// ─── Validace ─────────────────────────────────────────────────────────────────
 
-/**
- * @returns {{ok:true,value:number}|{ok:false,reason:string,details?:any}}
- */
-function readInt(elOrId, opts) {
+// Přečte celé číslo z inputu. opts: { required, min, max }
+function readInt(id, opts) {
     if (opts === undefined) opts = {};
-    var required = opts.required !== undefined ? opts.required : true;
-    var min = opts.min !== undefined ? opts.min : null;
-    var max = opts.max !== undefined ? opts.max : null;
+    const required = opts.required !== false;
+    const min = opts.min !== undefined ? opts.min : null;
+    const max = opts.max !== undefined ? opts.max : null;
 
-    const raw = getTrimmedValue(elOrId);
+    const raw = getInputValue(id);
+
     if (!raw) {
         return required ? { ok: false, reason: 'EMPTY' } : { ok: true, value: null };
     }
 
-    const parsed = strictParseInt(raw);
-    if (!parsed.ok) return { ok: false, reason: 'NOT_INT' };
-
-    const value = parsed.value;
-    if (isOutOfRange(value, min, max)) {
-        return { ok: false, reason: 'OUT_OF_RANGE', details: { min: min, max: max } };
+    const value = parseStrictInt(raw);
+    if (value === null) {
+        return { ok: false, reason: 'NOT_INT' };
     }
 
-    return { ok: true, value: value };
+    if ((min !== null && value < min) || (max !== null && value > max)) {
+        return { ok: false, reason: 'OUT_OF_RANGE', details: { min, max } };
+    }
+
+    return { ok: true, value };
 }
 
-/**
- * @returns {{ok:true,value:string}|{ok:false,reason:string}}
- */
-function readString(elOrId, opts) {
+// Přečte textový řetězec z inputu.
+function readString(id, opts) {
     if (opts === undefined) opts = {};
-    var required = opts.required !== undefined ? opts.required : true;
-    const raw = getTrimmedValue(elOrId);
+    const required = opts.required !== false;
+    const raw = getInputValue(id);
     if (!raw && required) return { ok: false, reason: 'EMPTY' };
     return { ok: true, value: raw };
 }
 
-/**
- * Validates min/max pair.
- * @returns {{ok:true,min:number,max:number}|{ok:false,reason:string}}
- */
-function readIntMinMax(minElOrId, maxElOrId, opts) {
-    if (opts === undefined) opts = {};
-    const minRes = readInt(minElOrId, opts);
+// Přečte a zvaliduje dvojici min/max ze dvou inputů.
+function readIntMinMax(minId, maxId, opts) {
+    const minRes = readInt(minId, opts);
     if (!minRes.ok) return minRes;
-    const maxRes = readInt(maxElOrId, opts);
+
+    const maxRes = readInt(maxId, opts);
     if (!maxRes.ok) return maxRes;
+
     if (minRes.value > maxRes.value) return { ok: false, reason: 'MIN_GT_MAX' };
+
     return { ok: true, min: minRes.value, max: maxRes.value };
 }
 
-function defaultMessageForReason(reason, d, details) {
-    // d.* keys are optional; we provide fallbacks.
-    switch (reason) {
-        case 'EMPTY':
-            return (d && d.validationEmpty) || (d && d.invalidInput) || 'Invalid input.';
-        case 'NOT_INT':
-            return (d && d.validationNotInteger) || (d && d.invalidInput) || 'Invalid input.';
-        case 'OUT_OF_RANGE':
-            if (d && typeof d.validationOutOfRange === 'function') {
-                return d.validationOutOfRange(details && details.min, details && details.max);
-            }
-            return (d && d.invalidInput) || 'Invalid input.';
-        case 'MIN_GT_MAX':
-            return (d && d.validationMinGreaterThanMax) || (d && d.invalidInput) || 'Invalid input.';
-        default:
-            return (d && d.invalidInput) || 'Invalid input.';
+// Převede kód chyby na text pomocí slovníku aktuálního jazyka.
+function getErrorMessage(reason, dict, details) {
+    if (!dict) return 'Invalid input.';
+
+    if (reason === 'EMPTY')        return dict.validationEmpty             || dict.invalidInput || 'Invalid input.';
+    if (reason === 'NOT_INT')      return dict.validationNotInteger        || dict.invalidInput || 'Invalid input.';
+    if (reason === 'MIN_GT_MAX')   return dict.validationMinGreaterThanMax || dict.invalidInput || 'Invalid input.';
+    if (reason === 'OUT_OF_RANGE') {
+        if (typeof dict.validationOutOfRange === 'function') return dict.validationOutOfRange(details && details.min, details && details.max);
+        return dict.invalidInput || 'Invalid input.';
     }
+
+    return dict.invalidInput || 'Invalid input.';
 }
 
-/**
- * @param {string} reason
- * @param {object} ctx
- * @param {object} ctx.dict dictionary for current language (page-specific)
- * @param {(msg:string)=>void} ctx.report function that shows the validation error
- * @param {any} [ctx.details]
- */
+// Zkrácený wrapper — vezme výsledek z readInt/readIntMinMax a zobrazí chybu přes reportFn.
+function reportValidation(result, dict, reportFn) {
+    const msg = getErrorMessage(result.reason, dict, result.details);
+    if (typeof reportFn === 'function') reportFn(msg);
+}
+
+// Nízkoúrovňová verze pro případ, kdy máme jen kód chyby (bez výsledku).
 function reportValidationError(reason, ctx) {
-    var ctxDict = ctx ? ctx.dict : undefined;
-    var ctxDetails = ctx ? ctx.details : undefined;
-    const msg = defaultMessageForReason(reason, ctxDict, ctxDetails);
+    const msg = getErrorMessage(reason, ctx && ctx.dict, ctx && ctx.details);
     if (ctx && typeof ctx.report === 'function') ctx.report(msg);
 }
+
+// ─── Sdílené utility ──────────────────────────────────────────────────────────
+
+// Náhodné celé číslo v uzavřeném intervalu <min, max>.
+function randInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// Asynchronní pauza v milisekundách.
+function sleep(ms) {
+    return new Promise(function(resolve) { setTimeout(resolve, ms); });
+}
+
+// ─── Export ───────────────────────────────────────────────────────────────────
 
 window.InputValidation = {
     readInt,
     readString,
     readIntMinMax,
+    reportValidation,
     reportValidationError,
+    randInt,
+    sleep,
 };
