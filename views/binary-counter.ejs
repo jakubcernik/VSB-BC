@@ -8,13 +8,7 @@
 <div id="container">
     <header>
         <h1 id="pageTitle">Amortized complexity — Binary Counter</h1>
-        <nav id="pageNav">
-            <a href="/" id="pageNavHome" onclick="navigateToPage(event, '/')">🏠 <span id="pageNavHomeLabel">Home</span></a>
-            <span class="page-nav-divider">|</span>
-            <span id="pageNavSimActive">⚙️ <span id="pageNavSimLabel">Simulation</span></span>
-            <span class="page-nav-divider">|</span>
-            <a href="<%= algo.route %>/theory" id="pageNavTheory" onclick="navigateToPage(event, '<%= algo.route %>/theory')">📖 <span id="pageNavTheoryLabel">Theory</span></a>
-        </nav>
+        <%- include('partials/nav-sim', { algo: algo }) %>
     </header>
 
     <!-- Input mode tabs -->
