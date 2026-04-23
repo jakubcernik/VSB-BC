@@ -112,9 +112,7 @@ function setBitLengthFromUI() {
     updateCaseButtons();
 }
 
-function randomIntInclusive(min, max) {
-    return min + Math.floor(Math.random() * (max - min + 1));
-}
+const randomIntInclusive = InputValidation.randInt;
 
 function applyRandomStateByTrailingOnes(minTrailing, maxTrailing) {
     const t = randomIntInclusive(minTrailing, maxTrailing);
@@ -245,11 +243,7 @@ async function animateCoins(bitIndex, targetCount) {
     }
 }
 
-function sleep(ms) {
-    return new Promise(function(resolve) {
-        setTimeout(resolve, ms);
-    });
-}
+const sleep = InputValidation.sleep;
 
 async function animateBitFlip(bitIndex, newValue) {
     const frame = document.getElementById(`bit-frame-${bitIndex}`);
@@ -454,43 +448,18 @@ async function generateRandom() {
     if (isAnimating) return;
     const d = dict[currentLang];
     const maxTrailingAllowed = Math.max(0, numBits - 1);
-    const minTrailingRes = InputValidation.readInt('randomMinTrailing', {
+    const rangeRes = InputValidation.readIntMinMax('randomMinTrailing', 'randomMaxTrailing', {
         required: true,
         min: 0,
         max: maxTrailingAllowed,
     });
-    if (!minTrailingRes.ok) {
-        InputValidation.reportValidationError(minTrailingRes.reason, {
-            dict: d,
-            details: minTrailingRes.details,
-            report: function(msg) { updateInfoPanel(msg); },
-        });
+    if (!rangeRes.ok) {
+        InputValidation.reportValidation(rangeRes, d, updateInfoPanel);
         return;
     }
 
-    const maxTrailingRes = InputValidation.readInt('randomMaxTrailing', {
-        required: true,
-        min: 0,
-        max: maxTrailingAllowed,
-    });
-    if (!maxTrailingRes.ok) {
-        InputValidation.reportValidationError(maxTrailingRes.reason, {
-            dict: d,
-            details: maxTrailingRes.details,
-            report: function(msg) { updateInfoPanel(msg); },
-        });
-        return;
-    }
-
-    const minTrailing = minTrailingRes.value;
-    const maxTrailing = maxTrailingRes.value;
-    if (minTrailing > maxTrailing) {
-        InputValidation.reportValidationError('MIN_GT_MAX', {
-            dict: d,
-            report: function(msg) { updateInfoPanel(msg); },
-        });
-        return;
-    }
+    const minTrailing = rangeRes.min;
+    const maxTrailing = rangeRes.max;
 
     resetCounter();
     createLogEntry(LOG_TYPES.INFO, d.randomGenerating(minTrailing, maxTrailing));

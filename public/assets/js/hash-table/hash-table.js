@@ -70,19 +70,9 @@ function hashKey(keyInt) {
     return (k >>> 0);
 }
 
-function randInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function randKeyInt(min, max) {
-    return randInt(min, max);
-}
-
-function sleep(ms) {
-    return new Promise(function(resolve) {
-        setTimeout(resolve, ms);
-    });
-}
+const randInt = InputValidation.randInt;
+const randKeyInt = InputValidation.randInt;
+const sleep = InputValidation.sleep;
 
 function totalSavedCoins() {
     var total = 0;
@@ -436,24 +426,10 @@ async function addManual() {
     const d = dict[currentLang];
 
     const keyRes = InputValidation.readInt('keyInput', { required: true });
-    if (!keyRes.ok) {
-        InputValidation.reportValidationError(keyRes.reason, {
-            dict: d,
-            details: keyRes.details,
-            report: function(msg) { updateInfoPanel(msg); },
-        });
-        return;
-    }
+    if (!keyRes.ok) { InputValidation.reportValidation(keyRes, d, updateInfoPanel); return; }
 
     const valueRes = InputValidation.readInt('valueInput', { required: true });
-    if (!valueRes.ok) {
-        InputValidation.reportValidationError(valueRes.reason, {
-            dict: d,
-            details: valueRes.details,
-            report: function(msg) { updateInfoPanel(msg); },
-        });
-        return;
-    }
+    if (!valueRes.ok) { InputValidation.reportValidation(valueRes, d, updateInfoPanel); return; }
 
     await insertKV(keyRes.value, valueRes.value);
 }
@@ -463,24 +439,10 @@ async function generateRandom() {
 
     const d = dict[currentLang];
     const countRes = InputValidation.readInt('randomCount', { required: true, min: 1 });
-    if (!countRes.ok) {
-        InputValidation.reportValidationError(countRes.reason, {
-            dict: d,
-            details: countRes.details,
-            report: function(msg) { updateInfoPanel(msg); },
-        });
-        return;
-    }
+    if (!countRes.ok) { InputValidation.reportValidation(countRes, d, updateInfoPanel); return; }
 
     const rangeRes = InputValidation.readIntMinMax('randomKeyMin', 'randomKeyMax', { required: true });
-    if (!rangeRes.ok) {
-        InputValidation.reportValidationError(rangeRes.reason, {
-            dict: d,
-            details: rangeRes.details,
-            report: function(msg) { updateInfoPanel(msg); },
-        });
-        return;
-    }
+    if (!rangeRes.ok) { InputValidation.reportValidation(rangeRes, d, updateInfoPanel); return; }
 
     const count = countRes.value;
     const keyMin = rangeRes.min;

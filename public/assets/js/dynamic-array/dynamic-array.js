@@ -24,41 +24,17 @@ const randomController = {
     max: 0,
 };
 
-function isStrictIntegerString(value)
-{
-    return /^-?\d+$/.test((value || '').trim());
-}
-
-function sleep(ms)
-{
-    return new Promise(function(resolve) { setTimeout(resolve, ms); });
-}
+const sleep = InputValidation.sleep;
 
 function reportValidation(result, dictForLang)
 {
-    InputValidation.reportValidationError(result.reason, {
-        dict: dictForLang,
-        details: result.details,
-        report: function(msg) { updateInfoPanel(msg); },
-    });
+    InputValidation.reportValidation(result, dictForLang, updateInfoPanel);
 }
 
 function hasValidRandomInputs()
 {
-    const countEl = document.getElementById('randomCount');
-    const minEl = document.getElementById('randomMin');
-    const maxEl = document.getElementById('randomMax');
-    if (!countEl || !minEl || !maxEl) return false;
-
-    const countRaw = countEl.value.trim();
-    const minRaw = minEl.value.trim();
-    const maxRaw = maxEl.value.trim();
-    if (!isStrictIntegerString(countRaw) || !isStrictIntegerString(minRaw) || !isStrictIntegerString(maxRaw)) return false;
-
-    const count = Number(countRaw);
-    const min = Number(minRaw);
-    const max = Number(maxRaw);
-    return Number.isInteger(count) && Number.isInteger(min) && Number.isInteger(max) && count >= 1 && min <= max;
+    return InputValidation.readInt('randomCount', { required: true, min: 1 }).ok &&
+           InputValidation.readIntMinMax('randomMin', 'randomMax', { required: true }).ok;
 }
 
 function updateManualStepButtons()
@@ -69,7 +45,7 @@ function updateManualStepButtons()
     if (!input || !smallBtn || !bigBtn) return;
 
     const hasQueuedSteps = simulationController.queue.length > 0;
-    const canQueueFromInput = isStrictIntegerString(input.value);
+    const canQueueFromInput = InputValidation.readInt('manualInput').ok;
     const canRun = !simulationController.isExecuting && (hasQueuedSteps || canQueueFromInput);
 
     smallBtn.disabled = !canRun;
@@ -337,10 +313,7 @@ async function addElement()
     await runBigStep();
 }
 
-function getRandomNumber(min, max)
-{
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+const getRandomNumber = InputValidation.randInt;
 
 // Compute how many coins would be in the bank after inserting `n` elements
 // starting from an empty dynamic array with initial capacity 1, using our model:
