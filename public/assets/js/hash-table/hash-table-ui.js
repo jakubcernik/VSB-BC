@@ -4,9 +4,15 @@ let currentLang = localStorage.getItem('lang') || 'cz';
 
 // ─── Animation speed ───────────────────────────────────────────────────────────
 const animationDelay = 1;
-function getDelay(base = 1) {
-    const m = { 1: 4, 2: 2, 3: 1, 4: 0.4, 5: 0.15 };
-    return Math.round(base * (m[animationDelay] || 1));
+function getDelay(base) {
+    if (base === undefined) base = 1;
+    var multiplier = 1;
+    if (animationDelay === 1) multiplier = 4;
+    else if (animationDelay === 2) multiplier = 2;
+    else if (animationDelay === 3) multiplier = 1;
+    else if (animationDelay === 4) multiplier = 0.4;
+    else if (animationDelay === 5) multiplier = 0.15;
+    return Math.round(base * multiplier);
 }
 
 // ─── Dictionary ────────────────────────────────────────────────────────────────
@@ -283,7 +289,8 @@ const LOG_TYPES = {
 let currentLogGroup = null;
 let steps = 0; // shared with hashTable.js (same pattern as other pages)
 
-function beginLogGroup(key, value = null) {
+function beginLogGroup(key, value) {
+    if (value === undefined) value = null;
     const d = dict[currentLang];
     const panel = document.getElementById('infoPanel');
     const group = document.createElement('div');
@@ -308,16 +315,19 @@ function beginLogGroup(key, value = null) {
 
 function endLogGroup() { currentLogGroup = null; }
 
-function createLogEntry(type, title, details = null, meta = null) {
+function createLogEntry(type, title, details, meta) {
+    if (details === undefined) details = null;
+    if (meta === undefined) meta = null;
     const target = currentLogGroup || document.getElementById('infoPanel');
     const d = dict[currentLang];
 
     const entry = document.createElement('div');
     entry.classList.add('log-entry', type.class);
 
-    const unitBadge = meta && meta.unit === 'instruction'
-        ? `<span class="log-unit-badge instruction">${d.badgeInstruction || 'INS'}</span>`
-        : '';
+    var unitBadge = '';
+    if (meta && meta.unit === 'instruction') {
+        unitBadge = '<span class="log-unit-badge instruction">' + (d.badgeInstruction || 'INS') + '</span>';
+    }
 
     let html = `
         <div class="log-header">
@@ -328,9 +338,11 @@ function createLogEntry(type, title, details = null, meta = null) {
         </div>
     `;
     if (details) {
-        html += Array.isArray(details)
-            ? `<div class="log-details">${details.join(' • ')}</div>`
-            : `<div class="log-details">${details}</div>`;
+        if (Array.isArray(details)) {
+            html += '<div class="log-details">' + details.join(' • ') + '</div>';
+        } else {
+            html += '<div class="log-details">' + details + '</div>';
+        }
     }
     entry.innerHTML = html;
     target.appendChild(entry);
@@ -339,7 +351,10 @@ function createLogEntry(type, title, details = null, meta = null) {
     panel.scrollTop = panel.scrollHeight;
 }
 
-function updateInfoPanel(msg, meta = null) { createLogEntry(LOG_TYPES.INFO, msg, null, meta); }
+function updateInfoPanel(msg, meta) {
+    if (meta === undefined) meta = null;
+    createLogEntry(LOG_TYPES.INFO, msg, null, meta);
+}
 
 function setText(id, text) {
     const el = document.getElementById(id);
@@ -371,11 +386,11 @@ function initializeMetricsHelpModal() {
     const modal = document.getElementById('metricsHelpModal');
     if (!modal) return;
 
-    modal.addEventListener('click', (event) => {
+    modal.addEventListener('click', function(event) {
         if (event.target === modal) closeMetricsHelp();
     });
 
-    document.addEventListener('keydown', (event) => {
+    document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape' && modal.classList.contains('open')) closeMetricsHelp();
     });
 }
@@ -384,19 +399,28 @@ function initializeMetricsHelpModal() {
 function reloadWithTransition(beforeReload) {
     const ov = document.getElementById('pageTransitionOverlay');
     ov.classList.add('visible');
-    setTimeout(() => { if (beforeReload) beforeReload(); window.location.reload(); }, 350);
+    setTimeout(function() {
+        if (beforeReload) beforeReload();
+        window.location.reload();
+    }, 350);
 }
 
 function navigateToPage(event, url) {
     event.preventDefault();
     const ov = document.getElementById('pageTransitionOverlay');
     ov.classList.add('visible');
-    setTimeout(() => { window.location.href = url; }, 350);
+    setTimeout(function() { window.location.href = url; }, 350);
 }
 
 function toggleTheme() {
     const isDark = document.body.classList.contains('dark-mode');
-    reloadWithTransition(() => localStorage.setItem('theme', isDark ? 'light' : 'dark'));
+    reloadWithTransition(function() {
+        if (isDark) {
+            localStorage.setItem('theme', 'light');
+        } else {
+            localStorage.setItem('theme', 'dark');
+        }
+    });
 }
 
 function applyTheme() {
@@ -409,7 +433,9 @@ function applyTheme() {
 
 function toggleLanguage() {
     const next = currentLang === 'cz' ? 'en' : 'cz';
-    reloadWithTransition(() => localStorage.setItem('lang', next));
+    reloadWithTransition(function() {
+        localStorage.setItem('lang', next);
+    });
 }
 
 function updateLangToggleUI() {
@@ -420,10 +446,16 @@ function updateLangToggleUI() {
 // ─── Mode switching ────────────────────────────────────────────────────────────
 function setMode(mode) {
     resetHashTable();
-    document.querySelectorAll('nav#navigation button').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.mode').forEach(s => s.classList.remove('active'));
-    document.getElementById(`${mode}Tab`).classList.add('active');
-    document.getElementById(`${mode}Mode`).classList.add('active');
+    var navButtons = document.querySelectorAll('nav#navigation button');
+    for (var i = 0; i < navButtons.length; i++) {
+        navButtons[i].classList.remove('active');
+    }
+    var modeSections = document.querySelectorAll('.mode');
+    for (var i = 0; i < modeSections.length; i++) {
+        modeSections[i].classList.remove('active');
+    }
+    document.getElementById(mode + 'Tab').classList.add('active');
+    document.getElementById(mode + 'Mode').classList.add('active');
     if (typeof updateCaseButtons === 'function') updateCaseButtons();
 }
 
@@ -525,7 +557,7 @@ function applyLanguage() {
 }
 
 // ─── Page init ────────────────────────────────────────────────────────────────
-window.addEventListener('load', () => {
+window.addEventListener('load', function() {
     document.body.classList.add('page-loaded');
     initializeMetricsHelpModal();
     applyLanguage();

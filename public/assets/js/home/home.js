@@ -44,7 +44,7 @@ const homeDict = {
 function reloadWithTransition(beforeReload) {
     const overlay = document.getElementById('pageTransitionOverlay');
     overlay.classList.add('visible');
-    setTimeout(() => {
+    setTimeout(function() {
         if (beforeReload) beforeReload();
         window.location.reload();
     }, 350);
@@ -52,7 +52,13 @@ function reloadWithTransition(beforeReload) {
 
 function toggleTheme() {
     const isDark = document.body.classList.contains('dark-mode');
-    reloadWithTransition(() => localStorage.setItem('theme', isDark ? 'light' : 'dark'));
+    reloadWithTransition(function() {
+        if (isDark) {
+            localStorage.setItem('theme', 'light');
+        } else {
+            localStorage.setItem('theme', 'dark');
+        }
+    });
 }
 
 function applyTheme() {
@@ -65,7 +71,9 @@ function applyTheme() {
 
 function toggleLanguage() {
     const next = currentLang === 'cz' ? 'en' : 'cz';
-    reloadWithTransition(() => localStorage.setItem('lang', next));
+    reloadWithTransition(function() {
+        localStorage.setItem('lang', next);
+    });
 }
 
 function updateLangToggleUI() {
@@ -79,7 +87,7 @@ function navigateHome(event, url) {
     event.preventDefault();
     const overlay = document.getElementById('pageTransitionOverlay');
     overlay.classList.add('visible');
-    setTimeout(() => { window.location.href = url; }, 350);
+    setTimeout(function() { window.location.href = url; }, 350);
 }
 
 function setText(id, text) {
@@ -116,12 +124,11 @@ function applyLanguage() {
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
     applyTheme();
     applyLanguage();
 });
 
-window.addEventListener('load', () => {
+window.addEventListener('load', function() {
     document.body.classList.add('page-loaded');
 });
-

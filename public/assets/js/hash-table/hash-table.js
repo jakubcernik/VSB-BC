@@ -41,7 +41,8 @@ function getWorstVariants() {
 }
 
 function applyPreparedEntries(entries) {
-    for (const e of entries) {
+    for (var i = 0; i < entries.length; i++) {
+        var e = entries[i];
         const idx = findSlotForKey(e.key);
         if (idx < 0) continue;
         table[idx] = { key: e.key, value: e.value };
@@ -78,11 +79,17 @@ function randKeyInt(min, max) {
 }
 
 function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise(function(resolve) {
+        setTimeout(resolve, ms);
+    });
 }
 
 function totalSavedCoins() {
-    return coinsOnSlot.reduce((s, c) => s + c, 0);
+    var total = 0;
+    for (var i = 0; i < coinsOnSlot.length; i++) {
+        total += coinsOnSlot[i];
+    }
+    return total;
 }
 
 function updateCoinCounter() {
@@ -129,7 +136,8 @@ function updateMeta() {
 }
 
 // ─── Visualisation ────────────────────────────────────────────────────────────
-function renderTable(highlightIndex = null) {
+function renderTable(highlightIndex) {
+    if (highlightIndex === undefined) highlightIndex = null;
     const grid = document.getElementById('hashTableVisualization');
     if (!grid) return;
     grid.innerHTML = '';
@@ -201,7 +209,9 @@ function clearInfoPanel() {
 }
 
 // ─── Core operations ──────────────────────────────────────────────────────────
-function findSlotForKey(keyInt, cap = capacity, arr = table) {
+function findSlotForKey(keyInt, cap, arr) {
+    if (cap === undefined) cap = capacity;
+    if (arr === undefined) arr = table;
     const h = hashKey(keyInt) % cap;
     for (let offset = 0; offset < cap; offset++) {
         const i = (h + offset) % cap;
@@ -430,7 +440,7 @@ async function addManual() {
         InputValidation.reportValidationError(keyRes.reason, {
             dict: d,
             details: keyRes.details,
-            report: (msg) => updateInfoPanel(msg),
+            report: function(msg) { updateInfoPanel(msg); },
         });
         return;
     }
@@ -440,7 +450,7 @@ async function addManual() {
         InputValidation.reportValidationError(valueRes.reason, {
             dict: d,
             details: valueRes.details,
-            report: (msg) => updateInfoPanel(msg),
+            report: function(msg) { updateInfoPanel(msg); },
         });
         return;
     }
@@ -457,7 +467,7 @@ async function generateRandom() {
         InputValidation.reportValidationError(countRes.reason, {
             dict: d,
             details: countRes.details,
-            report: (msg) => updateInfoPanel(msg),
+            report: function(msg) { updateInfoPanel(msg); },
         });
         return;
     }
@@ -467,7 +477,7 @@ async function generateRandom() {
         InputValidation.reportValidationError(rangeRes.reason, {
             dict: d,
             details: rangeRes.details,
-            report: (msg) => updateInfoPanel(msg),
+            report: function(msg) { updateInfoPanel(msg); },
         });
         return;
     }
@@ -484,11 +494,14 @@ async function generateRandom() {
     }
 }
 
-function prepareBestCase(nextVariant = false) {
+function prepareBestCase(nextVariant) {
+    if (nextVariant === undefined) nextVariant = false;
     const variants = getBestVariants();
-    bestVariantIndex = nextVariant
-        ? (bestVariantIndex + 1) % variants.length
-        : 0;
+    if (nextVariant) {
+        bestVariantIndex = (bestVariantIndex + 1) % variants.length;
+    } else {
+        bestVariantIndex = 0;
+    }
     const scenario = variants[bestVariantIndex];
 
     resetHashTable();
@@ -502,11 +515,14 @@ function prepareBestCase(nextVariant = false) {
     updateCaseButtons();
 }
 
-function prepareWorstCase(nextVariant = false) {
+function prepareWorstCase(nextVariant) {
+    if (nextVariant === undefined) nextVariant = false;
     const variants = getWorstVariants();
-    worstVariantIndex = nextVariant
-        ? (worstVariantIndex + 1) % variants.length
-        : 0;
+    if (nextVariant) {
+        worstVariantIndex = (worstVariantIndex + 1) % variants.length;
+    } else {
+        worstVariantIndex = 0;
+    }
     const scenario = variants[worstVariantIndex];
 
     resetHashTable();
@@ -576,7 +592,7 @@ function resetHashTable() {
     updateCaseButtons();
 }
 
-window.addEventListener('load', () => {
+window.addEventListener('load', function() {
     // init state used by render
     table = new Array(capacity).fill(null);
     coinsOnSlot = new Array(capacity).fill(0);

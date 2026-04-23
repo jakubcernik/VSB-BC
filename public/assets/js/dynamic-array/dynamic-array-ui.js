@@ -5,21 +5,33 @@ let animationDelay = 3;
 let instantAnimationMode = false;
 
 // Vrátí zpoždění v ms pro danou základní hodnotu
-function getDelay(base = 1) {
+function getDelay(base) {
+    if (base === undefined) base = 1;
     if (instantAnimationMode) return 0;
-    const multipliers = { 1: 4, 2: 2, 3: 1, 4: 0.4, 5: 0.15 };
-    return Math.round(base * (multipliers[animationDelay] || 1));
+    var multiplier = 1;
+    if (animationDelay === 1) multiplier = 4;
+    else if (animationDelay === 2) multiplier = 2;
+    else if (animationDelay === 3) multiplier = 1;
+    else if (animationDelay === 4) multiplier = 0.4;
+    else if (animationDelay === 5) multiplier = 0.15;
+    return Math.round(base * multiplier);
 }
 
-function getSpeedMultiplierValue(level = animationDelay) {
-    const multipliers = { 1: 0.25, 2: 0.5, 3: 1, 4: 2.5, 5: 6.67 };
-    return multipliers[level] || 1;
+function getSpeedMultiplierValue(level) {
+    if (level === undefined) level = animationDelay;
+    if (level === 1) return 0.25;
+    if (level === 2) return 0.5;
+    if (level === 3) return 1;
+    if (level === 4) return 2.5;
+    if (level === 5) return 6.67;
+    return 1;
 }
 
 function updateRandomSpeedValue() {
     const speedEl = document.getElementById('randomSpeedValue');
     if (!speedEl) return;
-    speedEl.textContent = `${getSpeedMultiplierValue().toFixed(2)}x`;
+    var speedValue = getSpeedMultiplierValue();
+    speedEl.textContent = speedValue.toFixed(2) + 'x';
 }
 
 function setAnimationSpeedLevel(level) {
@@ -254,7 +266,7 @@ function reloadWithTransition(beforeReload)
     const overlay = document.getElementById('pageTransitionOverlay');
     overlay.classList.add('visible');
 
-    setTimeout(() => {
+    setTimeout(function() {
         if (beforeReload) beforeReload();
         window.location.reload();
     }, 350);
@@ -265,14 +277,18 @@ function navigateToPage(event, url)
     event.preventDefault();
     const overlay = document.getElementById('pageTransitionOverlay');
     overlay.classList.add('visible');
-    setTimeout(() => { window.location.href = url; }, 350);
+    setTimeout(function() { window.location.href = url; }, 350);
 }
 
 function toggleTheme()
 {
     const isDark = document.body.classList.contains('dark-mode');
-    reloadWithTransition(() => {
-        localStorage.setItem('theme', isDark ? 'light' : 'dark');
+    reloadWithTransition(function() {
+        if (isDark) {
+            localStorage.setItem('theme', 'light');
+        } else {
+            localStorage.setItem('theme', 'dark');
+        }
     });
 }
 
@@ -294,7 +310,7 @@ function updateThemeToggleUI()
 function toggleLanguage()
 {
     const next = currentLang === 'cz' ? 'en' : 'cz';
-    reloadWithTransition(() => {
+    reloadWithTransition(function() {
         localStorage.setItem('lang', next);
     });
 }
@@ -328,13 +344,13 @@ function initializeMetricsHelpModal()
     const modal = document.getElementById('metricsHelpModal');
     if (!modal) return;
 
-    modal.addEventListener('click', (event) => {
+    modal.addEventListener('click', function(event) {
         if (event.target === modal) {
             closeMetricsHelp();
         }
     });
 
-    document.addEventListener('keydown', (event) => {
+    document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape' && modal.classList.contains('open')) {
             closeMetricsHelp();
         }
@@ -345,11 +361,17 @@ function setMode(mode)
 {
     resetValues();
 
-    document.querySelectorAll('nav button').forEach(tab => tab.classList.remove('active'));
-    document.querySelectorAll('.mode').forEach(section => section.classList.remove('active'));
+    var navTabs = document.querySelectorAll('nav button');
+    for (var i = 0; i < navTabs.length; i++) {
+        navTabs[i].classList.remove('active');
+    }
+    var modeSections = document.querySelectorAll('.mode');
+    for (var i = 0; i < modeSections.length; i++) {
+        modeSections[i].classList.remove('active');
+    }
 
-    document.getElementById(`${mode}Tab`).classList.add('active');
-    document.getElementById(`${mode}Mode`).classList.add('active');
+    document.getElementById(mode + 'Tab').classList.add('active');
+    document.getElementById(mode + 'Mode').classList.add('active');
 
     // Reset special UI states for best/worst
     document.getElementById('bestCaseInputGroup').style.display = 'none';
@@ -414,16 +436,19 @@ function endLogGroup() {
     currentLogGroup = null;
 }
 
-function createLogEntry(type, title, details = null, meta = null)
+function createLogEntry(type, title, details, meta)
 {
+    if (details === undefined) details = null;
+    if (meta === undefined) meta = null;
     const target = currentLogGroup || document.getElementById("infoPanel");
     const logEntry = document.createElement("div");
     logEntry.classList.add('log-entry', type.class);
 
     const d = dict[currentLang];
-    const unitBadge = meta && meta.unit === 'instruction'
-        ? `<span class="log-unit-badge instruction">${d.badgeInstruction || 'INS'}</span>`
-        : '';
+    var unitBadge = '';
+    if (meta && meta.unit === 'instruction') {
+        unitBadge = '<span class="log-unit-badge instruction">' + (d.badgeInstruction || 'INS') + '</span>';
+    }
     let html = `
         <div class="log-header">
             <span class="log-icon">${type.icon}</span>
@@ -450,8 +475,9 @@ function createLogEntry(type, title, details = null, meta = null)
     infoPanel.scrollTop = infoPanel.scrollHeight;
 }
 
-function updateInfoPanel(message, meta = null)
+function updateInfoPanel(message, meta)
 {
+    if (meta === undefined) meta = null;
     let type = LOG_TYPES.INFO;
 
     if (message.includes('Vkládám') || message.includes('Inserting')) {
@@ -471,8 +497,9 @@ function updateInfoPanel(message, meta = null)
     createLogEntry(type, message, null, meta);
 }
 
-function updateInfoPanelWithDetails(mainMessage, details, meta = null)
+function updateInfoPanelWithDetails(mainMessage, details, meta)
 {
+    if (meta === undefined) meta = null;
     let type = LOG_TYPES.INFO;
 
     if (mainMessage.includes('Vkládám') || mainMessage.includes('Inserting')) {
@@ -518,7 +545,8 @@ function applyLanguage()
         const nextBest = document.getElementById('btnNextBest');
         if (nextBest && d.bestCase.btnAlt) nextBest.textContent = d.bestCase.btnAlt;
         setPlaceholder('bestInput', d.enterNumber);
-        document.querySelector('#bestCaseInputGroup button').textContent = d.bestCase.insert;
+        var bestInsertBtn = document.querySelector('#bestCaseInputGroup button');
+        if (bestInsertBtn) bestInsertBtn.textContent = d.bestCase.insert;
     }
 
     if (d.worstCase) {
@@ -528,7 +556,8 @@ function applyLanguage()
         const nextWorst = document.getElementById('btnNextWorst');
         if (nextWorst && d.worstCase.btnAlt) nextWorst.textContent = d.worstCase.btnAlt;
         setPlaceholder('worstInput', d.enterNumber);
-        document.querySelector('#worstCaseInputGroup button').textContent = d.worstCase.insert;
+        var worstInsertBtn = document.querySelector('#worstCaseInputGroup button');
+        if (worstInsertBtn) worstInsertBtn.textContent = d.worstCase.insert;
     }
 
     setPlaceholder('manualInput', d.enterNumber);
@@ -538,9 +567,12 @@ function applyLanguage()
     setText('btnSmallStep', d.smallStep);
     setText('btnBigStep', d.bigStep);
 
-    document.querySelector('label[for="randomCount"]').textContent = d.randomCountLabel;
-    document.querySelector('label[for="randomMin"]').textContent   = d.randomMinLabel;
-    document.querySelector('label[for="randomMax"]').textContent   = d.randomMaxLabel;
+    var labelCount = document.querySelector('label[for="randomCount"]');
+    if (labelCount) labelCount.textContent = d.randomCountLabel;
+    var labelMin = document.querySelector('label[for="randomMin"]');
+    if (labelMin) labelMin.textContent = d.randomMinLabel;
+    var labelMax = document.querySelector('label[for="randomMax"]');
+    if (labelMax) labelMax.textContent = d.randomMaxLabel;
     setPlaceholder('randomCount', d.randomCountPlaceholder);
     setPlaceholder('randomMin', d.randomMinPlaceholder);
     setPlaceholder('randomMax', d.randomMaxPlaceholder);
@@ -558,7 +590,8 @@ function applyLanguage()
     setText('randomSpeedLabel', d.randomSpeed);
     updateRandomSpeedValue();
 
-    document.querySelector('header h1').textContent = d.pageTitle;
+    var headerH1 = document.querySelector('header h1');
+    if (headerH1) headerH1.textContent = d.pageTitle;
     setText('pageNavHomeLabel', d.pageNavHome);
     setText('pageNavSimLabel', d.pageNavSim);
     setText('pageNavTheoryLabel', d.pageNavTheory);
@@ -622,13 +655,13 @@ function applyLanguage()
     updateLangToggleUI();
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
     initializeMetricsHelpModal();
     applyTheme();
     applyLanguage();
     setAnimationSpeedLevel(3);
 });
 
-window.addEventListener('load', () => {
+window.addEventListener('load', function() {
     document.body.classList.add('page-loaded');
 });

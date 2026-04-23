@@ -44,17 +44,31 @@ function resetCounters() {
 
 function getBestVariants() {
     const maxEven = Math.max(0, maxCounterValue() - (maxCounterValue() % 2));
-    const candidates = [0, 2, 6, 10, 42, 170, maxEven]
-        .filter(v => v <= maxEven)
-        .filter((v, i, a) => a.indexOf(v) === i);
+    var raw = [0, 2, 6, 10, 42, 170, maxEven];
+    var seen = [];
+    var candidates = [];
+    for (var i = 0; i < raw.length; i++) {
+        if (raw[i] <= maxEven && !seen.includes(raw[i])) {
+            candidates.push(raw[i]);
+            seen.push(raw[i]);
+        }
+    }
     return candidates.length ? candidates : [0];
 }
 
 function getWorstVariants() {
-    return [1, 2, 3, 4, 6, 8, numBits]
-        .filter(k => k >= 1 && k <= numBits)
-        .filter((k, i, a) => a.indexOf(k) === i)
-        .sort((a, b) => a - b);
+    var raw = [1, 2, 3, 4, 6, 8, numBits];
+    var seen = [];
+    var result = [];
+    for (var i = 0; i < raw.length; i++) {
+        var k = raw[i];
+        if (k >= 1 && k <= numBits && !seen.includes(k)) {
+            result.push(k);
+            seen.push(k);
+        }
+    }
+    result.sort(function(a, b) { return a - b; });
+    return result;
 }
 
 function updateCaseButtons() {
@@ -128,7 +142,11 @@ function applyRandomStateByTrailingOnes(minTrailing, maxTrailing) {
 
 // ─── Coin total helpers ───────────────────────────────────────────────────────
 function savedCoinsTotal() {
-    return coinsOnBit.reduce((s, c) => s + c, 0);
+    var total = 0;
+    for (var i = 0; i < coinsOnBit.length; i++) {
+        total += coinsOnBit[i];
+    }
+    return total;
 }
 
 function updateCoinCounter() {
@@ -195,7 +213,11 @@ function renderBits() {
 }
 
 function bitsToDecimal() {
-    return bits.reduce((sum, b, i) => sum + b * Math.pow(2, i), 0);
+    var sum = 0;
+    for (var i = 0; i < bits.length; i++) {
+        sum += bits[i] * Math.pow(2, i);
+    }
+    return sum;
 }
 
 // ─── Animated coin updates ────────────────────────────────────────────────────
@@ -223,7 +245,11 @@ async function animateCoins(bitIndex, targetCount) {
     }
 }
 
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function sleep(ms) {
+    return new Promise(function(resolve) {
+        setTimeout(resolve, ms);
+    });
+}
 
 async function animateBitFlip(bitIndex, newValue) {
     const frame = document.getElementById(`bit-frame-${bitIndex}`);
@@ -254,7 +280,8 @@ function renderBank(count) {
     }
 }
 
-async function spendCoinFromBank(mode = 'fade') {
+async function spendCoinFromBank(mode) {
+    if (mode === undefined) mode = 'fade';
     const bankDiv = document.getElementById('bankCoins');
     if (!bankDiv) return;
     const last = bankDiv.lastChild;
@@ -370,10 +397,8 @@ async function increment() {
         // Spend + flip together so timing stays visually clear.
         bank -= 1;
         createLogEntry(LOG_TYPES.COPY, d.spendSelf(pos), null, { unit: 'instruction' });
-        await Promise.all([
-            spendCoinFromBank('fade'),
-            animateBitFlip(pos, 1),
-        ]);
+        await spendCoinFromBank('fade');
+        await animateBitFlip(pos, 1);
 
         // Save one coin on the bit for its future 1->0 carry flip.
         bank -= 1;
@@ -438,7 +463,7 @@ async function generateRandom() {
         InputValidation.reportValidationError(minTrailingRes.reason, {
             dict: d,
             details: minTrailingRes.details,
-            report: (msg) => updateInfoPanel(msg),
+            report: function(msg) { updateInfoPanel(msg); },
         });
         return;
     }
@@ -452,7 +477,7 @@ async function generateRandom() {
         InputValidation.reportValidationError(maxTrailingRes.reason, {
             dict: d,
             details: maxTrailingRes.details,
-            report: (msg) => updateInfoPanel(msg),
+            report: function(msg) { updateInfoPanel(msg); },
         });
         return;
     }
@@ -462,7 +487,7 @@ async function generateRandom() {
     if (minTrailing > maxTrailing) {
         InputValidation.reportValidationError('MIN_GT_MAX', {
             dict: d,
-            report: (msg) => updateInfoPanel(msg),
+            report: function(msg) { updateInfoPanel(msg); },
         });
         return;
     }
@@ -478,13 +503,16 @@ async function generateRandom() {
 }
 
 // ─── Best case ────────────────────────────────────────────────────────────────
-async function prepareBestCase(nextVariant = false) {
+async function prepareBestCase(nextVariant) {
+    if (nextVariant === undefined) nextVariant = false;
     // Best case means LSB = 0; cycle through several even values.
     resetCounter();
     const variants = getBestVariants();
-    bestVariantIndex = nextVariant
-        ? (bestVariantIndex + 1) % variants.length
-        : 0;
+    if (nextVariant) {
+        bestVariantIndex = (bestVariantIndex + 1) % variants.length;
+    } else {
+        bestVariantIndex = 0;
+    }
     const target = variants[bestVariantIndex];
 
     for (let i = 0; i < numBits; i++) {
@@ -508,13 +536,16 @@ async function prepareBestCase(nextVariant = false) {
 }
 
 // ─── Worst case ───────────────────────────────────────────────────────────────
-async function prepareWorstCase(nextVariant = false) {
+async function prepareWorstCase(nextVariant) {
+    if (nextVariant === undefined) nextVariant = false;
     // Variants differ by carry depth (k trailing ones); k=numBits is full worst case.
     resetCounter();
     const variants = getWorstVariants();
-    worstVariantIndex = nextVariant
-        ? (worstVariantIndex + 1) % variants.length
-        : 0;
+    if (nextVariant) {
+        worstVariantIndex = (worstVariantIndex + 1) % variants.length;
+    } else {
+        worstVariantIndex = 0;
+    }
     const k = variants[worstVariantIndex];
 
     for (let i = 0; i < numBits; i++) {
@@ -568,7 +599,7 @@ async function incrementPreparedCase(mode) {
 }
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
     refreshBitLengthUI();
     updateCaseButtons();
     updateStepCounter();

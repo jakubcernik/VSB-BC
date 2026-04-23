@@ -167,14 +167,17 @@ const theoryDict = {
 function reloadWithTransition(beforeReload) {
     const ov = document.getElementById('pageTransitionOverlay');
     ov.classList.add('visible');
-    setTimeout(() => { if (beforeReload) beforeReload(); window.location.reload(); }, 350);
+    setTimeout(function() {
+        if (beforeReload) beforeReload();
+        window.location.reload();
+    }, 350);
 }
 
 function navigateToPage(event, url) {
     event.preventDefault();
     const ov = document.getElementById('pageTransitionOverlay');
     ov.classList.add('visible');
-    setTimeout(() => { window.location.href = url; }, 350);
+    setTimeout(function() { window.location.href = url; }, 350);
 }
 
 // Keep naming consistent with other theory pages
@@ -184,7 +187,13 @@ function navigateTo(event, url) {
 
 function toggleTheme() {
     const isDark = document.body.classList.contains('dark-mode');
-    reloadWithTransition(() => localStorage.setItem('theme', isDark ? 'light' : 'dark'));
+    reloadWithTransition(function() {
+        if (isDark) {
+            localStorage.setItem('theme', 'light');
+        } else {
+            localStorage.setItem('theme', 'dark');
+        }
+    });
 }
 
 function applyTheme() {
@@ -197,7 +206,9 @@ function applyTheme() {
 
 function toggleLanguage() {
     const next = currentLang === 'cz' ? 'en' : 'cz';
-    reloadWithTransition(() => localStorage.setItem('lang', next));
+    reloadWithTransition(function() {
+        localStorage.setItem('lang', next);
+    });
 }
 
 function updateLangToggleUI() {
@@ -206,10 +217,21 @@ function updateLangToggleUI() {
 }
 
 function showMethod(method) {
-    document.querySelectorAll('.method-tab').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.method-content').forEach(c => c.classList.remove('active'));
-    document.getElementById(`tab${method.charAt(0).toUpperCase() + method.slice(1)}`).classList.add('active');
-    const id = `method-${method}`;
+    var methodTabs = document.querySelectorAll('.method-tab');
+    for (var i = 0; i < methodTabs.length; i++) {
+        methodTabs[i].classList.remove('active');
+    }
+    var methodContents = document.querySelectorAll('.method-content');
+    for (var i = 0; i < methodContents.length; i++) {
+        methodContents[i].classList.remove('active');
+    }
+    var tabId;
+    if (method === 'aggregate') tabId = 'tabAggregate';
+    else if (method === 'accounting') tabId = 'tabAccounting';
+    else if (method === 'potential') tabId = 'tabPotential';
+    else tabId = 'tab' + method;
+    document.getElementById(tabId).classList.add('active');
+    const id = 'method-' + method;
     const el = document.getElementById(id) || document.getElementById(method);
     if (el) el.classList.add('active');
 }
@@ -310,7 +332,7 @@ function applyLanguage() {
     applyTheme();
 }
 
-window.addEventListener('load', () => {
+window.addEventListener('load', function() {
     document.body.classList.add('page-loaded');
     applyLanguage();
 });

@@ -31,7 +31,7 @@ function isStrictIntegerString(value)
 
 function sleep(ms)
 {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise(function(resolve) { setTimeout(resolve, ms); });
 }
 
 function reportValidation(result, dictForLang)
@@ -39,7 +39,7 @@ function reportValidation(result, dictForLang)
     InputValidation.reportValidationError(result.reason, {
         dict: dictForLang,
         details: result.details,
-        report: (msg) => updateInfoPanel(msg),
+        report: function(msg) { updateInfoPanel(msg); },
     });
 }
 
@@ -107,7 +107,8 @@ function createFlyingCoinFromRect(rect) {
     return coin;
 }
 
-async function flyCoin(fromEl, toEl, animate = true) {
+async function flyCoin(fromEl, toEl, animate) {
+    if (animate === undefined) animate = true;
     if (!animate) return;
     if (!fromEl || !toEl) return;
     const fromRect = fromEl.getBoundingClientRect();
@@ -127,14 +128,16 @@ async function flyCoin(fromEl, toEl, animate = true) {
     coin.remove();
 }
 
-async function depositToBank(fromSlotIndex, count, animate = true) {
+async function depositToBank(fromSlotIndex, count, animate) {
+    if (animate === undefined) animate = true;
     const fromCoins = getSlotCoinsEl(fromSlotIndex);
     const bankEl = getBankEl();
     if (!fromCoins || !bankEl) return;
 
     for (let k = 0; k < count; k++) {
         // First visually remove one coin from the slot, then fly that coin into the bank.
-        const current = creditsPerSlot[fromSlotIndex] ?? 0;
+        var current = creditsPerSlot[fromSlotIndex];
+        if (current === undefined || current === null) current = 0;
         const next = Math.max(0, current - 1);
         creditsPerSlot[fromSlotIndex] = next;
         await animateCoinUpdate(fromSlotIndex, next, animate);
@@ -144,7 +147,8 @@ async function depositToBank(fromSlotIndex, count, animate = true) {
     }
 }
 
-async function withdrawFromBank(toSlotIndex, count, animate = true) {
+async function withdrawFromBank(toSlotIndex, count, animate) {
+    if (animate === undefined) animate = true;
     const toCoins = getSlotCoinsEl(toSlotIndex);
     const bankEl = getBankEl();
     if (!toCoins || !bankEl) return;
@@ -175,16 +179,16 @@ function updateCredits()
     const instructionBoundEl = document.getElementById("instructionBound");
 
     if (creditCounterEl) {
-        creditCounterEl.textContent = `${d.coins}: ${bank}`;
+        creditCounterEl.textContent = d.coins + ': ' + bank;
     }
 
     if (stepCounterEl) {
-        stepCounterEl.textContent = `${d.steps}: ${steps}`;
+        stepCounterEl.textContent = d.steps + ': ' + steps;
     }
 
     if (instructionCounterEl) {
         const instructionsLabel = d.instructions || 'Instructions';
-        instructionCounterEl.textContent = `${instructionsLabel}: ${instructions}`;
+        instructionCounterEl.textContent = instructionsLabel + ': ' + instructions;
     }
 
     if (instructionBoundEl) {
@@ -194,13 +198,19 @@ function updateCredits()
         } else {
             const limit = steps * INSERT_CHARGE;
             const overLimit = instructions > limit;
-            instructionBoundEl.textContent = overLimit
-                ? (typeof d.instructionBoundExceeded === 'function'
-                    ? d.instructionBoundExceeded(instructions, steps, limit)
-                    : `${instructions} / ${limit}`)
-                : (typeof d.instructionBoundWithin === 'function'
-                    ? d.instructionBoundWithin(instructions, steps, limit)
-                    : `${instructions} / ${limit}`);
+            if (overLimit) {
+                if (typeof d.instructionBoundExceeded === 'function') {
+                    instructionBoundEl.textContent = d.instructionBoundExceeded(instructions, steps, limit);
+                } else {
+                    instructionBoundEl.textContent = instructions + ' / ' + limit;
+                }
+            } else {
+                if (typeof d.instructionBoundWithin === 'function') {
+                    instructionBoundEl.textContent = d.instructionBoundWithin(instructions, steps, limit);
+                } else {
+                    instructionBoundEl.textContent = instructions + ' / ' + limit;
+                }
+            }
             instructionBoundEl.classList.toggle('over-limit', overLimit);
         }
     }
@@ -269,8 +279,9 @@ function visualizeArray()
     updateCredits();
 }
 
-async function animateCoinUpdate(frameIndex, coinsNeeded, animate = true)
+async function animateCoinUpdate(frameIndex, coinsNeeded, animate)
 {
+    if (animate === undefined) animate = true;
     const frame = document.querySelector(`.frame:nth-child(${frameIndex + 1}) .coins`);
     if (!frame) return;
     const currentCoins = frame.childElementCount;
@@ -282,7 +293,7 @@ async function animateCoinUpdate(frameIndex, coinsNeeded, animate = true)
             frame.appendChild(coin);
         }
         while (frame.childElementCount > coinsNeeded) {
-            frame.lastChild?.remove();
+            if (frame.lastChild) frame.lastChild.remove();
         }
         return;
     }
@@ -403,8 +414,11 @@ const WORST_VARIANTS = [
 
 function makeArrayOfSize(n)
 {
-    // deterministic simple values for clarity
-    return Array.from({ length: n }, (_, i) => (i + 1) * 10);
+    var result = [];
+    for (var i = 0; i < n; i++) {
+        result.push((i + 1) * 10);
+    }
+    return result;
 }
 
 function createQueueAction(opId, run)
@@ -412,8 +426,9 @@ function createQueueAction(opId, run)
     return { opId, run };
 }
 
-function enqueueInsertOperation(value, options = {})
+function enqueueInsertOperation(value, options)
 {
+    if (options === undefined) options = {};
     const opId = simulationController.nextOpId++;
     const d = dict[currentLang];
     const actions = [];
@@ -432,7 +447,7 @@ function enqueueInsertOperation(value, options = {})
     }
 
     if (needsResize) {
-        actions.push(createQueueAction(opId, async (animate) => {
+        actions.push(createQueueAction(opId, async function(animate) {
             startOperationIfNeeded();
             updateInfoPanel(d.arrayFull);
             capacity *= 2;
@@ -448,7 +463,7 @@ function enqueueInsertOperation(value, options = {})
         }));
 
         for (let i = 0; i < oldCapacity; i++) {
-            actions.push(createQueueAction(opId, async (animate) => {
+            actions.push(createQueueAction(opId, async function(animate) {
                 startOperationIfNeeded();
                 if (bank > 0) {
                     await withdrawFromBank(i, 1, animate);
@@ -459,14 +474,14 @@ function enqueueInsertOperation(value, options = {})
             }));
         }
 
-        actions.push(createQueueAction(opId, async () => {
+        actions.push(createQueueAction(opId, async function() {
             startOperationIfNeeded();
             updateInfoPanel(d.resizeDoneSlots(oldCapacity));
             visualizeArray();
         }));
     }
 
-    actions.push(createQueueAction(opId, async (animate) => {
+    actions.push(createQueueAction(opId, async function(animate) {
         startOperationIfNeeded();
         creditsPerSlot[slotIndex] = 3;
         visualizeArray();
@@ -474,7 +489,7 @@ function enqueueInsertOperation(value, options = {})
         updateInfoPanel(d.atomicAllocStep(slotIndex, INSERT_CHARGE));
     }));
 
-    actions.push(createQueueAction(opId, async (animate) => {
+    actions.push(createQueueAction(opId, async function(animate) {
         startOperationIfNeeded();
         array.push(value);
         visualizeArray();
@@ -484,7 +499,7 @@ function enqueueInsertOperation(value, options = {})
         }
     }));
 
-    actions.push(createQueueAction(opId, async (animate) => {
+    actions.push(createQueueAction(opId, async function(animate) {
         startOperationIfNeeded();
         creditsPerSlot[slotIndex] = 2;
         await animateCoinUpdate(slotIndex, 2, animate);
@@ -493,29 +508,32 @@ function enqueueInsertOperation(value, options = {})
         updateInfoPanel(d.atomicSpendStep(slotIndex), { unit: 'instruction' });
     }));
 
-    actions.push(createQueueAction(opId, async (animate) => {
+    actions.push(createQueueAction(opId, async function(animate) {
         startOperationIfNeeded();
         await depositToBank(slotIndex, 1, animate);
         updateInfoPanel(d.atomicDepositStep(slotIndex));
     }));
 
-    actions.push(createQueueAction(opId, async (animate) => {
+    actions.push(createQueueAction(opId, async function(animate) {
         startOperationIfNeeded();
         await depositToBank(slotIndex, 1, animate);
         updateInfoPanel(d.atomicDepositStep(slotIndex));
         endLogGroup();
-        for (const inputId of clearInputs) {
-            const input = document.getElementById(inputId);
-            if (input) input.value = '';
+        for (var ci = 0; ci < clearInputs.length; ci++) {
+            var inputEl = document.getElementById(clearInputs[ci]);
+            if (inputEl) inputEl.value = '';
         }
     }));
 
-    simulationController.queue.push(...actions);
+    for (var ai = 0; ai < actions.length; ai++) {
+        simulationController.queue.push(actions[ai]);
+    }
     syncControlStates();
 }
 
-async function runNextQueueAction(animate = true)
+async function runNextQueueAction(animate)
 {
+    if (animate === undefined) animate = true;
     if (simulationController.isExecuting) return false;
     const action = simulationController.queue.shift();
     if (!action) return false;
@@ -677,23 +695,25 @@ function attachControlStateListeners()
 {
     const manualInput = document.getElementById('manualInput');
     if (manualInput) {
-        manualInput.addEventListener('input', () => updateManualStepButtons());
+        manualInput.addEventListener('input', function() { updateManualStepButtons(); });
     }
 
-    ['randomCount', 'randomMin', 'randomMax'].forEach((id) => {
-        const el = document.getElementById(id);
-        if (el) {
-            el.addEventListener('input', () => updateRandomButtons());
+    var randomIds = ['randomCount', 'randomMin', 'randomMax'];
+    for (var ri = 0; ri < randomIds.length; ri++) {
+        var elRandom = document.getElementById(randomIds[ri]);
+        if (elRandom) {
+            elRandom.addEventListener('input', function() { updateRandomButtons(); });
         }
-    });
+    }
 
     syncControlStates();
 }
 
 attachControlStateListeners();
 
-function prepareBestCase(next = false)
+function prepareBestCase(next)
 {
+    if (next === undefined) next = false;
     resetValues();
     const d = dict[currentLang];
 
@@ -750,8 +770,9 @@ async function finishBestCase()
     createLogEntry(LOG_TYPES.SUCCESS, d.bestCaseDone);
 }
 
-function prepareWorstCase(next = false)
+function prepareWorstCase(next)
 {
+    if (next === undefined) next = false;
     resetValues();
     const d = dict[currentLang];
 

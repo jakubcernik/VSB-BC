@@ -183,7 +183,7 @@ const theoryDict = {
 function reloadWithTransition(beforeReload) {
     const overlay = document.getElementById('pageTransitionOverlay');
     overlay.classList.add('visible');
-    setTimeout(() => {
+    setTimeout(function() {
         if (beforeReload) beforeReload();
         window.location.reload();
     }, 350);
@@ -191,8 +191,12 @@ function reloadWithTransition(beforeReload) {
 
 function toggleTheme() {
     const isDark = document.body.classList.contains('dark-mode');
-    reloadWithTransition(() => {
-        localStorage.setItem('theme', isDark ? 'light' : 'dark');
+    reloadWithTransition(function() {
+        if (isDark) {
+            localStorage.setItem('theme', 'light');
+        } else {
+            localStorage.setItem('theme', 'dark');
+        }
     });
 }
 
@@ -206,7 +210,7 @@ function applyTheme() {
 
 function toggleLanguage() {
     const next = currentLang === 'cz' ? 'en' : 'cz';
-    reloadWithTransition(() => {
+    reloadWithTransition(function() {
         localStorage.setItem('lang', next);
     });
 }
@@ -222,14 +226,20 @@ function navigateTo(event, url) {
     event.preventDefault();
     const overlay = document.getElementById('pageTransitionOverlay');
     overlay.classList.add('visible');
-    setTimeout(() => { window.location.href = url; }, 350);
+    setTimeout(function() { window.location.href = url; }, 350);
 }
 
 // ─── Method tabs ──────────────────────────────────────────────────────────────
 
 function showMethod(id) {
-    document.querySelectorAll('.method-content').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.method-tab').forEach(el => el.classList.remove('active'));
+    var methodContents = document.querySelectorAll('.method-content');
+    for (var i = 0; i < methodContents.length; i++) {
+        methodContents[i].classList.remove('active');
+    }
+    var methodTabs = document.querySelectorAll('.method-tab');
+    for (var i = 0; i < methodTabs.length; i++) {
+        methodTabs[i].classList.remove('active');
+    }
     document.getElementById('method-' + id).classList.add('active');
     event.currentTarget.classList.add('active');
 }
@@ -340,12 +350,12 @@ function applyLanguage() {
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
     applyTheme();
     applyLanguage();
 });
 
-window.addEventListener('load', () => {
+window.addEventListener('load', function() {
     document.body.classList.add('page-loaded');
 });
 
