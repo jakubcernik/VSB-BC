@@ -240,9 +240,18 @@ async function resizeAndRehash(newCapacity) {
     const oldTable = table;
     const oldCoins = coinsOnSlot;
 
+    // Show old table state once so the user sees all elements with their coins before rehash begins.
+    renderTable();
+    await sleep(getDelay(300));
+
     capacity = newCapacity;
     table = new Array(capacity).fill(null);
     coinsOnSlot = new Array(capacity).fill(0);
+
+    // Keep references to the new (empty) arrays so we can swap globals for animation.
+    const newCap = newCapacity;
+    const newTable = table;
+    const newCoins = coinsOnSlot;
 
     // Reinsert old entries.
     // Elements with coinsOnSlot=1 (freshly inserted, not yet rehashed) spend their own saved coin.
@@ -254,40 +263,47 @@ async function resizeAndRehash(newCapacity) {
         const entry = oldTable[from];
         if (!entry) continue;
 
+        // Step 1: Show old table with FROM slot highlighted (coin visible if coinsOnSlot=1).
+        capacity = oldCap; table = oldTable; coinsOnSlot = oldCoins;
+        renderTable(from);
+        await sleep(getDelay(200));
+
+        // Step 2: Spend the coin (slot coin or bank), show the consumption.
         let paidFromBank = false;
         if (oldCoins[from] > 0) {
-            // Has saved coin — spends it to pay for the move
-            oldCoins[from] -= 1;
+            oldCoins[from] -= 1; // coin disappears from old slot
         } else {
-            // No coin — pay from the global bank
             bank -= 1;
             paidFromBank = true;
             updateBankCounter();
         }
+        renderTable(from); // re-render old table: coin is now gone from FROM slot
+        await sleep(getDelay(150));
 
-        // When capacity changes, start slot changes too: hash(key) mod capacity.
-        // During re-insert we may need to probe forward due to collisions.
+        // Step 3: Restore new table state and find target slot.
+        capacity = newCap; table = newTable; coinsOnSlot = newCoins;
+
         const oldStart = (hashKey(entry.key) % oldCap);
-        const newStart = (hashKey(entry.key) % capacity);
+        const newStart = (hashKey(entry.key) % newCap);
 
         let probes = 0;
         let to = -1;
-        for (let offset = 0; offset < capacity; offset++) {
+        for (let offset = 0; offset < newCap; offset++) {
             probes++;
-            const i = (newStart + offset) % capacity;
-            if (!table[i]) { to = i; break; }
+            const i = (newStart + offset) % newCap;
+            if (!newTable[i]) { to = i; break; }
         }
         if (to === -1) {
-            // Should not happen (we resize before full), but keep it safe.
-            to = findSlotForKey(entry.key, capacity, table);
+            to = findSlotForKey(entry.key, newCap, newTable);
         }
 
         totalProbes += probes;
         if (probes > maxProbes) maxProbes = probes;
 
+        // Step 4: Place element in new slot (no coin — next rehash covered by bank).
         table[to] = entry;
-        coinsOnSlot[to] = 0; // no coin re-saved — next rehash covered by bank for this element
-        instructions++; // one moved/reinserted element instruction
+        coinsOnSlot[to] = 0;
+        instructions++;
 
         moved++;
         renderTable(to);

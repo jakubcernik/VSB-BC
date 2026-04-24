@@ -142,8 +142,8 @@ const dict = {
         resizeWhy:        () => `3-coin model: fresh elements (slot coin = 1) pay their own move; previously rehashed elements (slot coin = 0) are paid from the central bank.`,
         rehashStats:      (oldC, newC, size, oldLoad, newLoad) => `Rehash overview: size <span class="log-badge slot">${size}</span>, load <span class="log-badge slot">${oldLoad}</span> → <span class="log-badge slot">${newLoad}</span>, capacity <span class="log-badge capacity">${oldC} → ${newC}</span>.`,
         moveElement:      (from, to, fromBank) => fromBank
-            ? `Move from <span class="log-badge slot">[${from}]</span> → <span class="log-badge slot">[${to}]</span> (paid from <strong>bank</strong> — element had no slot coin)`
-            : `Move from <span class="log-badge slot">[${from}]</span> → <span class="log-badge slot">[${to}]</span> (spent <span class="coin-text">slot coin</span>)`,
+            ? `Move from <span class="log-badge slot">[${from}]</span> → <span class="log-badge slot">[${to}]</span> (paid from <strong>bank</strong> — no slot coin, no coin placed on new slot)`
+            : `Move from <span class="log-badge slot">[${from}]</span> → <span class="log-badge slot">[${to}]</span> (spent <span class="coin-text">slot coin</span> — no coin placed on new slot, bank covers next rehash)`,
         moveElementDetails:(key, oldStart, newStart, probes) => `key <span class="log-badge slot">${key}</span>: start <span class="log-badge slot">${oldStart}</span> → <span class="log-badge slot">${newStart}</span>, probes during re-insert: <span class="log-badge slot">${probes}</span>`,
         rehashSummary:    (moved, totalProbes, maxProbes) => `Rehash summary: moved <strong>${moved}</strong> element${moved !== 1 ? 's' : ''}, total probes <span class="log-badge slot">${totalProbes}</span>, max probes for one element <span class="log-badge slot">${maxProbes}</span>`,
         resizeDone:       (n) => `Rehash complete — moved <strong>${n}</strong> element${n !== 1 ? 's' : ''}`,
@@ -274,8 +274,8 @@ const dict = {
         resizeWhy:        () => `Model 3 mincí: čerstvé prvky (mince na slotu = 1) zaplatí přesun samy; dříve přehashované prvky (mince na slotu = 0) jsou zaplaceny z centrální banky.`,
         rehashStats:      (oldC, newC, size, oldLoad, newLoad) => `Přehled rehashe: velikost <span class="log-badge slot">${size}</span>, zaplnění <span class="log-badge slot">${oldLoad}</span> → <span class="log-badge slot">${newLoad}</span>, kapacita <span class="log-badge capacity">${oldC} → ${newC}</span>.`,
         moveElement:      (from, to, fromBank) => fromBank
-            ? `Přesun <span class="log-badge slot">[${from}]</span> → <span class="log-badge slot">[${to}]</span> (zaplaceno z <strong>banky</strong> — prvek neměl minci na slotu)`
-            : `Přesun <span class="log-badge slot">[${from}]</span> → <span class="log-badge slot">[${to}]</span> (utracena <span class="coin-text">mince ze slotu</span>)`,
+            ? `Přesun <span class="log-badge slot">[${from}]</span> → <span class="log-badge slot">[${to}]</span> (zaplaceno z <strong>banky</strong> — prvek neměl minci na slotu, na novém slotu mince není)`
+            : `Přesun <span class="log-badge slot">[${from}]</span> → <span class="log-badge slot">[${to}]</span> (utracena <span class="coin-text">mince ze slotu</span> — na novém slotu mince není, příští rehash kryje banka)`,
         moveElementDetails:(key, oldStart, newStart, probes) => `klíč <span class="log-badge slot">${key}</span>: start <span class="log-badge slot">${oldStart}</span> → <span class="log-badge slot">${newStart}</span>, probing při vložení: <span class="log-badge slot">${probes}</span>`,
         rehashSummary:    (moved, totalProbes, maxProbes) => `Souhrn rehashe: přesunuto <strong>${moved}</strong> ${moved === 1 ? 'prvek' : (moved >= 2 && moved <= 4 ? 'prvky' : 'prvků')}, probing celkem <span class="log-badge slot">${totalProbes}</span>, maximum u jednoho prvku <span class="log-badge slot">${maxProbes}</span>`,
         resizeDone:       (n) => `Rehash hotový — přesunuto <strong>${n}</strong> ${n === 1 ? 'prvek' : (n >= 2 && n <= 4 ? 'prvky' : 'prvků')}`,

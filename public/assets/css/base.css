@@ -539,7 +539,8 @@ button:hover {
     box-shadow: 0 8px 18px rgba(20, 48, 62, 0.08);
 }
 
-#creditCounter {
+#creditCounter,
+#bankCounter {
     min-width: 170px;
     text-align: center;
 }

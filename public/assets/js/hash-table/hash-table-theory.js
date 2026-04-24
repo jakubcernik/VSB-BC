@@ -53,13 +53,14 @@ const theoryDict = {
         aggregateConclusion: 'Total cost is O(N), so amortized cost per INSERT is O(1).',
 
         accountingTitle: 'Accounting Method',
-        accountingP1:    'Charge each INSERT a fixed fee of 2 coins. Spend and save coins so that future rehashes are always paid without going into debt:',
-        coinStep1: '<strong>2 coins</strong> are received at the start of every INSERT (fixed amortized charge).',
+        accountingP1:    'Charge each INSERT a fixed fee of 3 coins. The 3 coins are distributed so that every future rehash is always paid — including elements that were already rehashed once:',
+        coinStep1: '<strong>3 coins</strong> are received at the start of every INSERT (fixed amortized charge).',
         coinStep2: '<strong>1 coin</strong> pays for placing the new element into the table (the write).',
-        coinStep3: '<strong>1 coin</strong> is saved <em>on that element</em> to pay for moving it during a future rehash.',
-        coinStep4: 'Important: coins here pay mainly for <strong>future rehash moves</strong>. They do not claim that every possible probing sequence is cheap. Probing is analyzed separately in expectation: with good hashing and bounded load, most inserts need only a few probes.',
-        accountingMath: 'When resize happens, each of the n stored elements spends its saved coin to pay for exactly one move into the new table. Therefore the rehash cost is fully paid by saved coins.',
-        accountingConclusion: 'Since each INSERT is charged a constant number of coins and we never borrow from the future, INSERT runs in amortized O(1). A single INSERT can still cost O(n) when it triggers resize + rehash.',
+        coinStep3: '<strong>1 coin</strong> is saved <em>on that element\'s slot</em> to pay for its own move during the <em>first</em> rehash it ever faces.',
+        coinStep4: '<strong>1 coin</strong> goes into a central <strong>bank</strong>. When an element is rehashed a <em>second</em> (or later) time it no longer has a slot coin, so the bank covers its move.',
+        coinStep5: 'Important: the coins here pay for <strong>resize/rehash moves</strong> only. Probing is analyzed separately as an expected average-case property: with good hashing and bounded load factor, most inserts need only a few probes.',
+        accountingMath: 'On the first rehash every element (slot coin = 1) pays its own move; bank is untouched. On the second rehash those elements have slot coin = 0 and are paid from the bank. Each INSERT deposited 1 coin into the bank, so the bank always has enough to cover them.',
+        accountingConclusion: 'Since each INSERT is charged a constant number of coins (3) and we never borrow from the future, INSERT runs in amortized O(1). A single INSERT can still cost O(n) when it triggers resize + rehash.',
 
         potentialTitle: 'Potential Method',
         potentialP1:    'Define a potential Φ that depends on both the number of elements and capacity (not only on size). A convenient linear choice is:',
@@ -133,13 +134,14 @@ const theoryDict = {
         aggregateConclusion: 'Celková cena je O(N), takže amortizovaně vychází INSERT jako O(1).',
 
         accountingTitle: 'Účetní metoda',
-        accountingP1:    'Každému INSERT naúčtujeme pevný poplatek 2 mince. Mince utratíme a uložíme tak, aby byly budoucí rehashe vždy zaplacené bez dluhu:',
-        coinStep1: '<strong>2 mince</strong> se přidělí na začátku každého INSERT (pevný amortizovaný poplatek).',
+        accountingP1:    'Každému INSERT naúčtujeme pevný poplatek 3 mince. Mince se rozdělí tak, aby byly vždy pokryty i budoucí rehashe — včetně prvků, které byly přehashované už jednou:',
+        coinStep1: '<strong>3 mince</strong> se přidělí na začátku každého INSERT (pevný amortizovaný poplatek).',
         coinStep2: '<strong>1 mince</strong> zaplatí uložení nového prvku do tabulky (zápis).',
-        coinStep3: '<strong>1 mince</strong> se uloží <em>na tento prvek</em> a později zaplatí jeho přesun při rehashi.',
-        coinStep4: 'Důležité: mince zde platí hlavně <strong>budoucí přesuny při rehashi</strong>. Netvrdíme tím, že každá možná sekvence probingu je levná. Probing se hodnotí zvlášť v očekávaném průměrném případě: při dobrém hashování a omezeném zaplnění má většina vložení jen pár probe kroků.',
-        accountingMath: 'Když nastane resize, každý z n uložených prvků utratí svou ušetřenou minci a zaplatí přesně jeden přesun do nové tabulky. Rehash je tedy plně zaplacen ušetřenými mincemi.',
-        accountingConclusion: 'Protože každý INSERT účtuje konstantní počet mincí a nikdy si nepůjčujeme z budoucnosti, INSERT běží v amortizovaném O(1). Jednotlivý INSERT ale může stát O(n), když zrovna vyvolá resize + rehash.',
+        coinStep3: '<strong>1 mince</strong> se uloží <em>na slot tohoto prvku</em> a zaplatí jeho přesun při <em>prvním</em> rehashi, se kterým se setká.',
+        coinStep4: '<strong>1 mince</strong> jde do centrální <strong>banky</strong>. Prvek, který je rehashovaný <em>podruhé</em> (nebo vícekrát), už nemá minci na slotu — jeho přesun zaplatí banka.',
+        coinStep5: 'Důležité: mince zde platí výhradně <strong>přesuny při resize/rehashi</strong>. Probing se hodnotí zvlášť jako očekávaný průměrný případ: při dobrém hashování a omezeném zaplnění má většina vložení jen pár probe kroků.',
+        accountingMath: 'Při prvním rehashi má každý prvek minci na slotu (= 1) a zaplatí přesun sám; banka zůstává nedotčena. Při druhém rehashi mají tyto prvky minci na slotu = 0 a jsou placeny z banky. Každý INSERT do banky přidal 1 minci, takže banka vždy pokryje jejich přesuny.',
+        accountingConclusion: 'Protože každý INSERT účtuje konstantní počet mincí (3) a nikdy si nepůjčujeme z budoucnosti, INSERT běží v amortizovaném O(1). Jednotlivý INSERT ale může stát O(n), když zrovna vyvolá resize + rehash.',
 
         potentialTitle: 'Potenciálová metoda',
         potentialP1:    'Zaveďme potenciál Φ, který závisí na počtu prvků i kapacitě (ne jen na velikosti). Praktická lineární volba je:',
@@ -304,6 +306,7 @@ function applyLanguage() {
     setHtml('coinStep2', d.coinStep2);
     setHtml('coinStep3', d.coinStep3);
     setHtml('coinStep4', d.coinStep4);
+    setHtml('coinStep5', d.coinStep5);
     setHtml('accountingMath', d.accountingMath);
     setHtml('accountingConclusion', d.accountingConclusion);
 
