@@ -133,6 +133,50 @@ function updateMeta() {
 }
 
 // ─── Visualisation ────────────────────────────────────────────────────────────
+
+// Renders the grid using an explicit snapshot — does NOT touch globals or counters.
+// Used during rehash animation to show the old table state without side effects.
+function renderTableState(cap, tbl, coins, highlightIndex) {
+    if (highlightIndex === undefined) highlightIndex = null;
+    const grid = document.getElementById('hashTableVisualization');
+    if (!grid) return;
+    grid.innerHTML = '';
+    const d = dict[currentLang];
+    for (let i = 0; i < cap; i++) {
+        const slot = document.createElement('div');
+        slot.classList.add('hash-slot');
+        if (highlightIndex === i) slot.classList.add('slot-highlight');
+        const header = document.createElement('div');
+        header.classList.add('slot-header');
+        const idx = document.createElement('div');
+        idx.classList.add('slot-index');
+        idx.textContent = `[${i}]`;
+        const state = document.createElement('div');
+        state.classList.add('slot-state');
+        state.textContent = tbl[i] ? d.slotStateOccupied : d.slotStateEmpty;
+        header.appendChild(idx);
+        header.appendChild(state);
+        const body = document.createElement('div');
+        body.classList.add('slot-body');
+        const kv = document.createElement('div');
+        kv.classList.add('hash-kv');
+        kv.textContent = tbl[i] ? `${tbl[i].key} → ${tbl[i].value}` : '';
+        const coinsEl = document.createElement('div');
+        coinsEl.classList.add('hash-coins');
+        const cnt = coins[i] || 0;
+        for (let c = 0; c < cnt; c++) {
+            const coin = document.createElement('div');
+            coin.classList.add('hash-coin');
+            coinsEl.appendChild(coin);
+        }
+        body.appendChild(kv);
+        body.appendChild(coinsEl);
+        slot.appendChild(header);
+        slot.appendChild(body);
+        grid.appendChild(slot);
+    }
+}
+
 function renderTable(highlightIndex) {
     if (highlightIndex === undefined) highlightIndex = null;
     const grid = document.getElementById('hashTableVisualization');
@@ -248,11 +292,6 @@ async function resizeAndRehash(newCapacity) {
     table = new Array(capacity).fill(null);
     coinsOnSlot = new Array(capacity).fill(0);
 
-    // Keep references to the new (empty) arrays so we can swap globals for animation.
-    const newCap = newCapacity;
-    const newTable = table;
-    const newCoins = coinsOnSlot;
-
     // Reinsert old entries.
     // Elements with coinsOnSlot=1 (freshly inserted, not yet rehashed) spend their own saved coin.
     // Elements with coinsOnSlot=0 (previously rehashed, coin already spent) are paid from the global bank.
@@ -264,11 +303,11 @@ async function resizeAndRehash(newCapacity) {
         if (!entry) continue;
 
         // Step 1: Show old table with FROM slot highlighted (coin visible if coinsOnSlot=1).
-        capacity = oldCap; table = oldTable; coinsOnSlot = oldCoins;
-        renderTable(from);
+        // renderTableState renders with the provided snapshot — globals stay at new capacity.
+        renderTableState(oldCap, oldTable, oldCoins, from);
         await sleep(getDelay(200));
 
-        // Step 2: Spend the coin (slot coin or bank), show the consumption.
+        // Step 2: Spend the coin (slot coin or bank), re-render old state to show consumption.
         let paidFromBank = false;
         if (oldCoins[from] > 0) {
             oldCoins[from] -= 1; // coin disappears from old slot
@@ -277,24 +316,22 @@ async function resizeAndRehash(newCapacity) {
             paidFromBank = true;
             updateBankCounter();
         }
-        renderTable(from); // re-render old table: coin is now gone from FROM slot
+        renderTableState(oldCap, oldTable, oldCoins, from);
         await sleep(getDelay(150));
 
-        // Step 3: Restore new table state and find target slot.
-        capacity = newCap; table = newTable; coinsOnSlot = newCoins;
-
+        // Step 3: Find target slot in the new table (globals already at new capacity).
         const oldStart = (hashKey(entry.key) % oldCap);
-        const newStart = (hashKey(entry.key) % newCap);
+        const newStart = (hashKey(entry.key) % capacity);
 
         let probes = 0;
         let to = -1;
-        for (let offset = 0; offset < newCap; offset++) {
+        for (let offset = 0; offset < capacity; offset++) {
             probes++;
-            const i = (newStart + offset) % newCap;
-            if (!newTable[i]) { to = i; break; }
+            const i = (newStart + offset) % capacity;
+            if (!table[i]) { to = i; break; }
         }
         if (to === -1) {
-            to = findSlotForKey(entry.key, newCap, newTable);
+            to = findSlotForKey(entry.key, capacity, table);
         }
 
         totalProbes += probes;
