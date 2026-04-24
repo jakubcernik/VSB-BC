@@ -74,9 +74,6 @@ function hashKey(keyInt) {
     return (k >>> 0);
 }
 
-const randInt = InputValidation.randInt;
-const randKeyInt = InputValidation.randInt;
-const sleep = InputValidation.sleep;
 
 function totalSavedCoins() {
     var total = 0;
@@ -475,7 +472,7 @@ async function generateRandom() {
     const keyMax = rangeRes.max;
 
     for (let i = 0; i < count; i++) {
-        const k = randKeyInt(keyMin, keyMax);
+        const k = randInt(keyMin, keyMax);
         const v = randInt(0, 99);
         await insertKV(k, v);
         await sleep(getDelay(200));
