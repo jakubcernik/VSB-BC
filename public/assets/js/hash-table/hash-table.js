@@ -3,18 +3,21 @@
  * Model used by the demo:
  * - open addressing with linear probing
  * - resize (doubling) when load threshold is exceeded
- * - 2-coin accounting for INSERT: one pays the write, one is saved for future rehash move
+ * - 3-coin accounting for INSERT: one pays the write, one is saved on the slot for future rehash move,
+ *   one goes to a central bank. During rehash, elements with coinsOnSlot=0 (already rehashed once)
+ *   are paid from the bank.
  */
 
 // ─── State ────────────────────────────────────────────────────────────────────
 const INITIAL_CAPACITY = 8;
 const LOAD_THRESHOLD = 0.75;
-const INSERT_CHARGE = 2;
+const INSERT_CHARGE = 3;
 
 let capacity = INITIAL_CAPACITY;
 let size = 0; // number of live entries
 let table = []; // { key, value } | null
 let coinsOnSlot = []; // saved coin per occupied slot (0/1)
+let bank = 0; // central bank — accumulates 1 coin per fresh insert, pays for rehash of previously-rehashed elements
 let instructions = 0; // atomic internal work units (probe/write/move)
 let isAnimating = false;
 let preparedCaseMode = null;
@@ -47,6 +50,7 @@ function applyPreparedEntries(entries) {
         if (idx < 0) continue;
         table[idx] = { key: e.key, value: e.value };
         coinsOnSlot[idx] = 1;
+        bank++; // simulate the 1-coin-to-bank that a normal INSERT would contribute
         size++;
     }
 }
@@ -86,6 +90,12 @@ function updateCoinCounter() {
     const d = dict[currentLang];
     const el = document.getElementById('creditCounter');
     if (el) el.textContent = `${d.coins}: ${totalSavedCoins()}`;
+}
+
+function updateBankCounter() {
+    const d = dict[currentLang];
+    const el = document.getElementById('bankCounter');
+    if (el) el.textContent = `${d.bank}: ${bank}`;
 }
 
 function updateStepCounter() {
@@ -180,6 +190,7 @@ function renderTable(highlightIndex) {
     updateStepCounter();
     updateInstructionCounter();
     updateCoinCounter();
+    updateBankCounter();
 }
 
 function clearInfoPanel() {
@@ -236,7 +247,9 @@ async function resizeAndRehash(newCapacity) {
     table = new Array(capacity).fill(null);
     coinsOnSlot = new Array(capacity).fill(0);
 
-    // Reinsert old entries. Each entry spends its saved coin to pay for the move.
+    // Reinsert old entries.
+    // Elements with coinsOnSlot=1 (freshly inserted, not yet rehashed) spend their own saved coin.
+    // Elements with coinsOnSlot=0 (previously rehashed, coin already spent) are paid from the global bank.
     let moved = 0;
     let totalProbes = 0;
     let maxProbes = 0;
@@ -244,8 +257,16 @@ async function resizeAndRehash(newCapacity) {
         const entry = oldTable[from];
         if (!entry) continue;
 
-        // spend the saved coin
-        if (oldCoins[from] > 0) oldCoins[from] -= 1;
+        let paidFromBank = false;
+        if (oldCoins[from] > 0) {
+            // Has saved coin — spends it to pay for the move
+            oldCoins[from] -= 1;
+        } else {
+            // No coin — pay from the global bank
+            bank -= 1;
+            paidFromBank = true;
+            updateBankCounter();
+        }
 
         // When capacity changes, start slot changes too: hash(key) mod capacity.
         // During re-insert we may need to probe forward due to collisions.
@@ -268,14 +289,14 @@ async function resizeAndRehash(newCapacity) {
         if (probes > maxProbes) maxProbes = probes;
 
         table[to] = entry;
-        coinsOnSlot[to] = 1; // coin re-saved on new slot (invariant continues)
+        coinsOnSlot[to] = 0; // no coin re-saved — next rehash covered by bank for this element
         instructions++; // one moved/reinserted element instruction
 
         moved++;
         renderTable(to);
         createLogEntry(
             LOG_TYPES.COPY,
-            d.moveElement(from, to),
+            d.moveElement(from, to, paidFromBank),
             d.moveElementDetails(entry.key, oldStart, newStart, probes),
             { unit: 'instruction' }
         );
@@ -312,8 +333,8 @@ async function insertKV(keyInt, value) {
         createLogEntry(LOG_TYPES.INFO, d.resizeNotNeeded(projectedLoad.toFixed(2), LOAD_THRESHOLD.toFixed(2)));
     }
 
-    // operation bank
-    let bank = INSERT_CHARGE;
+    // operation coin budget for this insert
+    let opBank = INSERT_CHARGE;
 
     // probe
     const rawHash = hashKey(keyInt) >>> 0;
@@ -339,7 +360,7 @@ async function insertKV(keyInt, value) {
 
             if (coinsOnSlot[i] > 0) {
                 coinsOnSlot[i] -= 1;
-                bank += 1;
+                opBank += 1;
                 renderTable(i);
                 createLogEntry(LOG_TYPES.INFO, d.updateBorrowCoin(i));
                 await sleep(getDelay(160));
@@ -348,7 +369,7 @@ async function insertKV(keyInt, value) {
             // do the update
             table[i].value = value;
             instructions++; // one write/update instruction
-            if (bank > 0) bank -= 1;
+            if (opBank > 0) opBank -= 1;
             createLogEntry(LOG_TYPES.SUCCESS, d.updateDone(i), null, { unit: 'instruction' });
             await sleep(getDelay(160));
 
@@ -389,12 +410,17 @@ async function insertKV(keyInt, value) {
         instructions++; // one write instruction
 
         // 1 coin pays for placement
-        if (bank > 0) bank--;
+        if (opBank > 0) opBank--;
         createLogEntry(LOG_TYPES.SUCCESS, d.placeElement(i), null, { unit: 'instruction' });
 
-        // Save 1 coin on the element for future rehash.
+        // 1 coin saved on the slot for future rehash.
         coinsOnSlot[i] = 1;
         createLogEntry(LOG_TYPES.INFO, d.saveForRehash(i));
+
+        // 3rd coin goes to the global bank.
+        bank++;
+        updateBankCounter();
+        createLogEntry(LOG_TYPES.INFO, d.sendToBank(i));
 
         placedAt = i;
         renderTable(i);
@@ -543,6 +569,7 @@ function resetHashTable() {
     size = 0;
     table = new Array(capacity).fill(null);
     coinsOnSlot = new Array(capacity).fill(0);
+    bank = 0;
     steps = 0;
     instructions = 0;
     isAnimating = false;

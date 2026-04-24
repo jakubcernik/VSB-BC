@@ -27,7 +27,8 @@ const dict = {
         best:             'Best Case',
         worst:            'Worst Case',
 
-        coins:            'Coins',
+        coins:            'Coins on slots',
+        bank:             'Bank',
         operations:       'Steps',
         steps:            'Steps',
         instructions:     'Instructions',
@@ -35,7 +36,7 @@ const dict = {
         metricsHelpTitle: 'Metrics explanation',
         metricsHelpLine1: 'Step means one INSERT/UPDATE request from the user.',
         metricsHelpLine2: 'Instruction means one atomic internal action: one probe check, one write/update, or one moved element during rehash.',
-        metricsHelpLine3: 'Read this as two separate ideas: amortization explains rare expensive resize/rehash steps, while probing is explained by expected average behavior (good hashing + bounded load factor).',
+        metricsHelpLine3: 'Each INSERT charges 3 coins: 1 pays for the write, 1 is saved on the slot for future rehash, 1 goes to the central bank. During rehash, elements that were already rehashed once (no slot coin) are paid from the bank.',
         metricsHelpTheoryLink: 'Open theory',
         metricsHelpClose: 'Close',
         badgeOperation: 'STEP',
@@ -119,7 +120,7 @@ const dict = {
 
         hashStart:        (key, hash, cap, start) => `hash(<strong>${key}</strong>) = <span class="log-badge slot">${hash}</span>, start index = <span class="log-badge slot">${hash} mod ${cap} = ${start}</span>`,
 
-        insertCharge:     (c) => `INSERT starts: received <span class="coin-text">${c} coins</span> (fixed amortized charge)`,
+        insertCharge:     (c) => `INSERT starts: received <span class="coin-text">${c} coins</span> (fixed amortized charge) — 1 pays the write, 1 saved on slot, 1 to bank`,
         resizeCheck:      (projected, threshold) => `Before insert: projected load is <span class="log-badge slot">${projected}</span>, threshold is ${threshold}.`,
         resizeNeededNow:  (projected, threshold) => `Projected load ${projected} is above threshold ${threshold}. We must run resize + rehash now. This is the main one-insert worst case (O(n)) because many stored elements can be moved.`,
         resizeNotNeeded:  (projected, threshold) => `Projected load ${projected} is still under threshold ${threshold}. No resize is needed before this insert; saved coins remain reserved for a future rehash.`,
@@ -133,13 +134,16 @@ const dict = {
         updateReturnCoin: (i) => `Returned <span class="coin-text">1 coin</span> back onto <span class="log-badge slot">[${i}]</span> (reserve stays for future rehash)`,
         emptySlotFound:   (i) => `Found first empty slot at <span class="log-badge slot">[${i}]</span> — insert stops here because linear probing always writes into the first available position.`,
         placeElement:     (i) => `Placed element into <span class="log-badge slot">[${i}]</span> — spent <span class="coin-text">1 coin</span>`,
-        saveForRehash:    (i) => `Saved <span class="coin-text">1 coin</span> on <span class="log-badge slot">[${i}]</span> for future rehash`,
+        saveForRehash:    (i) => `Saved <span class="coin-text">1 coin</span> on slot <span class="log-badge slot">[${i}]</span> — will pay for its own move if it is the first rehash`,
+        sendToBank:       (i) => `Sent <span class="coin-text">1 coin</span> to the <strong>bank</strong> (3rd coin from INSERT of element at <span class="log-badge slot">[${i}]</span>)`,
         insertSummary:    (sizeNow, capNow, loadNow) => `Insert finished. New state: size=${sizeNow}, capacity=${capNow}, load=${loadNow}.`,
 
         resizeTitle:      (oldC, newC) => `Resize needed — rehash <span class="log-badge capacity">${oldC} → ${newC}</span>`,
-        resizeWhy:        () => `Each stored element has 1 saved coin. During rehash, each element spends its coin to pay for its move.`,
+        resizeWhy:        () => `3-coin model: fresh elements (slot coin = 1) pay their own move; previously rehashed elements (slot coin = 0) are paid from the central bank.`,
         rehashStats:      (oldC, newC, size, oldLoad, newLoad) => `Rehash overview: size <span class="log-badge slot">${size}</span>, load <span class="log-badge slot">${oldLoad}</span> → <span class="log-badge slot">${newLoad}</span>, capacity <span class="log-badge capacity">${oldC} → ${newC}</span>.`,
-        moveElement:      (from, to) => `Move from <span class="log-badge slot">[${from}]</span> → <span class="log-badge slot">[${to}]</span> (spent <span class="coin-text">1 saved coin</span>)`,
+        moveElement:      (from, to, fromBank) => fromBank
+            ? `Move from <span class="log-badge slot">[${from}]</span> → <span class="log-badge slot">[${to}]</span> (paid from <strong>bank</strong> — element had no slot coin)`
+            : `Move from <span class="log-badge slot">[${from}]</span> → <span class="log-badge slot">[${to}]</span> (spent <span class="coin-text">slot coin</span>)`,
         moveElementDetails:(key, oldStart, newStart, probes) => `key <span class="log-badge slot">${key}</span>: start <span class="log-badge slot">${oldStart}</span> → <span class="log-badge slot">${newStart}</span>, probes during re-insert: <span class="log-badge slot">${probes}</span>`,
         rehashSummary:    (moved, totalProbes, maxProbes) => `Rehash summary: moved <strong>${moved}</strong> element${moved !== 1 ? 's' : ''}, total probes <span class="log-badge slot">${totalProbes}</span>, max probes for one element <span class="log-badge slot">${maxProbes}</span>`,
         resizeDone:       (n) => `Rehash complete — moved <strong>${n}</strong> element${n !== 1 ? 's' : ''}`,
@@ -155,7 +159,8 @@ const dict = {
         best:             'Nejlepší případ',
         worst:            'Nejhorší případ',
 
-        coins:            'Mince',
+        coins:            'Mince na slotech',
+        bank:             'Banka',
         operations:       'Kroky',
         steps:            'Kroky',
         instructions:     'Instrukce',
@@ -163,7 +168,7 @@ const dict = {
         metricsHelpTitle: 'Vysvětlení metrik',
         metricsHelpLine1: 'Krok znamená jeden požadavek INSERT/UPDATE od uživatele.',
         metricsHelpLine2: 'Instrukce znamená jednu atomickou interní akci: jednu kontrolu slotu (probe), jeden zápis/UPDATE nebo jeden přesun prvku při rehashi.',
-        metricsHelpLine3: 'Ber to jako dvě oddělené myšlenky: amortizace vysvětluje vzácné drahé kroky resize/rehash, zatímco probing vysvětlujeme očekávaným průměrným chováním (dobré hashování + omezené zaplnění).',
+        metricsHelpLine3: 'Každý INSERT účtuje 3 mince: 1 zaplatí zápis, 1 se uloží na slot pro budoucí rehash, 1 jde do centrální banky. Při rehashi prvky, které už jednou přešly (žádná mince na slotu), jsou zaplaceny z banky.',
         metricsHelpTheoryLink: 'Otevřít teorii',
         metricsHelpClose: 'Zavřít',
         badgeOperation: 'KROK',
@@ -247,7 +252,7 @@ const dict = {
 
         hashStart:        (key, hash, cap, start) => `hash(<strong>${key}</strong>) = <span class="log-badge slot">${hash}</span>, startovní index = <span class="log-badge slot">${hash} mod ${cap} = ${start}</span>`,
 
-        insertCharge:     (c) => `INSERT začíná: přijaty <span class="coin-text">${c} mince</span> (pevný amortizovaný poplatek)`,
+        insertCharge:     (c) => `INSERT začíná: přijaty <span class="coin-text">${c} mince</span> (pevný amortizovaný poplatek) — 1 zaplatí zápis, 1 uložena na slot, 1 do banky`,
         resizeCheck:      (projected, threshold) => `Před vložením: očekávané zaplnění je <span class="log-badge slot">${projected}</span>, limit je ${threshold}.`,
         resizeNeededNow:  (projected, threshold) => `Očekávané zaplnění ${projected} je nad limitem ${threshold}. Teď musíme spustit resize + rehash. To je hlavní nejhorší případ jedné operace (O(n)), protože se může přesouvat mnoho uložených prvků.`,
         resizeNotNeeded:  (projected, threshold) => `Očekávané zaplnění ${projected} je zatím pod limitem ${threshold}. Před tímto vložením není resize potřeba; ušetřené mince zůstávají jako rezerva na budoucí rehash.`,
@@ -261,13 +266,16 @@ const dict = {
         updateReturnCoin: (i) => `Vracím <span class="coin-text">1 minci</span> zpět na <span class="log-badge slot">[${i}]</span> (rezerva zůstává pro budoucí rehash)`,
         emptySlotFound:   (i) => `Nalezen první prázdný slot <span class="log-badge slot">[${i}]</span> — vložení končí zde, protože lineární probing zapisuje do první volné pozice.`,
         placeElement:     (i) => `Uloženo do <span class="log-badge slot">[${i}]</span> — utracena <span class="coin-text">1 mince</span>`,
-        saveForRehash:    (i) => `Uložena <span class="coin-text">1 mince</span> na <span class="log-badge slot">[${i}]</span> pro budoucí rehash`,
+        saveForRehash:    (i) => `Uložena <span class="coin-text">1 mince</span> na slot <span class="log-badge slot">[${i}]</span> — zaplatí vlastní přesun při prvním rehashi`,
+        sendToBank:       (i) => `Odeslána <span class="coin-text">1 mince</span> do <strong>banky</strong> (3. mince z INSERTu prvku na <span class="log-badge slot">[${i}]</span>)`,
         insertSummary:    (sizeNow, capNow, loadNow) => `Vložení dokončeno. Nový stav: velikost=${sizeNow}, kapacita=${capNow}, zaplnění=${loadNow}.`,
 
         resizeTitle:      (oldC, newC) => `Potřeba resize — rehash <span class="log-badge capacity">${oldC} → ${newC}</span>`,
-        resizeWhy:        () => `Každý uložený prvek má 1 ušetřenou minci. Při rehashi ji utratí za svůj přesun.`,
+        resizeWhy:        () => `Model 3 mincí: čerstvé prvky (mince na slotu = 1) zaplatí přesun samy; dříve přehashované prvky (mince na slotu = 0) jsou zaplaceny z centrální banky.`,
         rehashStats:      (oldC, newC, size, oldLoad, newLoad) => `Přehled rehashe: velikost <span class="log-badge slot">${size}</span>, zaplnění <span class="log-badge slot">${oldLoad}</span> → <span class="log-badge slot">${newLoad}</span>, kapacita <span class="log-badge capacity">${oldC} → ${newC}</span>.`,
-        moveElement:      (from, to) => `Přesun <span class="log-badge slot">[${from}]</span> → <span class="log-badge slot">[${to}]</span> (utracena <span class="coin-text">1 ušetřená mince</span>)`,
+        moveElement:      (from, to, fromBank) => fromBank
+            ? `Přesun <span class="log-badge slot">[${from}]</span> → <span class="log-badge slot">[${to}]</span> (zaplaceno z <strong>banky</strong> — prvek neměl minci na slotu)`
+            : `Přesun <span class="log-badge slot">[${from}]</span> → <span class="log-badge slot">[${to}]</span> (utracena <span class="coin-text">mince ze slotu</span>)`,
         moveElementDetails:(key, oldStart, newStart, probes) => `klíč <span class="log-badge slot">${key}</span>: start <span class="log-badge slot">${oldStart}</span> → <span class="log-badge slot">${newStart}</span>, probing při vložení: <span class="log-badge slot">${probes}</span>`,
         rehashSummary:    (moved, totalProbes, maxProbes) => `Souhrn rehashe: přesunuto <strong>${moved}</strong> ${moved === 1 ? 'prvek' : (moved >= 2 && moved <= 4 ? 'prvky' : 'prvků')}, probing celkem <span class="log-badge slot">${totalProbes}</span>, maximum u jednoho prvku <span class="log-badge slot">${maxProbes}</span>`,
         resizeDone:       (n) => `Rehash hotový — přesunuto <strong>${n}</strong> ${n === 1 ? 'prvek' : (n >= 2 && n <= 4 ? 'prvky' : 'prvků')}`,
@@ -552,6 +560,7 @@ function applyLanguage() {
     updateStepCounter();
     if (typeof updateInstructionCounter === 'function') updateInstructionCounter();
     updateCoinCounter();
+    if (typeof updateBankCounter === 'function') updateBankCounter();
     updateMeta();
     if (typeof updateCaseButtons === 'function') updateCaseButtons();
 }
