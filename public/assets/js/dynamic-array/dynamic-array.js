@@ -22,8 +22,6 @@ const randomController = {
     max: 0,
 };
 
-const sleep = InputValidation.sleep;
-
 function reportValidation(result, dictForLang)
 {
     InputValidation.reportValidation(result, dictForLang, updateInfoPanel);

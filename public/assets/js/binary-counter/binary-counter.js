@@ -233,8 +233,6 @@ async function animateCoins(bitIndex, targetCount) {
     }
 }
 
-const sleep = InputValidation.sleep;
-
 async function animateBitFlip(bitIndex, newValue) {
     const frame = document.getElementById(`bit-frame-${bitIndex}`);
     if (!frame) return;
