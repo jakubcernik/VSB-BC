@@ -133,8 +133,6 @@
     margin-top: 18px;
 }
 
-/* ── Info box ────────────────────────────────────────────────── */
-
 .info-box {
     background: #eef8f0;
     border-left: 4px solid #4caf50;
@@ -144,8 +142,6 @@
     color: #2e7d32;
     margin-top: 8px;
 }
-
-/* ── Two-column case cards ───────────────────────────────────── */
 
 .two-col {
     display: grid;
@@ -265,7 +261,7 @@
     line-height: 1.7;
 }
 
-/* ── Coin demo (accounting) ──────────────────────────────────── */
+/* ── Coin demo  ─────────────────────────────────────────────── */
 
 .coin-demo {
     display: flex;
@@ -588,4 +584,3 @@ body.dark-mode .cta-box {
         padding: 12px;
     }
 }
-

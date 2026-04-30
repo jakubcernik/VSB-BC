@@ -737,7 +737,6 @@ body.modal-open {
     margin-bottom: 4px;
 }
 
-/* Log entry styles */
 .log-entry {
     margin-bottom: 8px;
     padding: 9px 10px 9px 18px;
@@ -981,7 +980,6 @@ body.modal-open {
     }
 }
 
-/* Flying coin used by Vector bank animations */
 .coin.flying {
     opacity: 0.95;
     will-change: transform, opacity;
@@ -1211,7 +1209,6 @@ body.dark-mode .log-title {
     color: #e0e0e0;
 }
 
-/* Accessibility helper */
 .visually-hidden {
   position: absolute !important;
   height: 1px; width: 1px;

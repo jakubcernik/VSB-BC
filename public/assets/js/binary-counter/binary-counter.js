@@ -1,25 +1,15 @@
-/* Binary counter simulation logic.
- *
- * Accounting model used in the animation:
- * - Every INCREMENT receives a fixed amortized charge of 2 coins.
- * - One coin pays the single 0->1 flip, one coin is saved on that bit.
- * - Carry flips 1->0 are paid by coins already saved on flipped 1-bits.
- *
- * Invariant: each bit set to 1 has exactly one saved coin.
- */
-
 // ─── State ────────────────────────────────────────────────────────────────────
 const DEFAULT_BITS = 8;
 const MIN_BITS = 4;
 const MAX_BITS = 12;
 const INCREMENT_CHARGE = 2;
 
-let numBits = DEFAULT_BITS;  // Display width (default 8-bit for clarity)
+let numBits = DEFAULT_BITS;  // Display width (default 8-bit)
 let bits        = new Array(numBits).fill(0);   // bits[0] = LSB
-let coinsOnBit  = new Array(numBits).fill(0);   // saved coins per bit position (invariant: 1-bit ↔ 1 coin)
-let bank        = 0;         // coins currently in the "operation bank" (transient during one increment)
-let totalCoinsEarned = 0;    // total coins received across all increments (= operations × 2)
-let totalBitSteps = 0;       // total atomic work = number of bit flips (1 flip = 1 step)
+let coinsOnBit  = new Array(numBits).fill(0);   // saved coins per bit position
+let bank        = 0;         // coins currently in bank
+let totalCoinsEarned = 0;
+let totalBitSteps = 0;       // total atomic work
 let isAnimating = false;
 let bestVariantIndex = 0;
 let worstVariantIndex = 0;
@@ -171,7 +161,7 @@ function renderBits() {
     const row = document.getElementById('bitsRow');
     row.innerHTML = '';
 
-    // Render MSB → LSB left-to-right for readability
+    // Render MSB → LSB
     for (let i = numBits - 1; i >= 0; i--) {
         const cell = document.createElement('div');
         cell.classList.add('bit-cell');
@@ -310,7 +300,7 @@ async function moveCoinFromBankToBit(bitIndex) {
     flying.style.transitionDuration = `${duration}ms`;
     document.body.appendChild(flying);
 
-    // Remove source coin first so the animation visibly starts in the bank.
+    // Remove source coin first so the animation visibly starts in the bank
     await spendCoinFromBank('instant');
 
     const dx = (to.left + (to.width / 2) - (from.left + from.width / 2));
@@ -323,7 +313,7 @@ async function moveCoinFromBankToBit(bitIndex) {
     await sleep(duration);
     flying.remove();
 
-    // Create the final coin only after the fly animation finishes.
+    // Create the final coin only after the fly animation finishes
     const landedCoin = document.createElement('div');
     landedCoin.classList.add('bit-coin');
     targetDiv.appendChild(landedCoin);
@@ -336,7 +326,7 @@ async function increment() {
     const d = dict[currentLang];
     const valueBefore = bitsToDecimal();
 
-    // Reset on max value to keep the demo cyclic for the selected bit width.
+    // Reset on max value
     if (valueBefore >= maxCounterValue()) {
         resetCounter();
         return;
@@ -349,7 +339,7 @@ async function increment() {
     const valueAfter = valueBefore + 1;
     beginLogGroup(valueBefore, valueAfter);
 
-    // 1) Receive fixed amortized charge into operation bank.
+    // Receive amortized charge into operation bank
     totalCoinsEarned += INCREMENT_CHARGE;
     bank = INCREMENT_CHARGE;
     renderBank(INCREMENT_CHARGE);
@@ -360,7 +350,7 @@ async function increment() {
     let flipCount = 0;
     let pos = 0;
 
-    // 2) Carry propagation: 1->0 flips are paid by coins saved on those bits.
+    // Carry propagation: 1->0 flips are paid by coins saved on those bits
     while (pos < numBits && bits[pos] === 1) {
         const frame = document.getElementById(`bit-frame-${pos}`);
         if (frame) frame.classList.add('active-bit');
@@ -383,18 +373,18 @@ async function increment() {
         await sleep(getDelay(200));
     }
 
-    // 3) First zero bit flips to one: one bank coin pays, one is saved on that bit.
+    // First zero bit flips to one: one bank coin pays, one is saved on that bit
     if (pos < numBits) {
         const frame = document.getElementById(`bit-frame-${pos}`);
         if (frame) frame.classList.add('active-bit');
 
-        // Spend + flip together so timing stays visually clear.
+        // Spend and flip together
         bank -= 1;
         createLogEntry(LOG_TYPES.COPY, d.spendSelf(pos), null, { unit: 'instruction' });
         await spendCoinFromBank('fade');
         await animateBitFlip(pos, 1);
 
-        // Save one coin on the bit for its future 1->0 carry flip.
+        // Save one coin on the bit for its future 1->0 carry flip
         bank -= 1;
         bits[pos] = 1;
         coinsOnBit[pos] = 1;
@@ -410,7 +400,7 @@ async function increment() {
         updateInstructionCounter();
     }
 
-    // Operation bank must be empty after each increment.
+    // Operation bank must be empty after each increment
     renderBank(0);
 
     document.getElementById('decimalDisplay').textContent = `${d.value}: ${bitsToDecimal()}`;
@@ -474,7 +464,7 @@ async function generateRandom() {
 // ─── Best case ────────────────────────────────────────────────────────────────
 async function prepareBestCase(nextVariant) {
     if (nextVariant === undefined) nextVariant = false;
-    // Best case means LSB = 0; cycle through several even values.
+    // Best case means LSB = 0
     resetCounter();
     const variants = getBestVariants();
     if (nextVariant) {
@@ -507,7 +497,7 @@ async function prepareBestCase(nextVariant) {
 // ─── Worst case ───────────────────────────────────────────────────────────────
 async function prepareWorstCase(nextVariant) {
     if (nextVariant === undefined) nextVariant = false;
-    // Variants differ by carry depth (k trailing ones); k=numBits is full worst case.
+    // Variants differ by carry depth
     resetCounter();
     const variants = getWorstVariants();
     if (nextVariant) {
@@ -562,7 +552,6 @@ async function incrementPreparedCase(mode) {
         createLogEntry(LOG_TYPES.INFO, d.worstStepExplain(trailingOnes, flips, trailingOnes === numBits));
     }
 
-    // Prepared scenario is single-use by design.
     preparedCaseMode = null;
     updateCaseButtons();
 }

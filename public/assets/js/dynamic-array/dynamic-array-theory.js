@@ -12,7 +12,6 @@ const theoryDict = {
 
         mainTitle: 'Amortized Complexity — Dynamic Array (vector<>)',
 
-        // --- Section titles ---
         titleIntro:      '1. What is a Dynamic Array?',
         titlePushback:   '2. The push_back Operation',
         titleNaive:      '3. Why Naive Analysis Gives a Wrong Picture',
@@ -20,7 +19,6 @@ const theoryDict = {
         titleGrowth:     '5. Growth Factor',
         titleSummary:    '6. Complexity Summary',
 
-        // --- Intro ---
         introP1: 'A <strong>dynamic array</strong> (known in C++ as <code>std::vector&lt;&gt;</code>) is a contiguous block of memory whose capacity grows automatically as elements are added. Unlike a static array, you never need to know the final size in advance.',
         introP2: 'Internally, a dynamic array tracks three values: a pointer to the allocated memory, the current <em>size</em> (number of stored elements) and the current <em>capacity</em> (total allocated slots). When size reaches capacity, the array must be <strong>resized</strong>.',
         introBox: '💡 Rule of thumb: when capacity is exhausted, allocate a new block of <strong>α × capacity</strong> slots, copy all elements, then release the old block. Most implementations use α = 2 (doubling).',
@@ -32,11 +30,9 @@ const theoryDict = {
         cardWorstTitle: 'Worst Case — O(N)',
         cardWorstDesc:  'Array is full. A new larger block is allocated, all N existing elements are copied and finally the new element is inserted.',
 
-        // --- Naive ---
         naiveP1: 'A naive estimate takes the worst-case cost of one <code>push_back</code> (O(N) when a resize copies N elements) and multiplies it by N operations. This yields <strong>O(N²)</strong>. The bound is valid, but very loose: it assumes every operation is worst-case, which never happens.',
         naiveP2: 'The key insight is that <strong>expensive resizes are rare</strong>. After doubling from capacity C to 2C, the next resize cannot happen for another C insertions. Amortized analysis spreads each resize cost across many cheap insertions and proves <strong>O(1) average cost per operation over any sequence</strong> (not a probabilistic average).',
 
-        // --- Amortized ---
         amortizedP1: 'Amortized analysis gives a guaranteed average cost per operation over a sequence of operations, even if individual operations occasionally spike. Three classical methods are used:',
 
         tabAggregate:  'Aggregate Method',
@@ -99,7 +95,6 @@ const theoryDict = {
 
         mainTitle: 'Amortizovaná složitost — Dynamické pole (vector<>)',
 
-        // --- Nadpisy sekcí ---
         titleIntro:      '1. Co je dynamické pole?',
         titlePushback:   '2. Operace push_back',
         titleNaive:      '3. Proč naivní analýza dává zkreslený výsledek',
@@ -107,7 +102,6 @@ const theoryDict = {
         titleGrowth:     '5. Faktor růstu',
         titleSummary:    '6. Přehled složitostí',
 
-        // --- Úvod ---
         introP1: '<strong>Dynamické pole</strong> (v C++ <code>std::vector&lt;&gt;</code>) je souvislý blok paměti, jehož kapacita se automaticky zvětšuje při přidávání prvků. Na rozdíl od statického pole nemusíte dopředu znát finální počet prvků.',
         introP2: 'Interně dynamické pole udržuje tři hodnoty: ukazatel na alokovanou paměť, aktuální <em>velikost</em> (počet uložených prvků) a aktuální <em>kapacitu</em> (celkový počet alokovaných míst). Jakmile velikost dosáhne kapacity, musí dojít ke <strong>zvětšení (resize)</strong>.',
         introBox: '💡 Základní pravidlo: při vyčerpání kapacity se alokuje nový blok o velikosti <strong>α × kapacita</strong>, všechny prvky se zkopírují a starý blok se uvolní. Většina implementací používá α = 2 (zdvojení).',
@@ -119,11 +113,9 @@ const theoryDict = {
         cardWorstTitle: 'Nejhorší případ — O(N)',
         cardWorstDesc:  'Pole je plné. Alokuje se nový větší blok, všech N stávajících prvků se zkopíruje a teprve poté se vloží nový prvek.',
 
-        // --- Naivní ---
         naiveP1: 'Naivní odhad vezme nejhorší cenu jedné operace <code>push_back</code> (O(N), když resize kopíruje N prvků) a vynásobí ji N operacemi. Tím vyjde <strong>O(N²)</strong>. Tato mez je formálně správná, ale velmi hrubá: předpokládá, že každá operace je nejhorší případ, což v praxi nenastává.',
         naiveP2: 'Klíčové pozorování je, že <strong>nákladné resize operace jsou vzácné</strong>. Po zdvojení kapacity z C na 2C nastane další resize až po C dalších vloženích. Amortizovaná analýza proto rozkládá cenu resize mezi mnoho levných vložení a dokazuje <strong>O(1) průměr na operaci v libovolné posloupnosti</strong> (nejde o pravděpodobnostní průměr).',
 
-        // --- Amortizovaná ---
         amortizedP1: 'Amortizovaná analýza zaručuje průměrnou cenu operace v posloupnosti operací, i když jednotlivé operace občas skokově zdraží. Používají se tři klasické metody:',
 
         tabAggregate:  'Agregační metoda',
@@ -152,7 +144,6 @@ const theoryDict = {
         potentialMath2: 'Normální push_back: â = 1 + (2·(s+1) − cap) − (2·s − cap) = 1 + 2 = 3 (horní odhad)\nResize push_back (zdvojení): skutečná cena = N+1 (kopie N + vložení 1), ΔΦ = 2·(N+1) − 2N − (2N − N) = 2 − N\nâ = (N+1) + (2 − N) = 3',
         potentialConclusion: 'S touto standardní volbou potenciálu je â omezeno konstantou (zde ≤ 3), takže amortizovaně vychází <code>push_back</code> jako <strong>O(1)</strong>. To odpovídá i 3-mincovému „bankovnímu“ příběhu použitému v simulaci.',
 
-        // --- Faktor růstu ---
         growthP1: 'Faktor růstu α určuje, jak agresivně se předalokuje paměť. Všechny faktory α > 1 zajišťují O(1) amortizovaný push_back, ale liší se kompromisem mezi časem a pamětí:',
         thFactor:   'Faktor růstu α',
         thAmortized:'Amortizovaná cena',
@@ -163,7 +154,6 @@ const theoryDict = {
         tdHigh:     'Vysoké (~200 %)',
         growthP2: 'Tato simulace používá <strong>α = 2</strong> (zdvojení) pro přehlednost. V účetní metodě výše účtujeme <strong>3 mince</strong> na vložení a ukládáme úspory do banky, která pak platí kopírování při resize.',
 
-        // --- Přehled složitostí ---
         opPushback:       'push_back (amortizovaně)',
         opPushbackBest:   'push_back (nejlepší)',
         opPushbackWorst:  'push_back (nejhorší 1×)',
@@ -178,7 +168,7 @@ const theoryDict = {
     }
 };
 
-// ─── Theme & Language helpers (mirrors ui.js) ─────────────────────────────────
+// ─── Theme & Language helpers ─────────────────────────────────
 
 function reloadWithTransition(beforeReload) {
     const overlay = document.getElementById('pageTransitionOverlay');
@@ -219,8 +209,6 @@ function updateLangToggleUI() {
     document.getElementById('langOptCZ').classList.toggle('active', currentLang === 'cz');
     document.getElementById('langOptEN').classList.toggle('active', currentLang === 'en');
 }
-
-// ─── Navigation with transition ───────────────────────────────────────────────
 
 function navigateTo(event, url) {
     event.preventDefault();

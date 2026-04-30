@@ -1,5 +1,3 @@
-/* UI helpers and i18n for the Hash Table page. */
-
 let currentLang = localStorage.getItem('lang') || 'cz';
 
 // ─── Animation speed ───────────────────────────────────────────────────────────
@@ -238,7 +236,7 @@ const dict = {
         // Errors
         invalidInput:     'Zadejte celočíselný klíč a celočíselnou hodnotu.',
 
-        // --- Validace (sdílené) ---
+        // --- Validace ---
         validationEmpty: 'Vyplňte pole.',
         validationNotInteger: 'Zadejte celé číslo.',
         validationOutOfRange: (min, max) => `Zadejte hodnotu v rozsahu ${min}–${max}.`,
@@ -284,7 +282,6 @@ const dict = {
 
 // ─── Log helpers ──────────────────────────────────────────────────────────────
 const LOG_TYPES = {
-    // Minimal, unified icon set across the whole web
     INSERT:  { class: 'insert',  icon: '＋' },
     RESIZE:  { class: 'resize',  icon: '↔' },
     PROBE:   { class: 'copy',    icon: '⧉' },
@@ -295,7 +292,7 @@ const LOG_TYPES = {
 };
 
 let currentLogGroup = null;
-let steps = 0; // shared with hashTable.js (same pattern as other pages)
+let steps = 0; // shared with hashTable.js
 
 function beginLogGroup(key, value) {
     if (value === undefined) value = null;
@@ -556,7 +553,6 @@ function applyLanguage() {
     const metricsHelpCloseX = document.getElementById('metricsHelpCloseX');
     if (metricsHelpCloseX) metricsHelpCloseX.setAttribute('aria-label', d.metricsHelpClose || 'Close');
 
-    // ensure counters use right labels
     updateStepCounter();
     if (typeof updateInstructionCounter === 'function') updateInstructionCounter();
     updateCoinCounter();

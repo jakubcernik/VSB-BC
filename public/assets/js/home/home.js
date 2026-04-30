@@ -9,7 +9,6 @@ const homeDict = {
         subtitle:    'Pick an algorithm to explore its theory and interactive simulation.',
         footer:      '2026 by Jakub Cernik. Developed for educational purposes as a Bachelor Thesis.',
 
-        // (tags/chips removed from home cards)
 
         algoTitle1: 'Dynamic Array — vector<>',
         algoDesc1:  'Explore how a dynamic array grows automatically and learn why repeated push_back runs in amortized O(1) using the coin-based accounting method.',
@@ -26,7 +25,6 @@ const homeDict = {
         subtitle:    'Vyber si algoritmus a prozkoumej jeho teorii i interaktivní simulaci.',
         footer:      '2026 by Jakub Cernik. Vyvinuto pro vzdělávací účely jako bakalářská práce.',
 
-        // (tagy/chipy odstraněny z domovských karet)
 
         algoTitle1: 'Dynamické pole — vector<>',
         algoDesc1:  'Prozkoumej, jak se dynamické pole automaticky zvětšuje, a pochop proč opakovaný push_back běží v amortizovaném O(1) pomocí mincové účetní metody.',
@@ -81,8 +79,6 @@ function updateLangToggleUI() {
     document.getElementById('langOptEN').classList.toggle('active', currentLang === 'en');
 }
 
-// ─── Navigation with page transition ─────────────────────────────────────────
-
 function navigateHome(event, url) {
     event.preventDefault();
     const overlay = document.getElementById('pageTransitionOverlay');
@@ -109,8 +105,6 @@ function applyLanguage() {
     setText('homeTitle', d.title);
     setText('homeSubtitle', d.subtitle);
     setText('footerText', d.footer);
-
-    // Cards: tags/chips were removed from the Home page UI.
 
     setHtml('algoTitle1', d.algoTitle1);
     setText('algoDesc1', d.algoDesc1);

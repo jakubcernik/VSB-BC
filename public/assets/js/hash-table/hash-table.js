@@ -1,13 +1,3 @@
-/* Hash table simulation logic.
- *
- * Model used by the demo:
- * - open addressing with linear probing
- * - resize (doubling) when load threshold is exceeded
- * - 3-coin accounting for INSERT: one pays the write, one is saved on the slot for future rehash move,
- *   one goes to a central bank. During rehash, elements with coinsOnSlot=0 (already rehashed once)
- *   are paid from the bank.
- */
-
 // ─── State ────────────────────────────────────────────────────────────────────
 const INITIAL_CAPACITY = 8;
 const LOAD_THRESHOLD = 0.75;
@@ -16,9 +6,9 @@ const INSERT_CHARGE = 3;
 let capacity = INITIAL_CAPACITY;
 let size = 0; // number of live entries
 let table = []; // { key, value } | null
-let coinsOnSlot = []; // saved coin per occupied slot (0/1)
-let bank = 0; // central bank — accumulates 1 coin per fresh insert, pays for rehash of previously-rehashed elements
-let instructions = 0; // atomic internal work units (probe/write/move)
+let coinsOnSlot = [];
+let bank = 0;
+let instructions = 0;
 let isAnimating = false;
 let preparedCaseMode = null;
 let preparedScenario = null;
@@ -50,7 +40,7 @@ function applyPreparedEntries(entries) {
         if (idx < 0) continue;
         table[idx] = { key: e.key, value: e.value };
         coinsOnSlot[idx] = 1;
-        bank++; // simulate the 1-coin-to-bank that a normal INSERT would contribute
+        bank++;
         size++;
     }
 }
@@ -65,12 +55,7 @@ function updateCaseButtons() {
 
 // ─── Helpers (hashing, random) ────────────────────────────────────────────────
 function hashKey(keyInt) {
-    // Educational hash for INT keys.
-    // We intentionally keep it trivial so students can compute the start slot in their head:
-    //   startIndex = key mod capacity
-    // In a real implementation we would mix bits better.
     const k = Number(keyInt);
-    // ensure non-negative 32-bit
     return (k >>> 0);
 }
 
@@ -134,8 +119,6 @@ function updateMeta() {
 
 // ─── Visualisation ────────────────────────────────────────────────────────────
 
-// Renders the grid using an explicit snapshot — does NOT touch globals or counters.
-// Used during rehash animation to show the old table state without side effects.
 function renderTableState(cap, tbl, coins, highlightIndex) {
     if (highlightIndex === undefined) highlightIndex = null;
     const grid = document.getElementById('hashTableVisualization');
@@ -257,8 +240,6 @@ function findSlotForKey(keyInt, cap, arr) {
     const h = hashKey(keyInt) % cap;
     for (let offset = 0; offset < cap; offset++) {
         const i = (h + offset) % cap;
-        // Standard open-addressing rule: stop either on the matching key (UPDATE)
-        // or on the first empty slot (INSERT).
         if (!arr[i] || arr[i].key === keyInt) return i;
     }
     return -1; // full
@@ -292,9 +273,6 @@ async function resizeAndRehash(newCapacity) {
     table = new Array(capacity).fill(null);
     coinsOnSlot = new Array(capacity).fill(0);
 
-    // Reinsert old entries.
-    // Elements with coinsOnSlot=1 (freshly inserted, not yet rehashed) spend their own saved coin.
-    // Elements with coinsOnSlot=0 (previously rehashed, coin already spent) are paid from the global bank.
     let moved = 0;
     let totalProbes = 0;
     let maxProbes = 0;
@@ -302,15 +280,12 @@ async function resizeAndRehash(newCapacity) {
         const entry = oldTable[from];
         if (!entry) continue;
 
-        // Step 1: Show old table with FROM slot highlighted (coin visible if coinsOnSlot=1).
-        // renderTableState renders with the provided snapshot — globals stay at new capacity.
         renderTableState(oldCap, oldTable, oldCoins, from);
         await sleep(getDelay(200));
 
-        // Step 2: Spend the coin (slot coin or bank), re-render old state to show consumption.
         let paidFromBank = false;
         if (oldCoins[from] > 0) {
-            oldCoins[from] -= 1; // coin disappears from old slot
+            oldCoins[from] -= 1;
         } else {
             bank -= 1;
             paidFromBank = true;
@@ -319,7 +294,7 @@ async function resizeAndRehash(newCapacity) {
         renderTableState(oldCap, oldTable, oldCoins, from);
         await sleep(getDelay(150));
 
-        // Step 3: Find target slot in the new table (globals already at new capacity).
+        // Find target slot in the new table
         const oldStart = (hashKey(entry.key) % oldCap);
         const newStart = (hashKey(entry.key) % capacity);
 
@@ -337,7 +312,7 @@ async function resizeAndRehash(newCapacity) {
         totalProbes += probes;
         if (probes > maxProbes) maxProbes = probes;
 
-        // Step 4: Place element in new slot (no coin — next rehash covered by bank).
+        // Place element in new slot
         table[to] = entry;
         coinsOnSlot[to] = 0;
         instructions++;
@@ -372,7 +347,7 @@ async function insertKV(keyInt, value) {
     let collisionCount = 0;
     let wasUpdate = false;
 
-    // Resize check BEFORE insertion (classic approach)
+    // Resize check before insert
     const projectedLoad = (size + 1) / capacity;
     createLogEntry(LOG_TYPES.INFO, d.resizeCheck(projectedLoad.toFixed(2), LOAD_THRESHOLD.toFixed(2)));
     if (projectedLoad > LOAD_THRESHOLD) {
@@ -383,7 +358,6 @@ async function insertKV(keyInt, value) {
         createLogEntry(LOG_TYPES.INFO, d.resizeNotNeeded(projectedLoad.toFixed(2), LOAD_THRESHOLD.toFixed(2)));
     }
 
-    // operation coin budget for this insert
     let opBank = INSERT_CHARGE;
 
     // probe
@@ -395,15 +369,14 @@ async function insertKV(keyInt, value) {
     for (let offset = 0; offset < capacity; offset++) {
         const i = (h + offset) % capacity;
         probeCount++;
-        instructions++; // one probe check instruction
+        instructions++;
         renderTable(i);
         createLogEntry(LOG_TYPES.PROBE, d.probeCheck(i), null, { unit: 'instruction' });
         await sleep(getDelay(250));
 
-        // If the key already exists, a standard hash table performs UPDATE.
+        // UPDATE
         if (table[i] && table[i].key === keyInt) {
             wasUpdate = true;
-            // (Coin model) UPDATE costs 1 step. We pay it using the coin saved on this element.
             createLogEntry(LOG_TYPES.INFO, d.updateFound(i));
             createLogEntry(LOG_TYPES.INFO, d.updateCostExplain(i));
             await sleep(getDelay(180));
@@ -418,12 +391,11 @@ async function insertKV(keyInt, value) {
 
             // do the update
             table[i].value = value;
-            instructions++; // one write/update instruction
+            instructions++;
             if (opBank > 0) opBank -= 1;
             createLogEntry(LOG_TYPES.SUCCESS, d.updateDone(i), null, { unit: 'instruction' });
             await sleep(getDelay(160));
 
-            // return the coin back to the element so invariants for rehash stay intact
             if (coinsOnSlot[i] === 0) {
                 coinsOnSlot[i] = 1;
                 renderTable(i);
@@ -436,12 +408,9 @@ async function insertKV(keyInt, value) {
             break;
         }
 
-        // Occupied by a different key => collision, continue probing
+        // collision, continue probing
         if (table[i]) {
             collisionCount++;
-            // Collision: we continue probing.
-            // (Note) We do NOT attempt to maintain a strict “coins pay every probe” invariant here.
-            // The saved coin model is used to explain amortized resize/rehash.
             createLogEntry(LOG_TYPES.WARNING, d.probeCollision(i, table[i].key));
             await sleep(getDelay(200));
 
@@ -478,7 +447,6 @@ async function insertKV(keyInt, value) {
     }
 
     if (placedAt === -1) {
-        // should be impossible with resizing, but safe guard
         createLogEntry(LOG_TYPES.WARNING, 'Table is full even after resize.');
     } else {
         createLogEntry(LOG_TYPES.INFO, d.insertSummary(size, capacity, currentLoadFactor().toFixed(2)));
@@ -632,7 +600,6 @@ function resetHashTable() {
 }
 
 window.addEventListener('load', function() {
-    // init state used by render
     table = new Array(capacity).fill(null);
     coinsOnSlot = new Array(capacity).fill(0);
     resetHashTable();

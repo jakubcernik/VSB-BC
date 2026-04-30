@@ -1,11 +1,9 @@
-let array = [];             // Vložená čísla
-let capacity = 1;           // Aktuální kapacita pole
-let creditsPerSlot = [];    // Mince nad každým políčkem
+let array = [];
+let capacity = 1;
+let creditsPerSlot = [];
 let steps = 0;
-let instructions = 0;       // Atomické instrukce (1 instrukce = 1 mince)
+let instructions = 0;
 
-// Central "bank" used for the borrowing/accounting story.
-// Coins are accumulated over cheap operations and spent during expensive resizes.
 let bank = 0;
 
 const simulationController = {
@@ -137,14 +135,9 @@ async function withdrawFromBank(toSlotIndex, count, animate) {
     }
 }
 
-// Accounting method used by this simulation (borrowing / bank model):
-// Charge every push_back a fixed 3 coins:
-//   1 coin pays for the insertion itself,
-//   2 coins are saved into a central bank.
-// During RESIZE (doubling), copying each element costs 1 coin, paid from the bank.
 const INSERT_CHARGE = 3;
 
-// ── Pomocné funkce ────────────────────────────────────────────
+// ── Helpers ────────────────────────────────────────────
 
 function updateCredits()
 {
@@ -209,7 +202,6 @@ function resetValues()
     const d = dict[currentLang];
     updateCredits();
 
-    // Clear log panel and show initial message
     const infoPanel = document.getElementById("infoPanel");
     infoPanel.innerHTML = "";
     const initialEntry = document.createElement("div");
@@ -315,10 +307,7 @@ async function addElement()
 
 const getRandomNumber = InputValidation.randInt;
 
-// Compute how many coins would be in the bank after inserting `n` elements
-// starting from an empty dynamic array with initial capacity 1, using our model:
-//  - each insertion deposits 2 coins into bank
-//  - each resize from C -> 2C copies C elements and withdraws C coins from bank
+// Compute how many coins would be in the bank after inserting n elements
 function bankAfterInserting(n)
 {
     let b = 0;
@@ -329,12 +318,11 @@ function bankAfterInserting(n)
     {
         if (size === cap)
         {
-            // resize: copy `cap` elements
             b -= cap;
             cap *= 2;
         }
 
-        // insertion: deposit 2
+        // deposit 2
         b += 2;
         size += 1;
     }
@@ -369,12 +357,11 @@ let bestVariantIndex = 0;
 let worstVariantIndex = 0;
 
 const BEST_VARIANTS = [
-    // Various free-capacity situations (still O(1) for the next insertion)
-    { capacity: 4,  size: 1 },  // many free slots
-    { capacity: 8,  size: 4 },  // ~50% full
-    { capacity: 8,  size: 6 },  // ~75% full
-    { capacity: 16, size: 14 }, // almost full, but still 2 free slots
-    { capacity: 10, size: 9 },  // exactly 1 free slot
+    { capacity: 4,  size: 1 },
+    { capacity: 8,  size: 4 },
+    { capacity: 8,  size: 6 },
+    { capacity: 16, size: 14 },
+    { capacity: 10, size: 9 },
 ];
 
 const WORST_VARIANTS = [
@@ -693,10 +680,8 @@ function prepareBestCase(next)
     if (next) bestVariantIndex = (bestVariantIndex + 1) % BEST_VARIANTS.length;
     const variant = BEST_VARIANTS[bestVariantIndex];
 
-    // Setup: one free slot => O(1) insertion (no resize)
     capacity = variant.capacity;
     array = makeArrayOfSize(variant.size);
-    // Under the 3-coin + bank model, long-term saved coins live in the bank.
     creditsPerSlot = new Array(capacity).fill(0);
     bank = bankAfterInserting(array.length);
     steps = array.length;
@@ -732,7 +717,6 @@ async function finishBestCase()
         return;
     }
 
-    // Reuse logic
     document.getElementById("manualInput").value = valueRes.value;
     await addElement();
     
@@ -752,8 +736,6 @@ function prepareWorstCase(next)
     if (next) worstVariantIndex = (worstVariantIndex + 1) % WORST_VARIANTS.length;
     const variant = WORST_VARIANTS[worstVariantIndex];
 
-    // Setup: full array => next insertion triggers resize, costing O(N) where
-    // N is the current number of stored elements copied during the resize.
     capacity = variant.capacity;
     array = makeArrayOfSize(variant.size);
     creditsPerSlot = new Array(capacity).fill(0);
@@ -791,7 +773,6 @@ async function finishWorstCase()
         return;
     }
 
-    // Reuse logic
     document.getElementById("manualInput").value = valueRes.value;
     await addElement();
 

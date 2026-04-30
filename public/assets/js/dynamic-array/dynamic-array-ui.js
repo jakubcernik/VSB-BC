@@ -1,10 +1,8 @@
 let currentLang = localStorage.getItem('lang') || 'cz';
 
-// Rychlost animací je řízená sliderem (1 = nejpomalejší, 5 = nejrychlejší).
 let animationDelay = 3;
 let instantAnimationMode = false;
 
-// Vrátí zpoždění v ms pro danou základní hodnotu
 function getDelay(base) {
     if (base === undefined) base = 1;
     if (instantAnimationMode) return 0;
@@ -117,7 +115,7 @@ const dict = {
         pleaseEnterValidNumber: 'Please enter a valid number.',
         invalidInput: 'Invalid input. Please check the values and try again.',
 
-        // --- Validation (shared) ---
+        // --- Validation ---
         validationEmpty: 'Please fill out the field.',
         validationNotInteger: 'Please enter an integer.',
         validationOutOfRange: (min, max) => `Please enter a value in range ${min}–${max}.`,
@@ -226,7 +224,7 @@ const dict = {
         pleaseEnterValidNumber: 'Zadejte platné číslo.',
         invalidInput: 'Neplatný vstup. Zkontrolujte hodnoty a zkuste to znovu.',
 
-        // --- Validace (sdílené) ---
+        // --- Validace ---
         validationEmpty: 'Vyplňte pole.',
         validationNotInteger: 'Zadejte celé číslo.',
         validationOutOfRange: (min, max) => `Zadejte hodnotu v rozsahu ${min}–${max}.`,
@@ -470,7 +468,6 @@ function createLogEntry(type, title, details, meta)
     logEntry.innerHTML = html;
     target.appendChild(logEntry);
 
-    // Auto-scroll to bottom
     const infoPanel = document.getElementById("infoPanel");
     infoPanel.scrollTop = infoPanel.scrollHeight;
 }

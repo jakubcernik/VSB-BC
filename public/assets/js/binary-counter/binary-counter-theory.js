@@ -1,5 +1,3 @@
-/* binary-counter-theory.js – i18n & logic for binary-counter-theory.html */
-
 let currentLang = localStorage.getItem('lang') || 'cz';
 
 // ─── Dictionary ────────────────────────────────────────────────────────────────
@@ -85,7 +83,7 @@ const theoryDict = {
         tdContribK: '≤ N/2^i',
         tableP2: 'Summing the geometric series: N + N/2 + N/4 + … < 2N. Therefore the average cost per increment is <strong>< 2, and in particular O(1)</strong>.',
 
-        // Complexity summary (unified: best / amortized / single worst)
+        // Complexity summary
         opIncrement:      'INCREMENT (amortized)',
         opIncrementBest:  'INCREMENT (best)',
         opIncrementWorst: 'INCREMENT (single worst)',
@@ -108,7 +106,6 @@ const theoryDict = {
 
         mainTitle: 'Amortizovaná složitost — Binární čítač',
 
-        // Nadpisy sekcí
         titleIntro:     '1. Co je binární čítač?',
         titleIncrement: '2. Operace INCREMENT',
         titleNaive:     '3. Proč naivní analýza nadhodnocuje',
@@ -116,7 +113,6 @@ const theoryDict = {
         titleTable:     '5. Tabulka frekvencí přepínání bitů',
         titleSummary:   '6. Přehled složitostí',
 
-        // Úvod
         introP1: '<strong>Binární čítač</strong> je k-bitový registr, který začíná na 0 a podporuje jedinou operaci: <code>INCREMENT</code>. Každé volání přičte 1 k uložené hodnotě pomocí binárního sčítání s přenosem. V simulaci je kvůli názornosti výchozí délka 8 bitů, ale hodnotu k lze měnit.',
         introP2: 'Registr je uložen jako pole <code>A[0..k−1]</code>, kde <code>A[0]</code> je nejméně významný bit (LSB). Inkrementování probíhá od LSB: přepínáme <code>1→0</code>, dokud nenarazíme na <code>0</code>, tu pak přepneme <code>0→1</code>.',
         introBox: '💡 Klíčové pozorování: každý INCREMENT přepne <em>nejméně</em> 1 bit (přepnutí 0→1) a <em>nejvýše</em> k bitů (jsou-li všechny bity 1). Nejhorší případ závisí na zvolené délce k a je vzácný — to zachycuje amortizovaná analýza.',
@@ -128,11 +124,9 @@ const theoryDict = {
         cardWorstTitle:'Nejhorší případ — O(k)',
         cardWorstDesc: 'Všech k bitů je 1 (čítač = 2^k − 1). Přepnou se všechny bity. Cena = k přepnutí. Pro zvolenou délku registru nastane jednou za 2^k inkrementací.',
 
-        // Naivní
         naiveP1: 'Naivní analýza by se podívala na nejhorší cenu jednoho INCREMENT: <strong>O(k)</strong>. Vynásobením N operacemi by dostala <strong>O(Nk)</strong> — to ale předpokládá, že každé inkrementování přepíná všech k bitů, což není možné.',
         naiveP2: 'Ve skutečnosti se bit 0 přepíná při každém inkrementování, bit 1 každý druhý, bit 2 každý čtvrtý atd. Drahé případy jsou exponenciálně vzácnější. Amortizovaná analýza to zohledňuje.',
 
-        // Amortizovaná
         amortizedP1: 'Tři klasické metody potvrzují, že amortizovaná cena je O(1) na INCREMENT:',
 
         tabAggregate:  'Agregační metoda',
@@ -162,7 +156,7 @@ const theoryDict = {
         potentialMath2: 'â = (t + 1) + (1 − t) = 2',
         potentialConclusion: 'V každém případě â = 2 = <strong>O(1)</strong>. Potenciálová metoda potvrzuje, že amortizovaná cena je konstantní bez ohledu na délku přenosu.',
 
-        // Tabulka
+        // Table
         tableP1: 'Níže je tabulka, která ukazuje, jak často se každá bitová pozice přepíná při N inkrementacích:',
         thBit:     'Bitová pozice',
         thWeight:  'Váha',
@@ -180,7 +174,7 @@ const theoryDict = {
         tdContribK: '≤ N/2^i',
         tableP2: 'Součet geometrické řady: N + N/2 + N/4 + … < 2N. Z toho plyne, že průměrná cena jedné inkrementace je <strong>< 2, a tedy O(1)</strong>.',
 
-        // Přehled složitostí (sjednoceno: nejlepší / amortizovaně / nejhorší 1×)
+        // Complexity summary
         opIncrement:      'INCREMENT (amortizovaně)',
         opIncrementBest:  'INCREMENT (nejlepší)',
         opIncrementWorst: 'INCREMENT (nejhorší 1×)',
@@ -367,7 +361,6 @@ function applyLanguage() {
     updateLangToggleUI();
 }
 
-// ─── Boot ──────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
     applyTheme();
     applyLanguage();

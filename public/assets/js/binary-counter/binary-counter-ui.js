@@ -1,5 +1,3 @@
-/* UI helpers and i18n for the Binary Counter page. */
-
 let currentLang = localStorage.getItem('lang') || 'cz';
 
 // ─── Animation speed ───────────────────────────────────────────────────────────

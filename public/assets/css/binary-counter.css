@@ -135,13 +135,12 @@
     100% { transform: scaleY(1); }
 }
 
-/* Highlight of bit processed */
+/* Bit processed */
 .bit-frame.active-bit {
     box-shadow: 0 0 0 3px #f0ad00;
     border-color: #f0ad00;
 }
 
-/* Coins on bit cells */
 .bit-coins {
     display: flex;
     flex-wrap: wrap;
@@ -190,7 +189,6 @@
     100% { transform: scale(0);   opacity: 0; }
 }
 
-/* ── Operation Bank ── */
 #operationBank {
     display: flex;
     flex-direction: column;
@@ -243,7 +241,6 @@ body.dark-mode #bankLabel {
     color: #d4a800;
 }
 
-/* ── Decimal value display ── */
 #decimalDisplay {
     font-size: 1.2rem;
     font-weight: 700;
@@ -256,7 +253,6 @@ body.dark-mode #bankLabel {
     transition: background 0.3s;
 }
 
-/* ── Dark-mode overrides ── */
 body.dark-mode .bit-frame.bit-one {
     background: #1a3d52;
     border-color: #5ab3d4;
@@ -321,4 +317,3 @@ body.dark-mode #btnReset:hover {
     background: #505050;
     color: #eee;
 }
-

@@ -16,7 +16,6 @@ function parseStrictInt(str) {
 
 // ─── Validace ─────────────────────────────────────────────────────────────────
 
-// Přečte celé číslo z inputu. opts: { required, min, max }
 function readInt(id, opts) {
     if (opts === undefined) opts = {};
     const required = opts.required !== false;
@@ -41,7 +40,6 @@ function readInt(id, opts) {
     return { ok: true, value };
 }
 
-// Přečte textový řetězec z inputu.
 function readString(id, opts) {
     if (opts === undefined) opts = {};
     const required = opts.required !== false;
@@ -50,7 +48,6 @@ function readString(id, opts) {
     return { ok: true, value: raw };
 }
 
-// Přečte a zvaliduje dvojici min/max ze dvou inputů.
 function readIntMinMax(minId, maxId, opts) {
     const minRes = readInt(minId, opts);
     if (!minRes.ok) return minRes;
@@ -63,7 +60,6 @@ function readIntMinMax(minId, maxId, opts) {
     return { ok: true, min: minRes.value, max: maxRes.value };
 }
 
-// Převede kód chyby na text pomocí slovníku aktuálního jazyka.
 function getErrorMessage(reason, dict, details) {
     if (!dict) return 'Invalid input.';
 
@@ -78,26 +74,22 @@ function getErrorMessage(reason, dict, details) {
     return dict.invalidInput || 'Invalid input.';
 }
 
-// Zkrácený wrapper — vezme výsledek z readInt/readIntMinMax a zobrazí chybu přes reportFn.
 function reportValidation(result, dict, reportFn) {
     const msg = getErrorMessage(result.reason, dict, result.details);
     if (typeof reportFn === 'function') reportFn(msg);
 }
 
-// Nízkoúrovňová verze pro případ, kdy máme jen kód chyby (bez výsledku).
 function reportValidationError(reason, ctx) {
     const msg = getErrorMessage(reason, ctx && ctx.dict, ctx && ctx.details);
     if (ctx && typeof ctx.report === 'function') ctx.report(msg);
 }
 
-// ─── Sdílené utility ──────────────────────────────────────────────────────────
+// ─── Shared utility ──────────────────────────────────────────────────────────
 
-// Náhodné celé číslo v uzavřeném intervalu <min, max>.
 function randInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// Asynchronní pauza v milisekundách.
 function sleep(ms) {
     return new Promise(function(resolve) { setTimeout(resolve, ms); });
 }

@@ -1,5 +1,3 @@
-/* hash-table-theory.js – i18n & logic for hash-table-theory.html */
-
 let currentLang = localStorage.getItem('lang') || 'cz';
 
 const theoryDict = {
@@ -69,7 +67,6 @@ const theoryDict = {
         potentialMath2:  'â = actual + ΔΦ = O(1)',
         potentialConclusion: 'Potential method confirms the same result: even with occasional expensive resize, amortized cost per INSERT is constant.',
 
-        // Complexity summary (unified: best / amortized / single worst)
         opInsert: 'INSERT (amortized)',
         opInsertBest: 'INSERT (best)',
         opInsertWorst: 'INSERT (single worst)',
@@ -150,7 +147,6 @@ const theoryDict = {
         potentialMath2:  'â = skutečná cena + ΔΦ = O(1)',
         potentialConclusion: 'Potenciálová metoda potvrzuje stejný výsledek: i přes občasný drahý resize je amortizovaná cena INSERT konstantní.',
 
-        // Přehled složitostí (sjednoceno: nejlepší / amortizovaně / nejhorší 1×)
         opInsert: 'INSERT (amortizovaně)',
         opInsertBest: 'INSERT (nejlepší)',
         opInsertWorst: 'INSERT (nejhorší 1×)',
